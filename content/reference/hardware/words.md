@@ -1,7 +1,7 @@
 ---
 title: "Board Words"
 weight: 1
-description: "One-page lookup table for Froth Machine words, arity, return value, and use."
+description: "One-page lookup table for Frothy Machine words, arity, return value, and use."
 ---
 
 This is the fast lookup page for workshop and Machine work. Follow a word link

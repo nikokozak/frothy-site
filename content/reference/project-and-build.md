@@ -8,12 +8,12 @@ icon: boxes
 tags: [frothy.toml, target, board]
 ---
 
-Froth keeps project selection explicit. A target names the platform. A board
+Frothy keeps project selection explicit. A target names the platform. A board
 names the concrete board profile under `boards/`.
 
 ## Project Shape
 
-**`froth.toml`** *(project manifest)*
+**`frothy.toml`** *(project manifest)*
 
 Layer: `tooling`  
 Behavior: Declares the project inputs the CLI needs to resolve source,
@@ -24,14 +24,14 @@ Example:
 [project]
 name = "blink"
 version = "0.1.0"
-entry = "src/main.froth"
+entry = "src/main.frothy"
 
 [target]
 board = "esp32-devkit-v1"
 platform = "esp-idf"
 ```
 
-**`src/main.froth`** *(project source)*
+**`src/main.frothy`** *(project source)*
 
 Layer: `tooling`  
 Behavior: Conventional project entry source file. The editor can send any
@@ -52,7 +52,7 @@ Behavior: Selects the platform layer, such as `posix` or `esp-idf`.
 Example:
 
 ```sh
-froth --target esp-idf build
+frothy --target esp-idf build
 ```
 
 **`--board`** *(CLI flag)*
@@ -62,7 +62,7 @@ Behavior: Selects the concrete board profile under `boards/`.
 Example:
 
 ```sh
-froth --target esp-idf --board esp32-devkit-v1 build
+frothy --target esp-idf --board esp32-devkit-v1 build
 ```
 
 Keep those two ideas separate. `esp-idf` is the target platform.
@@ -70,14 +70,14 @@ Keep those two ideas separate. `esp-idf` is the target platform.
 
 ## Build And Flash
 
-**`froth build`** *(CLI command)*
+**`frothy build`** *(CLI command)*
 
 Layer: `tooling`  
 Behavior: Builds the selected project or repo checkout for the selected target
 and board. Use `--clean` when target, board, or FFI inputs changed and stale
 cache state would make the result ambiguous.
 
-**`froth flash`** *(CLI command)*
+**`frothy flash`** *(CLI command)*
 
 Layer: `tooling`  
 Behavior: Flashes the selected firmware to the connected device. For ordinary
@@ -90,15 +90,15 @@ A maintained board profile is a small set of files:
 
 - `board.json` for capacities and board metadata
 - `ffi.c` and `ffi.h` for native board bindings
-- `lib/base.froth` or the generated base library surface for startup words
+- `lib/base.frothy` or the generated base library surface for startup words
 
 The public language does not expose raw C pointers or native handles as
-ordinary persisted values. Board code publishes Froth values and words at the
+ordinary persisted values. Board code publishes Frothy values and words at the
 base-image boundary.
 
 ## Build Options
 
-Project builds read build settings from `froth.toml`. The public site should
+Project builds read build settings from `frothy.toml`. The public site should
 not promise every internal CMake knob as a stable user flag; the manifest is
 the project-level surface.
 
@@ -121,7 +121,7 @@ Common keys:
 
 Board profiles may also set evaluator and persistence capacities directly in
 `board.json`. Those are maintainer-facing board choices, not knobs most users
-should tune while writing Froth.
+should tune while writing Frothy.
 
 ## Project FFI Build Keys
 

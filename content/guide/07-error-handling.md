@@ -12,7 +12,7 @@ A live microcontroller language needs mistakes to be survivable. If a bad
 line at the prompt can destroy the session, the prompt stops being a useful
 working surface.
 
-Froth treats reader errors, parser errors, type errors, arity errors, bounds
+Frothy treats reader errors, parser errors, type errors, arity errors, bounds
 errors, division by zero, and persistence rejection as recoverable whenever
 possible. The target should report the error and return to a usable prompt.
 
@@ -20,7 +20,7 @@ possible. The target should report the error and return to a usable prompt.
 
 Calling a non-`Code` value is an error:
 
-```froth
+```frothy
 delay is 75
 delay:
 ```
@@ -29,7 +29,7 @@ delay:
 
 Calling code with the wrong number of arguments is also an error:
 
-```froth
+```frothy
 to pulse with pin, wait [
   gpio.high: pin;
   ms: wait;
@@ -44,7 +44,7 @@ the problem.
 
 Cells bounds and kind errors are another common class:
 
-```froth
+```frothy
 scores is cells(2)
 set scores[3] to 10
 ```
@@ -56,7 +56,7 @@ The cells object exists, but index `3` is outside a two-element store.
 Use `Ctrl-C` to interrupt long-running evaluation or pending multiline input.
 The runtime checks interruption at safe points, including loop back edges.
 
-```froth
+```frothy
 while true [
   led.toggle:;
   ms: 100
@@ -70,7 +70,7 @@ the prompt should still be usable.
 
 When something feels wrong, inspect first:
 
-```froth
+```frothy
 words
 show @boot
 see @boot
@@ -85,7 +85,7 @@ special. Use those tools before reaching for destructive recovery.
 
 Use the smallest recovery operation that matches the problem:
 
-```froth
+```frothy
 restore
 dangerous.wipe
 ```
@@ -102,7 +102,7 @@ image back.
 If saved `boot` code prevents the prompt from becoming usable, power-cycle or
 reset the board and press `Ctrl-C` during the safe-boot window. Then run:
 
-```froth
+```frothy
 dangerous.wipe
 ```
 

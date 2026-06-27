@@ -1,11 +1,11 @@
 ---
 title: "Drive a Servo"
 weight: 9
-description: "Generate hobby-servo pulses with LEDC and wrap the low-level timing in readable Froth words."
+description: "Generate hobby-servo pulses with LEDC and wrap the low-level timing in readable Frothy words."
 advanced: true
 ---
 
-This is a lower-level ESP32 tutorial. It is not part of the Froth Machine
+This is a lower-level ESP32 tutorial. It is not part of the Frothy Machine
 workshop path. Use a source board that exposes the LEDC bindings, a powered
 hobby servo, and a signal pin that is safe for your board.
 
@@ -15,7 +15,7 @@ other side. Exact ranges vary by servo.
 
 ## Choose The Pin And Channel
 
-```froth
+```frothy
 servo.pin is 18
 servo.speed is 0
 servo.timer is 1
@@ -27,7 +27,7 @@ servo.freq is 50
 At 50 Hz, one period is 20 ms. With 16-bit duty, the full period is `65535`.
 One millisecond is about `3277` duty counts.
 
-```froth
+```frothy
 servo.min is 3277
 servo.center is 4915
 servo.max is 6553
@@ -35,14 +35,14 @@ servo.max is 6553
 
 ## Configure PWM
 
-```froth
+```frothy
 ledc.timer-config: servo.speed, servo.timer, servo.freq, servo.resolution
 ledc.channel-config: servo.pin, servo.speed, servo.channel, servo.timer, servo.center
 ```
 
 Wrap duty updates:
 
-```froth
+```frothy
 to servo.duty! with duty [
   ledc.set-duty: servo.speed, servo.channel, duty;
   ledc.update-duty: servo.speed, servo.channel
@@ -51,7 +51,7 @@ to servo.duty! with duty [
 
 Move to the center:
 
-```froth
+```frothy
 servo.duty!: servo.center
 ```
 
@@ -59,7 +59,7 @@ servo.duty!: servo.center
 
 Keep the dangerous numbers in one place:
 
-```froth
+```frothy
 to servo.left [
   servo.duty!: servo.min
 ]
@@ -75,7 +75,7 @@ to servo.right [
 
 Try them slowly:
 
-```froth
+```frothy
 servo.left:
 ms: 500
 servo.middle:
@@ -88,7 +88,7 @@ continuing.
 
 ## Sweep
 
-```froth
+```frothy
 to servo.sweep [
   repeat 4 [
     servo.left:;
@@ -105,7 +105,7 @@ to servo.sweep [
 
 Run it:
 
-```froth
+```frothy
 servo.sweep:
 ```
 
@@ -113,7 +113,7 @@ servo.sweep:
 
 If you have an analog input, map `0..100` percent to the servo duty range:
 
-```froth
+```frothy
 to servo.fromPercent with percent [
   servo.min + ((clamp: percent, 0, 100) * (servo.max - servo.min) / 100)
 ]
@@ -126,6 +126,6 @@ to servo.followA0 [
 ]
 ```
 
-This is the current-Froth shape the old servo tutorial was reaching for: hide
+This is the current-Frothy shape the old servo tutorial was reaching for: hide
 the peripheral math behind names, test the safe positions first, then connect
 input to motion.

@@ -1,7 +1,7 @@
 ---
 title: "Guide"
 weight: 1
-description: "Learn Froth from the first prompt through hardware, persistence, and FFI."
+description: "Learn Frothy from the first prompt through hardware, persistence, and FFI."
 ---
 
 The guide starts with the live prompt, then builds outward through values,

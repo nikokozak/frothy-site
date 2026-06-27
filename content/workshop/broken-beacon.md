@@ -1,14 +1,14 @@
 ---
 title: "The Broken Beacon"
 weight: 1
-description: "Inspect, repair, save, and recover the workshop puzzle words baked into the Froth Machine."
+description: "Inspect, repair, save, and recover the workshop puzzle words baked into the Frothy Machine."
 ---
 
 This activity assumes you have:
 
-- the Froth CLI installed (`froth doctor` passes)
-- the Froth VS Code extension
-- a preflashed Froth Machine plugged in and connected
+- the Frothy CLI installed (`frothy doctor` passes)
+- the Frothy VS Code extension
+- a preflashed Frothy Machine plugged in and connected
 
 If you have not connected yet, start with [First steps](/machine/first-steps/).
 
@@ -49,13 +49,13 @@ familiar `grid.*` and `matrix.*` families.
 
 Pick one of the puzzle words and inspect it before calling it.
 
-```froth
+```frothy
 show @puzzle.dot
 ```
 
 Read the definition. Predict what will happen. Then call it:
 
-```froth
+```frothy
 puzzle.dot:
 ```
 
@@ -64,7 +64,7 @@ two values, `puzzle.x` and `puzzle.y`, and lights the pixel at that position.
 
 You can also check metadata:
 
-```froth
+```frothy
 info @puzzle.dot
 ```
 
@@ -81,7 +81,7 @@ value class, arity, and origin of a binding. Try both.
 The dot appeared at (5, 3) because that is where `puzzle.x` and `puzzle.y`
 point. Change them:
 
-```froth
+```frothy
 puzzle.x
 set puzzle.x to 10
 puzzle.dot:
@@ -96,7 +96,7 @@ what it is supposed to do.
 
 Inspect it:
 
-```froth
+```frothy
 show @puzzle.frame
 ```
 
@@ -105,7 +105,7 @@ supposed to draw a border rectangle around the full display.
 
 Fix it by redefining the word:
 
-```froth
+```frothy
 to puzzle.frame [
   grid.clear:;
   grid.rect: 0, 0, grid.width, grid.height, true;
@@ -118,7 +118,7 @@ Call `puzzle.frame:` again. You should see a 12x8 border rectangle.
 <details>
 <summary>Answer</summary>
 
-```froth
+```frothy
 to puzzle.frame [ grid.clear:; grid.rect: 0, 0, grid.width, grid.height, true; grid.show: ]
 ```
 
@@ -133,7 +133,7 @@ all three before `puzzle.scene:` works.
 
 Start by inspecting the chain:
 
-```froth
+```frothy
 show @puzzle.scene
 show @puzzle.top
 show @puzzle.bottom
@@ -149,21 +149,21 @@ What you will find:
 The fix is iterative. Start with `puzzle.scene` so you can see something on the
 display, then fix the other two:
 
-```froth
+```frothy
 to puzzle.scene [ grid.clear:; puzzle.top:; puzzle.bottom:; grid.show: ]
 ```
 
 Call `puzzle.scene:`. You should see the full screen filled. That is the
 broken `puzzle.top` overshooting. Fix it to fill only the top three rows:
 
-```froth
+```frothy
 to puzzle.top [ matrix.fillRect: 0, 0, grid.width, 3, true ]
 ```
 
 Call `puzzle.scene:` again. A filled band appears across the top. Now fix
 `puzzle.bottom` to fill the bottom three rows:
 
-```froth
+```frothy
 to puzzle.bottom [ matrix.fillRect: 0, 5, grid.width, 3, true ]
 ```
 
@@ -173,7 +173,7 @@ middle.
 <details>
 <summary>Answer</summary>
 
-```froth
+```frothy
 to puzzle.scene [ grid.clear:; puzzle.top:; puzzle.bottom:; grid.show: ]
 to puzzle.top [ matrix.fillRect: 0, 0, grid.width, 3, true ]
 to puzzle.bottom [ matrix.fillRect: 0, 5, grid.width, 3, true ]
@@ -188,7 +188,7 @@ side of the screen. Twist the left knob and call it again. Same bar.
 
 Inspect it:
 
-```froth
+```frothy
 show @puzzle.reveal
 ```
 
@@ -196,7 +196,7 @@ The width is hardcoded to 3. Make it respond to the left knob instead.
 
 First, find out what the knob returns:
 
-```froth
+```frothy
 knob.left:
 ```
 
@@ -204,7 +204,7 @@ Twist the knob and try again. It returns a value between 0 and 100.
 
 Now redefine `puzzle.reveal` so the bar width tracks the knob:
 
-```froth
+```frothy
 to puzzle.reveal [
   grid.clear:;
   grid.rect: 0, 0, (knob.left: * grid.width / 100), grid.height, true;
@@ -218,7 +218,7 @@ width.
 <details>
 <summary>Answer</summary>
 
-```froth
+```frothy
 to puzzle.reveal [ grid.clear:; grid.rect: 0, 0, (knob.left: * grid.width / 100), grid.height, true; grid.show: ]
 ```
 
@@ -235,14 +235,14 @@ overlay.
 
 Intentionally break one of your fixes:
 
-```froth
+```frothy
 to puzzle.scene [ grid.clear:; grid.show: ]
 puzzle.scene:
 ```
 
 The screen goes blank. Your pattern is gone. Now recover:
 
-```froth
+```frothy
 restore
 puzzle.scene:
 ```
@@ -251,7 +251,7 @@ The two bands are back. The board returned to your last saved state.
 
 If you had never saved, or your save is also broken, there is a harder reset:
 
-```froth
+```frothy
 dangerous.wipe
 ```
 

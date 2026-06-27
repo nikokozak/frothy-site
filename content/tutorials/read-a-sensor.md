@@ -7,14 +7,14 @@ description: "Read ADC values, scale them, and turn analog input into board beha
 Analog input gives you a range instead of a yes/no answer. On ESP32-class
 boards the raw ADC reading is usually a 12-bit count from `0` to `4095`.
 
-On the Froth Machine, the easiest analog sensors are already mounted: the left
+On the Frothy Machine, the easiest analog sensors are already mounted: the left
 and right knobs.
 
 ## Read A Raw ADC Pin
 
 On a general board:
 
-```froth
+```frothy
 adc.read: A0
 ```
 
@@ -23,7 +23,7 @@ should move.
 
 Convert a raw count to a percentage:
 
-```froth
+```frothy
 to adc.percent.of with raw [
   raw * 100 / 4095
 ]
@@ -33,7 +33,7 @@ adc.percent.of: (adc.read: A0)
 
 The board library already provides the usual helper:
 
-```froth
+```frothy
 adc.percent: A0
 ```
 
@@ -41,9 +41,9 @@ Use the helper unless you are teaching or debugging the conversion.
 
 ## Read The Machine Knobs
 
-On the Froth Machine:
+On the Frothy Machine:
 
-```froth
+```frothy
 knob.left:
 knob.right:
 knob.left.raw:
@@ -57,14 +57,14 @@ The `knob.left` and `knob.right` helpers return a percentage-style value on the
 
 Initialize the display:
 
-```froth
+```frothy
 matrix.init:
 matrix.brightness!: 1
 ```
 
 Scale the left knob to an x coordinate:
 
-```froth
+```frothy
 to knob.x [
   (knob.left:) * (grid.width - 1) / 100
 ]
@@ -72,7 +72,7 @@ to knob.x [
 
 Draw one frame:
 
-```froth
+```frothy
 sensor.frame is fn [
   grid.clear:;
   grid.set: knob.x:, 3, true;
@@ -82,7 +82,7 @@ sensor.frame is fn [
 
 Run it:
 
-```froth
+```frothy
 repeat 300 [
   sensor.frame:;
   ms: 25
@@ -95,13 +95,13 @@ Turn the knob. The lit pixel should move across the display.
 
 Thresholds are clearer when named:
 
-```froth
+```frothy
 alert.threshold is 70
 ```
 
 Light the built-in LED when the knob crosses the threshold:
 
-```froth
+```frothy
 alert.frame is fn [
   if (knob.left:) > alert.threshold [
     led.on:
@@ -113,7 +113,7 @@ alert.frame is fn [
 
 Run both the display and LED behavior in one frame:
 
-```froth
+```frothy
 sensor.alertFrame is fn [
   sensor.frame:;
   alert.frame:

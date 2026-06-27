@@ -8,12 +8,12 @@ icon: repeat-2
 readTime: "7 min"
 ---
 
-Froth keeps code as a value, but the syntax is lexical and direct.
+Frothy keeps code as a value, but the syntax is lexical and direct.
 
 The most important rule is simple: a block creates a scope and yields the value
 of its last expression.
 
-```froth
+```frothy
 to nextSpeed with speed [
   here candidate is speed + 10;
   clamp: candidate, 0, 100
@@ -25,10 +25,10 @@ result.
 
 ## `if`, `when`, and `unless`
 
-Conditions must be `Bool`. Froth does not treat arbitrary integers or text as
+Conditions must be `Bool`. Frothy does not treat arbitrary integers or text as
 truthy.
 
-```froth
+```frothy
 to led.byKnob with percent [
   if percent > 50 [
     led.on:
@@ -40,7 +40,7 @@ to led.byKnob with percent [
 
 Use `when` for a one-sided action:
 
-```froth
+```frothy
 when joy.click?: [
   led.toggle:
 ]
@@ -48,7 +48,7 @@ when joy.click?: [
 
 Use `unless` when the negative condition reads better:
 
-```froth
+```frothy
 unless joy.click?: [
   grid.clear:
 ]
@@ -60,7 +60,7 @@ If an `if` has no `else` and the condition is false, it yields `nil`.
 
 `while` evaluates the condition before each iteration:
 
-```froth
+```frothy
 to waitForClick [
   while not joy.click?: [
     ms: 20
@@ -75,7 +75,7 @@ after the loop.
 
 Use `repeat` for counted loops:
 
-```froth
+```frothy
 to blink.times with count, wait [
   repeat count [
     led.on:;
@@ -88,7 +88,7 @@ to blink.times with count, wait [
 
 Use `repeat ... as name` when the loop index matters:
 
-```froth
+```frothy
 to diagonal [
   grid.clear:;
   repeat grid.height as y [
@@ -104,7 +104,7 @@ The index is a local for that iteration's body.
 
 Use `fn` when behavior itself is the value:
 
-```froth
+```frothy
 to twice with action [
   action:;
   action:
@@ -119,19 +119,19 @@ twice: flash
 
 Computed calls use `call` when the callee is the result of an expression:
 
-```froth
+```frothy
 call flash with
 ```
 
 Most code does not need that form. A named call is clearer when the callee is
 already a name:
 
-```froth
+```frothy
 flash:
 ```
 
 The old quotation chapter was about choosing and executing delayed code. The
-current Froth version is the same idea with less stack ceremony: blocks are
+current Frothy version is the same idea with less stack ceremony: blocks are
 lexical, `Code` is a value, and calls say their arguments out loud.
 
 Next: [Errors and recovery](/guide/07-error-handling/).

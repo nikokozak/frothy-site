@@ -8,7 +8,7 @@ icon: circuit-board
 readTime: "8 min"
 ---
 
-Froth is device-first. The host tools help you reach the board, but the board
+Frothy is device-first. The host tools help you reach the board, but the board
 is the real environment.
 
 The hardware surface is layered:
@@ -27,17 +27,17 @@ what you mean.
 
 The raw digital shape is:
 
-```froth
+```frothy
 gpio.output: LED_BUILTIN
 gpio.high: LED_BUILTIN
 ms: 100
 gpio.low: LED_BUILTIN
 ```
 
-The helper words are ordinary Froth definitions over the lower-level FFI
+The helper words are ordinary Frothy definitions over the lower-level FFI
 binding:
 
-```froth
+```frothy
 gpio.mode: LED_BUILTIN, 1
 gpio.write: LED_BUILTIN, 1
 gpio.read: LED_BUILTIN
@@ -50,14 +50,14 @@ The board metadata seeds those names into the base image.
 
 Analog input is board-specific but follows the same idea:
 
-```froth
+```frothy
 adc.read: A0
 adc.percent: A0
 ```
 
-On the Froth Machine, the friendly layer names the two knobs:
+On the Frothy Machine, the friendly layer names the two knobs:
 
-```froth
+```frothy
 knob.left:
 knob.right:
 knob.left.raw:
@@ -67,11 +67,11 @@ knob.right.raw:
 Use percentage helpers for sketches. Use raw readings when you are calibrating
 or debugging.
 
-## Froth Machine Display And Controls
+## Frothy Machine Display And Controls
 
 For the Machine, initialize the display once:
 
-```froth
+```frothy
 matrix.init:
 matrix.brightness!: 1
 grid.clear:
@@ -80,14 +80,14 @@ grid.show:
 
 Then work through the canvas layer:
 
-```froth
+```frothy
 grid.set: 4, 3, true
 grid.show:
 ```
 
 Read the joystick through booleans:
 
-```froth
+```frothy
 joy.up?:
 joy.down?:
 joy.left?:

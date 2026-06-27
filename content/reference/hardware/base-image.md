@@ -4,7 +4,7 @@ weight: 1
 description: "Seeded pins, timing, GPIO, LED, and ADC helpers that live in the board base image."
 ---
 
-These entries cover the shared board/base-image layer that Froth seeds at
+These entries cover the shared board/base-image layer that Frothy seeds at
 boot.
 
 ## Pins and Constants
@@ -18,7 +18,7 @@ On the TM1629 protoboard that also includes display, joystick, button, and
 potentiometer pin names.  
 Example:
 
-```froth
+```frothy
 gpio.output: LED_BUILTIN
 adc.read: A0
 ```
@@ -32,7 +32,7 @@ Behavior: The primitive timing and GPIO surface: read uptime, sleep for a
 duration, configure a pin, write a pin, and read a pin.  
 Example:
 
-```froth
+```frothy
 millis:
 gpio.mode: LED_BUILTIN, 1
 gpio.write: LED_BUILTIN, 1
@@ -45,11 +45,11 @@ ms: 75
 **`gpio.input`, `gpio.output`, `gpio.high`, `gpio.low`, `gpio.toggle`** *(board library)*
 
 Layer: `board library`  
-Behavior: Froth-native helper words layered on top of the raw GPIO primitives
+Behavior: Frothy-native helper words layered on top of the raw GPIO primitives
 to make everyday board interaction readable.  
 Example:
 
-```froth
+```frothy
 gpio.output: LED_BUILTIN
 gpio.toggle: LED_BUILTIN
 ```
@@ -62,7 +62,7 @@ board-library work. `blink` drives a pin for a count and wait interval.
 `animate` repeatedly runs a step function.  
 Example:
 
-```froth
+```frothy
 blink: LED_BUILTIN, 3, 75
 animate: 8, 40, fn with i [ led.toggle: ]
 ```
@@ -75,7 +75,7 @@ Layer: `board library`
 Behavior: Convenience words for the board's default LED wiring.  
 Example:
 
-```froth
+```frothy
 led.on:
 led.blink: 3, 75
 ```
@@ -83,11 +83,11 @@ led.blink: 3, 75
 **`adc.read`, `adc.max`, `adc.percent`** *(base image / board library)*
 
 Layer: `base image`  
-Behavior: Raw ADC input plus the Froth-native percentage helper layered on top
+Behavior: Raw ADC input plus the Frothy-native percentage helper layered on top
 of it.  
 Example:
 
-```froth
+```frothy
 adc.read: A0
 adc.percent: A0
 ```

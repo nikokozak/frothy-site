@@ -7,7 +7,7 @@ description: "Read a digital input, turn it into a boolean, and use it to contro
 The LED tutorial drove an output. This one reads an input. A button is the
 cleanest first input because it only has two states: pressed or not pressed.
 
-You can do this on a plain ESP32 board with `BOOT_BUTTON`, or on the Froth
+You can do this on a plain ESP32 board with `BOOT_BUTTON`, or on the Frothy
 Machine with `joy.click?`.
 
 ## Start With The Built-In Button
@@ -15,7 +15,7 @@ Machine with `joy.click?`.
 On ESP32 DevKit-style boards, the boot button is active-low. Released reads
 high. Pressed reads low.
 
-```froth
+```frothy
 gpio.input: BOOT_BUTTON
 gpio.read: BOOT_BUTTON
 ```
@@ -24,7 +24,7 @@ Hold the button and read again. The value should change from `1` to `0`.
 
 Wrap the electrical detail in a name:
 
-```froth
+```frothy
 to boot.pressed? [
   (gpio.read: BOOT_BUTTON) == 0
 ]
@@ -37,13 +37,13 @@ button is active-low.
 
 Configure the output once:
 
-```froth
+```frothy
 gpio.output: LED_BUILTIN
 ```
 
 Then define one frame:
 
-```froth
+```frothy
 button.frame is fn [
   if boot.pressed?: [
     gpio.high: LED_BUILTIN
@@ -55,7 +55,7 @@ button.frame is fn [
 
 Run it in a short loop:
 
-```froth
+```frothy
 repeat 300 [
   button.frame:;
   ms: 20
@@ -69,14 +69,14 @@ Hold the button. The LED follows your hand.
 Most button programs should react once per press, not on every poll while the
 button is held. Store the previous state:
 
-```froth
+```frothy
 button.prev is false
 button.led is false
 ```
 
 Detect the transition from not pressed to pressed:
 
-```froth
+```frothy
 button.fell? is fn [
   here now is boot.pressed?:;
   here fresh is now and (not button.prev);
@@ -87,7 +87,7 @@ button.fell? is fn [
 
 Toggle the LED on that edge:
 
-```froth
+```frothy
 button.toggleFrame is fn [
   when button.fell?: [
     set button.led to (not button.led);
@@ -102,7 +102,7 @@ button.toggleFrame is fn [
 
 Run it:
 
-```froth
+```frothy
 repeat 600 [
   button.toggleFrame:;
   ms: 20
@@ -111,17 +111,17 @@ repeat 600 [
 
 Each press toggles once. Holding the button does not keep firing.
 
-## Froth Machine Shortcut
+## Frothy Machine Shortcut
 
 On the Machine, the joystick click already has a semantic helper:
 
-```froth
+```frothy
 joy.click?:
 ```
 
 Use the same edge pattern:
 
-```froth
+```frothy
 joy.prev is false
 
 joy.clicked? is fn [

@@ -13,7 +13,7 @@ Machine sketch surface.
 
 Behavior: Return current uptime in milliseconds.
 
-```froth
+```frothy
 millis:
 ```
 
@@ -21,7 +21,7 @@ millis:
 
 Behavior: Sleep for the given number of milliseconds.
 
-```froth
+```frothy
 ms: 75
 ```
 
@@ -31,7 +31,7 @@ ms: 75
 
 Behavior: Return a random integer from `0` to `n - 1`.
 
-```froth
+```frothy
 random.below: grid.width
 ```
 
@@ -41,7 +41,7 @@ random.below: grid.width
 
 Behavior: Return the smaller value.
 
-```froth
+```frothy
 min: player.x, target.x
 ```
 
@@ -49,7 +49,7 @@ min: player.x, target.x
 
 Behavior: Return the larger value.
 
-```froth
+```frothy
 max: player.x, 0
 ```
 
@@ -57,7 +57,7 @@ max: player.x, 0
 
 Behavior: Clamp a value to the inclusive range `lo..hi`.
 
-```froth
+```frothy
 clamp: player.x, 0, (grid.width - 1)
 ```
 
@@ -65,7 +65,7 @@ clamp: player.x, 0, (grid.width - 1)
 
 Behavior: Wrap a value into the range `0..size - 1`.
 
-```froth
+```frothy
 wrap: player.x, grid.width
 ```
 
@@ -73,7 +73,7 @@ wrap: player.x, grid.width
 
 Behavior: Linearly map a value from one range to another.
 
-```froth
+```frothy
 map: knob.right:, 0, 100, 180, 20
 ```
 

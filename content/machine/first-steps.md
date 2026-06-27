@@ -1,10 +1,10 @@
 ---
 title: "01. First Steps"
 weight: 1
-description: "What the Froth Machine is, what is on it, and the first words to try."
+description: "What the Frothy Machine is, what is on it, and the first words to try."
 ---
 
-If you have just been handed the Froth Machine in a workshop, start here.
+If you have just been handed the Frothy Machine in a workshop, start here.
 
 ## What Is On The Board
 
@@ -16,12 +16,12 @@ The workshop board gives you:
 - a built-in LED
 - raw pin names for the display, joystick, knobs, and buttons
 
-In everyday Froth work, the front-door words are not the raw pin names.
+In everyday Frothy work, the front-door words are not the raw pin names.
 Start with the higher-level board words instead.
 
 ## The First Display Proof
 
-```froth
+```frothy
 matrix.init:
 matrix.brightness!: 0
 grid.clear:
@@ -47,7 +47,7 @@ That is the basic pattern for the whole board:
 
 Try the joystick and knobs directly at the prompt:
 
-```froth
+```frothy
 joy.up?:
 joy.down?:
 joy.left?:
@@ -65,7 +65,7 @@ What those return:
 
 If you want the raw analog value instead, use:
 
-```froth
+```frothy
 knob.left.raw:
 knob.right.raw:
 ```
@@ -88,7 +88,7 @@ That is enough to do a surprising amount of work.
 
 Here is a simple moving cursor driven by the knobs:
 
-```froth
+```frothy
 to scaleKnob with percent, max [
   percent * max / 100
 ]
@@ -118,7 +118,7 @@ knobs first.
 
 If you want to experiment with a raw button, the shape is:
 
-```froth
+```frothy
 gpio.input: BUTTON_2
 gpio.read: BUTTON_2
 ```

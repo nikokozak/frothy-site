@@ -6,16 +6,16 @@ advanced: true
 ---
 
 I2C is a source-board peripheral surface. It is useful for sensors and small
-external devices, but it is not part of the beginner Froth Machine workshop
+external devices, but it is not part of the beginner Frothy Machine workshop
 path.
 
 ## Availability
 
-The `esp32-devkit-v1` board source exposes I2C bindings. The Froth Machine
+The `esp32-devkit-v1` board source exposes I2C bindings. The Frothy Machine
 public workshop board does not currently teach I2C as a front-door feature.
 
 Handles are small integers returned by setup words and passed back into later
-calls. Native ESP-IDF pointers do not become Froth values.
+calls. Native ESP-IDF pointers do not become Frothy values.
 
 ## Bus And Device
 
@@ -23,7 +23,7 @@ calls. Native ESP-IDF pointers do not become Froth values.
 
 Creates a bus handle.
 
-```froth
+```frothy
 i2c.bus is i2c.init: SDA, SCL, 400000
 ```
 
@@ -31,7 +31,7 @@ i2c.bus is i2c.init: SDA, SCL, 400000
 
 Adds one 7-bit-addressed device and returns a device handle.
 
-```froth
+```frothy
 i2c.dev is i2c.add-device: i2c.bus, 104, 400000
 ```
 
@@ -49,7 +49,7 @@ Releases a bus handle.
 
 Checks whether one address responds.
 
-```froth
+```frothy
 i2c.probe: i2c.bus, 104
 ```
 
@@ -67,7 +67,7 @@ Reads one byte.
 
 Writes one byte to a register.
 
-```froth
+```frothy
 i2c.write-reg: 0, i2c.dev, 107
 ```
 
@@ -75,7 +75,7 @@ i2c.write-reg: 0, i2c.dev, 107
 
 Reads one byte from a register.
 
-```froth
+```frothy
 i2c.read-reg: i2c.dev, 117
 ```
 
@@ -87,7 +87,7 @@ Reads a 16-bit register value.
 
 Keep setup in one named place:
 
-```froth
+```frothy
 i2c.bus is nil
 i2c.dev is nil
 

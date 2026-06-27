@@ -6,7 +6,7 @@ description: "Use the prompt or editor as a live loop against the device-owned i
 
 This is not a project tutorial. It is the workflow tutorial.
 
-Froth work is a loop: send a small change, run it on the target, inspect the
+Frothy work is a loop: send a small change, run it on the target, inspect the
 image, and revise the same names. The board is not just where the final
 program runs. During live work, the board is the development environment.
 
@@ -14,7 +14,7 @@ program runs. During live work, the board is the development environment.
 
 Start with one helper:
 
-```froth
+```frothy
 to dot with x, y [
   grid.clear:;
   grid.set: x, y, true;
@@ -24,7 +24,7 @@ to dot with x, y [
 
 Run it:
 
-```froth
+```frothy
 dot: 2, 2
 ```
 
@@ -34,7 +34,7 @@ If the display is connected and initialized, one pixel should light.
 
 Give yourself one command to rerun:
 
-```froth
+```frothy
 demo.run is fn [
   matrix.init:;
   matrix.brightness!: 1;
@@ -44,7 +44,7 @@ demo.run is fn [
 
 Now the edit loop has a stable handle:
 
-```froth
+```frothy
 demo.run:
 ```
 
@@ -54,7 +54,7 @@ value in the `dot` slot, not a stale copy.
 That single fact changes the way you should work. Do not write a twenty-line
 definition and hope. Write one small word, test it, and compose upward.
 
-```froth
+```frothy
 to line.demo [
   grid.clear:;
   matrix.line: 0, 0, 11, 7, true;
@@ -69,7 +69,7 @@ knob, or change brightness.
 
 Use the same names the editor calls:
 
-```froth
+```frothy
 words
 show @demo.run
 see @dot
@@ -86,24 +86,24 @@ whether a binding is foreign, base-image, user-created, or persistable.
 
 If you start a loop that runs too long:
 
-```froth
+```frothy
 repeat 1000000 [
   demo.run:;
   ms: 20
 ]
 ```
 
-Press `Ctrl-C` at the prompt or use `Froth: Interrupt` in the editor. The
+Press `Ctrl-C` at the prompt or use `Frothy: Interrupt` in the editor. The
 runtime checks for interrupts at safe points and returns to a usable prompt.
 
-In VS Code, **Froth: Interrupt** sends the same kind of interruption through
+In VS Code, **Frothy: Interrupt** sends the same kind of interruption through
 the connected control session.
 
 ## Save The Session
 
 When the current overlay is worth keeping:
 
-```froth
+```frothy
 save
 ```
 

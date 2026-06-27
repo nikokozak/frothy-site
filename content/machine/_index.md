@@ -1,10 +1,10 @@
 ---
 title: "Machine"
 weight: 2
-description: "Meet the Froth Machine: the display, controls, and game-shaped workflow on the protoboard."
+description: "Meet the Frothy Machine: the display, controls, and game-shaped workflow on the protoboard."
 ---
 
-The Froth Machine is the workshop board built around an ESP32, a TM1629 12x8
+The Frothy Machine is the workshop board built around an ESP32, a TM1629 12x8
 display, a joystick with click, two knobs, an LED, and a handful of raw pins.
 
 The right way to learn it is not by memorizing every low-level word first.
@@ -18,7 +18,7 @@ Start with the friendly board layer:
 
 If you want one five-line proof that the board is alive, use this:
 
-```froth
+```frothy
 matrix.init:
 grid.clear:
 grid.set: 1, 1, true

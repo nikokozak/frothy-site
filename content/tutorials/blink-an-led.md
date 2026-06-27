@@ -5,7 +5,7 @@ description: "Connect to a board, configure the LED pin, define a blink word, ch
 ---
 
 Blinking an LED is the hardware hello world. It proves three things at once:
-your host can talk to the board, the board can run Froth code immediately, and
+your host can talk to the board, the board can run Frothy code immediately, and
 a definition you make at the prompt becomes part of the live image.
 
 ## Check The Board
@@ -13,32 +13,32 @@ a definition you make at the prompt becomes part of the live image.
 Run the environment check first:
 
 ```sh
-froth doctor
+frothy doctor
 ```
 
 If more than one serial device is visible, pass the port explicitly:
 
 ```sh
-froth --port /dev/tty.usbserial-XXXX doctor
+frothy --port /dev/tty.usbserial-XXXX doctor
 ```
 
 Then connect:
 
 ```sh
-froth --port /dev/tty.usbserial-XXXX connect
+frothy --port /dev/tty.usbserial-XXXX connect
 ```
 
 ## Configure The Pin
 
 Use the board-provided pin name instead of the raw GPIO number:
 
-```froth
+```frothy
 gpio.output: LED_BUILTIN
 ```
 
 Then drive it by hand:
 
-```froth
+```frothy
 gpio.high: LED_BUILTIN
 ms: 200
 gpio.low: LED_BUILTIN
@@ -52,7 +52,7 @@ or board-selection problem inside a larger definition.
 
 At the prompt, define one small word:
 
-```froth
+```frothy
 to pulse with pin, wait [
   gpio.high: pin;
   ms: wait;
@@ -63,7 +63,7 @@ to pulse with pin, wait [
 
 Call it once:
 
-```froth
+```frothy
 pulse: LED_BUILTIN, 120
 ```
 
@@ -76,7 +76,7 @@ session.
 
 Now define a repeated blink:
 
-```froth
+```frothy
 to blink with pin [
   repeat 3 [
     pulse: pin, 120
@@ -86,7 +86,7 @@ to blink with pin [
 
 Run it:
 
-```froth
+```frothy
 blink: LED_BUILTIN
 ```
 
@@ -98,7 +98,7 @@ the board.
 
 Change the timing:
 
-```froth
+```frothy
 to blink with pin [
   repeat 5 [
     pulse: pin, 50
@@ -108,7 +108,7 @@ to blink with pin [
 
 Call the same name again:
 
-```froth
+```frothy
 blink: LED_BUILTIN
 ```
 
@@ -117,7 +117,7 @@ later call resolves through that same slot and sees the new behavior.
 
 Inspect it:
 
-```froth
+```frothy
 show @blink
 see @blink
 info @blink
@@ -131,7 +131,7 @@ typing ten minutes ago.
 If you want the board to blink after restore, bind `boot` to a small setup
 word:
 
-```froth
+```frothy
 to boot [
   gpio.output: LED_BUILTIN;
   blink: LED_BUILTIN
@@ -145,13 +145,13 @@ uninterruptible program is harder to recover from.
 
 When you want the overlay image to survive a reboot:
 
-```froth
+```frothy
 save
 ```
 
 If you want to return to the base image:
 
-```froth
+```frothy
 dangerous.wipe
 ```
 

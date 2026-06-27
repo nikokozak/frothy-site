@@ -6,7 +6,7 @@ advanced: true
 ---
 
 This is the companion to the safe-dial tutorial. It uses local state and a
-small flattened grid to show how Froth handles nested loops without hiding the
+small flattened grid to show how Frothy handles nested loops without hiding the
 work.
 
 The grid stores `1` for a marked cell and `0` for empty.
@@ -15,7 +15,7 @@ The grid stores `1` for a marked cell and `0` for empty.
 
 Use a 4 by 4 sample:
 
-```froth
+```frothy
 grid.w is 4
 grid.h is 4
 scan.grid is cells(16)
@@ -45,7 +45,7 @@ set scan.grid[15] to 1
 
 Flatten `(x, y)` to an index:
 
-```froth
+```frothy
 to scan.index with x, y [
   y * grid.w + x
 ]
@@ -53,7 +53,7 @@ to scan.index with x, y [
 
 Bounds are explicit:
 
-```froth
+```frothy
 to scan.inBounds? with x, y [
   (x >= 0) and (x < grid.w) and (y >= 0) and (y < grid.h)
 ]
@@ -61,7 +61,7 @@ to scan.inBounds? with x, y [
 
 Read a cell safely:
 
-```froth
+```frothy
 to scan.at with x, y [
   if scan.inBounds?: x, y [
     here i is scan.index: x, y;
@@ -77,7 +77,7 @@ to scan.at with x, y [
 There are eight neighbors. Write the eight checks. It is clearer than hiding
 the fixed shape behind a generic iterator:
 
-```froth
+```frothy
 to scan.neighbors with x, y [
   (scan.at: x - 1, y - 1) +
   (scan.at: x, y - 1) +
@@ -92,7 +92,7 @@ to scan.neighbors with x, y [
 
 Count marked cells with fewer than four marked neighbors:
 
-```froth
+```frothy
 to scan.accessible? with x, y [
   ((scan.at: x, y) == 1) and ((scan.neighbors: x, y) < 4)
 ]
@@ -100,7 +100,7 @@ to scan.accessible? with x, y [
 
 ## Scan The Grid
 
-```froth
+```frothy
 scan.total is 0
 
 to scan.solve [
@@ -118,7 +118,7 @@ to scan.solve [
 
 Run it:
 
-```froth
+```frothy
 scan.solve:
 ```
 

@@ -5,10 +5,10 @@ description: "Build a small local calculator with named operations, memory, and 
 ---
 
 This tutorial does not need hardware. Use a local target or a connected board.
-The point is to practice the current Froth style without a display or sensor
+The point is to practice the current Frothy style without a display or sensor
 in the way.
 
-Froth uses names and values instead of a calculator-style stack. That changes
+Frothy uses names and values instead of a calculator-style stack. That changes
 the shape of the program, but not the exercise: build small operations, test
 each one, then compose them.
 
@@ -16,14 +16,14 @@ each one, then compose them.
 
 Create two top-level values:
 
-```froth
+```frothy
 calc.current is 0
 calc.memory is 0
 ```
 
 These are part of the live overlay. You can inspect them:
 
-```froth
+```frothy
 show @calc.current
 show @calc.memory
 ```
@@ -32,7 +32,7 @@ show @calc.memory
 
 Define operations that update `calc.current`:
 
-```froth
+```frothy
 to calc.enter with n [
   set calc.current to n
 ]
@@ -52,7 +52,7 @@ to calc.mul with n [
 
 Try them:
 
-```froth
+```frothy
 calc.enter: 10
 calc.add: 5
 calc.mul: 3
@@ -66,7 +66,7 @@ The result is `45`.
 Division by zero should report an error and return to the prompt. For a small
 calculator, make the guard explicit:
 
-```froth
+```frothy
 to calc.div with n [
   if n == 0 [
     "division by zero"
@@ -79,7 +79,7 @@ to calc.div with n [
 
 Now both paths are visible:
 
-```froth
+```frothy
 calc.enter: 10
 calc.div: 2
 calc.div: 0
@@ -91,7 +91,7 @@ The zero case does not corrupt `calc.current`.
 
 Add the classic memory buttons:
 
-```froth
+```frothy
 to calc.store [
   set calc.memory to calc.current
 ]
@@ -109,7 +109,7 @@ to calc.clear [
 
 Try a short session:
 
-```froth
+```frothy
 calc.enter: 21
 calc.mul: 2
 calc.store:
@@ -123,7 +123,7 @@ The recalled value is `42`.
 
 Because `Code` is a value, you can pass operations around:
 
-```froth
+```frothy
 to calc.apply with op, n [
   op: n;
   calc.current
@@ -133,7 +133,7 @@ calc.apply: calc.add, 8
 calc.apply: calc.mul, 4
 ```
 
-This is the current-Froth analogue of building a small RPN calculator. The
+This is the current-Frothy analogue of building a small RPN calculator. The
 program still composes tiny operations, but the data flow is named instead of
 implicit on a stack.
 
@@ -141,7 +141,7 @@ implicit on a stack.
 
 When the calculator has the behavior you want:
 
-```froth
+```frothy
 save
 ```
 

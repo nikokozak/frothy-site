@@ -6,7 +6,7 @@ advanced: true
 ---
 
 PWM/LEDC is a source-board ESP32 surface. It is useful for LED brightness and
-servo pulses, but it is not part of the Froth Machine workshop front door.
+servo pulses, but it is not part of the Frothy Machine workshop front door.
 
 ## Timer And Channel Setup
 
@@ -14,7 +14,7 @@ servo pulses, but it is not part of the Froth Machine workshop front door.
 
 Configures one LEDC timer.
 
-```froth
+```frothy
 ledc.timer-config: 0, 0, 1000, 10
 ```
 
@@ -22,7 +22,7 @@ ledc.timer-config: 0, 0, 1000, 10
 
 Attaches one pin to one LEDC channel.
 
-```froth
+```frothy
 ledc.channel-config: LED_BUILTIN, 0, 0, 0, 0
 ```
 
@@ -36,7 +36,7 @@ Sets duty but does not apply it.
 
 Applies the duty change.
 
-```froth
+```frothy
 ledc.set-duty: 0, 0, 512
 ledc.update-duty: 0, 0
 ```
@@ -71,5 +71,5 @@ Configures a fade.
 
 Starts the configured fade.
 
-The [Fade an LED tutorial](/tutorials/fade-an-led/) shows both a Froth-level
+The [Fade an LED tutorial](/tutorials/fade-an-led/) shows both a Frothy-level
 software fade and the hardware fade helper.

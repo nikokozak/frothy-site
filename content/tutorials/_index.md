@@ -1,7 +1,7 @@
 ---
 title: "Tutorials"
 weight: 2
-description: "Task-shaped paths for learning Froth on hardware, local targets, and the Machine."
+description: "Task-shaped paths for learning Frothy on hardware, local targets, and the Machine."
 ---
 
 Tutorials are for doing one thing end to end. The guide explains the mental
@@ -21,5 +21,5 @@ surfaces:
 
 Use [Build a Calculator](/tutorials/build-a-calculator/) for a local state
 exercise, [Build a Small Game](/tutorials/build-a-small-game/) when you have a
-Froth Machine nearby, and the Advent of Code pages when you want algorithmic
+Frothy Machine nearby, and the Advent of Code pages when you want algorithmic
 practice without pretending the language is Python.

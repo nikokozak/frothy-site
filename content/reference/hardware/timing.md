@@ -13,24 +13,24 @@ uses the board/RTOS delay path. POSIX uses host-side sleep.
 
 Blocks for the requested number of milliseconds.
 
-```froth
+```frothy
 ms: 75
 ```
 
 Use it for simple sketches, not hard real-time scheduling. While `ms` is
-running, no other Froth code in that evaluation proceeds.
+running, no other Frothy code in that evaluation proceeds.
 
 **`millis:`** `() -> Int`
 
 Returns wrapped monotonic uptime in milliseconds.
 
-```froth
+```frothy
 millis:
 ```
 
 Use `millis` for elapsed-time checks when a loop should keep control:
 
-```froth
+```frothy
 blink.last is 0
 
 to blink.poll [

@@ -1,12 +1,12 @@
 ---
-title: "01. What Froth Is"
+title: "01. What Frothy Is"
 description: "The core mental model: stable slots, lexical code, and a live image."
 weight: 1
 icon: lightbulb
 readTime: "4 min"
 ---
 
-Froth is easiest to learn if you start with three laws from the accepted
+Frothy is easiest to learn if you start with three laws from the accepted
 language spec:
 
 1. The top level is a board of stable named slots.
@@ -14,13 +14,13 @@ language spec:
    repeat.
 3. Persistence remembers the overlay image, not the current execution.
 
-That is the center of the language. Froth is not organized around a
+That is the center of the language. Frothy is not organized around a
 user-visible stack. It is organized around values, places, and a live image
 you can inspect and recover.
 
 ## A Tiny Example
 
-```froth
+```frothy
 unit is 75
 
 to pulse with pin [
@@ -51,14 +51,14 @@ resolve through the same stable top-level slot.
 
 ## What Makes It Different
 
-Froth is built around a few current priorities:
+Frothy is built around a few current priorities:
 
 - live interaction on the device
 - coherent redefinition
 - persistence and recovery
 - transparent inspection
 
-It deliberately keeps the public model named and lexical. In Froth, values are
+It deliberately keeps the public model named and lexical. In Frothy, values are
 read by name, locals are lexical, and code is just another value.
 
 ## The First Things To Keep In Your Head

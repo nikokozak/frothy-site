@@ -1,13 +1,13 @@
 ---
 title: "Display"
 weight: 2
-description: "The Froth Machine display words across grid, matrix, and TM1629 layers."
+description: "The Frothy Machine display words across grid, matrix, and TM1629 layers."
 aliases:
   - /reference/hardware/matrix/
   - /reference/hardware/tm1629/
 ---
 
-The Froth Machine display surface has three levels over the same 12x8 board:
+The Frothy Machine display surface has three levels over the same 12x8 board:
 
 - `grid.*` is the game-canvas vocabulary: cells, pixels, toggles, and simple
   workshop drawing.
@@ -23,17 +23,17 @@ The Froth Machine display surface has three levels over the same 12x8 board:
 
 **`grid.width`** *(grid)* `() -> Int`
 
-Behavior: Logical display width. On the Froth Machine this is `12`.
+Behavior: Logical display width. On the Frothy Machine this is `12`.
 
-```froth
+```frothy
 grid.width
 ```
 
 **`grid.height`** *(grid)* `() -> Int`
 
-Behavior: Logical display height. On the Froth Machine this is `8`.
+Behavior: Logical display height. On the Frothy Machine this is `8`.
 
-```froth
+```frothy
 grid.height
 ```
 
@@ -41,7 +41,7 @@ grid.height
 
 Behavior: Clear the current framebuffer.
 
-```froth
+```frothy
 grid.clear:
 ```
 
@@ -49,7 +49,7 @@ grid.clear:
 
 Behavior: Set one pixel by `x`, `y`, and boolean value.
 
-```froth
+```frothy
 grid.set: 1, 1, true
 ```
 
@@ -57,7 +57,7 @@ grid.set: 1, 1, true
 
 Behavior: Read one pixel by `x` and `y`.
 
-```froth
+```frothy
 grid.get: 1, 1
 ```
 
@@ -65,7 +65,7 @@ grid.get: 1, 1
 
 Behavior: Toggle one pixel by `x` and `y`.
 
-```froth
+```frothy
 grid.toggle: 1, 1
 ```
 
@@ -74,7 +74,7 @@ grid.toggle: 1, 1
 Behavior: Draw an outline rectangle as `x`, `y`, `width`, `height`, and
 boolean value.
 
-```froth
+```frothy
 grid.rect: 0, 0, grid.width, grid.height, true
 ```
 
@@ -82,7 +82,7 @@ grid.rect: 0, 0, grid.width, grid.height, true
 
 Behavior: Fill the whole framebuffer with a boolean value.
 
-```froth
+```frothy
 grid.fill: true
 ```
 
@@ -90,7 +90,7 @@ grid.fill: true
 
 Behavior: Flush the framebuffer to the physical display.
 
-```froth
+```frothy
 grid.show:
 ```
 
@@ -100,7 +100,7 @@ grid.show:
 
 Behavior: Initialize the display using the board's baked-in wiring.
 
-```froth
+```frothy
 matrix.init:
 ```
 
@@ -108,7 +108,7 @@ matrix.init:
 
 Behavior: Set display brightness. The workshop-facing range is `0..7`.
 
-```froth
+```frothy
 matrix.brightness!: 3
 ```
 
@@ -116,7 +116,7 @@ matrix.brightness!: 3
 
 Behavior: Flush the framebuffer to the physical display.
 
-```froth
+```frothy
 matrix.show:
 ```
 
@@ -124,7 +124,7 @@ matrix.show:
 
 Behavior: Clear the current framebuffer.
 
-```froth
+```frothy
 matrix.clear:
 ```
 
@@ -132,23 +132,23 @@ matrix.clear:
 
 Behavior: Fill the whole framebuffer with a boolean value.
 
-```froth
+```frothy
 matrix.fill: false
 ```
 
 **`matrix.width`** *(matrix)* `() -> Int`
 
-Behavior: Display width. On the Froth Machine this is `12`.
+Behavior: Display width. On the Frothy Machine this is `12`.
 
-```froth
+```frothy
 matrix.width
 ```
 
 **`matrix.height`** *(matrix)* `() -> Int`
 
-Behavior: Display height. On the Froth Machine this is `8`.
+Behavior: Display height. On the Frothy Machine this is `8`.
 
-```froth
+```frothy
 matrix.height
 ```
 
@@ -156,7 +156,7 @@ matrix.height
 
 Behavior: Read one framebuffer pixel by `x` and `y`.
 
-```froth
+```frothy
 matrix.pixel@: 2, 3
 ```
 
@@ -164,7 +164,7 @@ matrix.pixel@: 2, 3
 
 Behavior: Set one framebuffer pixel by `x`, `y`, and boolean value.
 
-```froth
+```frothy
 matrix.pixel!: 2, 3, true
 ```
 
@@ -172,7 +172,7 @@ matrix.pixel!: 2, 3, true
 
 Behavior: Draw a line as `x0`, `y0`, `x1`, `y1`, and boolean value.
 
-```froth
+```frothy
 matrix.line: 0, 0, 11, 7, true
 ```
 
@@ -181,7 +181,7 @@ matrix.line: 0, 0, 11, 7, true
 Behavior: Draw an outline rectangle as `x`, `y`, `width`, `height`, and
 boolean value.
 
-```froth
+```frothy
 matrix.rect: 0, 0, 12, 8, true
 ```
 
@@ -190,7 +190,7 @@ matrix.rect: 0, 0, 12, 8, true
 Behavior: Draw a filled rectangle as `x`, `y`, `width`, `height`, and boolean
 value.
 
-```froth
+```frothy
 matrix.fillRect: 2, 2, 3, 2, true
 ```
 
@@ -198,17 +198,17 @@ matrix.fillRect: 2, 2, 3, 2, true
 
 **`tm1629.width`** *(tm1629)* `() -> Int`
 
-Behavior: TM1629 display width. On the Froth Machine this is `12`.
+Behavior: TM1629 display width. On the Frothy Machine this is `12`.
 
-```froth
+```frothy
 tm1629.width
 ```
 
 **`tm1629.height`** *(tm1629)* `() -> Int`
 
-Behavior: TM1629 display height. On the Froth Machine this is `8`.
+Behavior: TM1629 display height. On the Frothy Machine this is `8`.
 
-```froth
+```frothy
 tm1629.height
 ```
 
@@ -216,7 +216,7 @@ tm1629.height
 
 Behavior: Bit mask for one 12-bit display row.
 
-```froth
+```frothy
 tm1629.rowMask
 ```
 
@@ -225,7 +225,7 @@ tm1629.rowMask
 Behavior: Initialize the TM1629 transport with explicit `stb`, `clk`, and
 `dio` pins.
 
-```froth
+```frothy
 tm1629.init: TM1629_STB, TM1629_CLK, TM1629_DIO
 ```
 
@@ -233,7 +233,7 @@ tm1629.init: TM1629_STB, TM1629_CLK, TM1629_DIO
 
 Behavior: Set TM1629 brightness.
 
-```froth
+```frothy
 tm1629.brightness!: 3
 ```
 
@@ -241,7 +241,7 @@ tm1629.brightness!: 3
 
 Behavior: Flush the current framebuffer.
 
-```froth
+```frothy
 tm1629.show:
 ```
 
@@ -249,7 +249,7 @@ tm1629.show:
 
 Behavior: Clear the current framebuffer.
 
-```froth
+```frothy
 tm1629.clear:
 ```
 
@@ -257,7 +257,7 @@ tm1629.clear:
 
 Behavior: Fill the current framebuffer.
 
-```froth
+```frothy
 tm1629.fill:
 ```
 
@@ -265,7 +265,7 @@ tm1629.fill:
 
 Behavior: Invert the current framebuffer.
 
-```froth
+```frothy
 tm1629.invert:
 ```
 
@@ -273,7 +273,7 @@ tm1629.invert:
 
 Behavior: Shift the current framebuffer one column left.
 
-```froth
+```frothy
 tm1629.shiftLeft:
 ```
 
@@ -281,7 +281,7 @@ tm1629.shiftLeft:
 
 Behavior: Shift the current framebuffer one column right.
 
-```froth
+```frothy
 tm1629.shiftRight:
 ```
 
@@ -289,7 +289,7 @@ tm1629.shiftRight:
 
 Behavior: Shift the current framebuffer one row up.
 
-```froth
+```frothy
 tm1629.shiftUp:
 ```
 
@@ -297,7 +297,7 @@ tm1629.shiftUp:
 
 Behavior: Shift the current framebuffer one row down.
 
-```froth
+```frothy
 tm1629.shiftDown:
 ```
 
@@ -305,7 +305,7 @@ tm1629.shiftDown:
 
 Behavior: Read one row mask by row index.
 
-```froth
+```frothy
 tm1629.row@: 2
 ```
 
@@ -313,7 +313,7 @@ tm1629.row@: 2
 
 Behavior: Write one row mask by row index and mask.
 
-```froth
+```frothy
 tm1629.row!: 2, 0b000000111100
 ```
 
@@ -321,7 +321,7 @@ tm1629.row!: 2, 0b000000111100
 
 Behavior: Read one pixel by `x` and `y`.
 
-```froth
+```frothy
 tm1629.pixel@: 5, 2
 ```
 
@@ -329,7 +329,7 @@ tm1629.pixel@: 5, 2
 
 Behavior: Set one pixel by `x`, `y`, and boolean value.
 
-```froth
+```frothy
 tm1629.pixel!: 5, 2, true
 ```
 
@@ -337,7 +337,7 @@ tm1629.pixel!: 5, 2, true
 
 Behavior: Alias-shaped pixel read by `x` and `y`.
 
-```froth
+```frothy
 tm1629.plot@: 5, 2
 ```
 
@@ -345,7 +345,7 @@ tm1629.plot@: 5, 2
 
 Behavior: Alias-shaped pixel write by `x`, `y`, and boolean value.
 
-```froth
+```frothy
 tm1629.plot!: 5, 2, true
 ```
 
@@ -353,7 +353,7 @@ tm1629.plot!: 5, 2, true
 
 Behavior: Toggle one pixel by `x` and `y`.
 
-```froth
+```frothy
 tm1629.toggle!: 5, 2
 ```
 
@@ -361,7 +361,7 @@ tm1629.toggle!: 5, 2
 
 Behavior: Clear the staged next-frame buffer.
 
-```froth
+```frothy
 tm1629.nextClear:
 ```
 
@@ -369,7 +369,7 @@ tm1629.nextClear:
 
 Behavior: Set one staged next-frame pixel by `x`, `y`, and boolean value.
 
-```froth
+```frothy
 tm1629.nextPixel!: 2, 3, true
 ```
 
@@ -377,7 +377,7 @@ tm1629.nextPixel!: 2, 3, true
 
 Behavior: Copy the staged next-frame buffer into the current framebuffer.
 
-```froth
+```frothy
 tm1629.commitNext:
 ```
 
@@ -385,7 +385,7 @@ tm1629.commitNext:
 
 Behavior: Draw a horizontal line as `x`, `y`, length, and boolean value.
 
-```froth
+```frothy
 tm1629.hLine: 2, 1, 5, true
 ```
 
@@ -393,7 +393,7 @@ tm1629.hLine: 2, 1, 5, true
 
 Behavior: Draw a vertical line as `x`, `y`, length, and boolean value.
 
-```froth
+```frothy
 tm1629.vLine: 2, 1, 5, true
 ```
 
@@ -402,7 +402,7 @@ tm1629.vLine: 2, 1, 5, true
 Behavior: Draw an outline rectangle as `x`, `y`, `width`, `height`, and
 boolean value.
 
-```froth
+```frothy
 tm1629.rect: 0, 0, 12, 8, true
 ```
 
@@ -411,7 +411,7 @@ tm1629.rect: 0, 0, 12, 8, true
 Behavior: Draw a filled rectangle as `x`, `y`, `width`, `height`, and boolean
 value.
 
-```froth
+```frothy
 tm1629.fillRect: 1, 1, 3, 2, true
 ```
 
@@ -419,7 +419,7 @@ tm1629.fillRect: 1, 1, 3, 2, true
 
 Behavior: Visit each display coordinate with a callback.
 
-```froth
+```frothy
 tm1629.eachXY: fn with x, y [ grid.toggle: x, y ]
 ```
 
@@ -428,7 +428,7 @@ tm1629.eachXY: fn with x, y [ grid.toggle: x, y ]
 Behavior: Fill the framebuffer by calling a function with `x` and `y`; the
 function returns the boolean pixel value.
 
-```froth
+```frothy
 tm1629.populate: fn with x, y [ ((x + y) % 2) == 1 ]
 ```
 
@@ -444,14 +444,14 @@ Use `info @tm1629.blit` on the board to inspect the exact live arity.
 
 Behavior: Advance the current framebuffer by one Conway's Game of Life step.
 
-```froth
+```frothy
 tm1629.lifeStep:
 grid.show:
 ```
 
 ## Raw TM1629 FFI
 
-The `tm1629.raw.*` words expose the C-backed primitives below the Froth
+The `tm1629.raw.*` words expose the C-backed primitives below the Frothy
 wrappers. Prefer the non-raw words unless you are debugging the driver layer or
 matching low-level board code.
 
@@ -459,7 +459,7 @@ matching low-level board code.
 
 Behavior: Initialize the raw TM1629 transport with explicit pins.
 
-```froth
+```frothy
 tm1629.raw.init: TM1629_STB, TM1629_CLK, TM1629_DIO
 ```
 
@@ -467,7 +467,7 @@ tm1629.raw.init: TM1629_STB, TM1629_CLK, TM1629_DIO
 
 Behavior: Flush the raw framebuffer.
 
-```froth
+```frothy
 tm1629.raw.show:
 ```
 
@@ -475,7 +475,7 @@ tm1629.raw.show:
 
 Behavior: Clear the raw framebuffer.
 
-```froth
+```frothy
 tm1629.raw.clear:
 ```
 
@@ -483,7 +483,7 @@ tm1629.raw.clear:
 
 Behavior: Read one raw row mask.
 
-```froth
+```frothy
 tm1629.raw.row@: 2
 ```
 
@@ -491,7 +491,7 @@ tm1629.raw.row@: 2
 
 Behavior: Write one raw row mask.
 
-```froth
+```frothy
 tm1629.raw.row!: 2, 0b000000111100
 ```
 
@@ -499,7 +499,7 @@ tm1629.raw.row!: 2, 0b000000111100
 
 Behavior: Read one staged raw next-frame row.
 
-```froth
+```frothy
 tm1629.raw.next@: 2
 ```
 
@@ -507,7 +507,7 @@ tm1629.raw.next@: 2
 
 Behavior: Write one staged raw next-frame row.
 
-```froth
+```frothy
 tm1629.raw.next!: 2, 0b000000111100
 ```
 
@@ -515,7 +515,7 @@ tm1629.raw.next!: 2, 0b000000111100
 
 Behavior: Clear the staged raw next-frame buffer.
 
-```froth
+```frothy
 tm1629.raw.nextClear:
 ```
 
@@ -523,7 +523,7 @@ tm1629.raw.nextClear:
 
 Behavior: Set one staged raw next-frame pixel.
 
-```froth
+```frothy
 tm1629.raw.nextPixel!: 2, 3, true
 ```
 
@@ -531,7 +531,7 @@ tm1629.raw.nextPixel!: 2, 3, true
 
 Behavior: Commit the staged raw next-frame buffer.
 
-```froth
+```frothy
 tm1629.raw.commitNext:
 ```
 
@@ -539,7 +539,7 @@ tm1629.raw.commitNext:
 
 Behavior: Draw a raw line.
 
-```froth
+```frothy
 tm1629.raw.line: 0, 0, 11, 7, true
 ```
 
@@ -547,7 +547,7 @@ tm1629.raw.line: 0, 0, 11, 7, true
 
 Behavior: Draw a raw outline rectangle.
 
-```froth
+```frothy
 tm1629.raw.rect: 0, 0, 12, 8, true
 ```
 
@@ -555,6 +555,6 @@ tm1629.raw.rect: 0, 0, 12, 8, true
 
 Behavior: Draw a raw filled rectangle.
 
-```froth
+```frothy
 tm1629.raw.fillRect: 1, 1, 3, 2, true
 ```

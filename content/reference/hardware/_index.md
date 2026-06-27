@@ -6,7 +6,7 @@ icon: circuit-board
 tags: [display, joystick, i2c]
 ---
 
-Froth's maintained hardware surface is layered:
+Frothy's maintained hardware surface is layered:
 
 - [Board words](/reference/hardware/words/) for the one-page lookup table
 - [Display](/reference/hardware/display/) for `grid.*`, `matrix.*`,
@@ -28,5 +28,5 @@ the protoboard target while still documenting the shared base-image board
 surface underneath it.
 
 If you want the applied board docs first, use [Machine](/machine/). That
-section teaches the Froth Machine as a board you can draw on and play with,
+section teaches the Frothy Machine as a board you can draw on and play with,
 while this section stays focused on exact surface details.

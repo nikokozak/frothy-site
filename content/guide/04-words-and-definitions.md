@@ -8,13 +8,13 @@ icon: pen-line
 readTime: "7 min"
 ---
 
-In Froth, a word is just a named value that can be called. There is no separate
+In Frothy, a word is just a named value that can be called. There is no separate
 function namespace. A top-level name can hold an integer, text, cells storage,
 or `Code`. When the value is `Code`, calling it runs that code.
 
 The shortest reusable definition looks like this:
 
-```froth
+```frothy
 to led.flash [
   led.on:;
   ms: 100;
@@ -24,7 +24,7 @@ to led.flash [
 
 Call it:
 
-```froth
+```frothy
 led.flash:
 ```
 
@@ -35,7 +35,7 @@ zero-argument `Code` value.
 
 Use `with` when the code expects arguments:
 
-```froth
+```frothy
 to pulse with pin, wait [
   gpio.output: pin;
   gpio.high: pin;
@@ -54,7 +54,7 @@ over the old style. You can say `pin` and `wait` exactly where you need them.
 
 The docs use two styles:
 
-```froth
+```frothy
 to pulse with pin, wait [
   gpio.high: pin;
   ms: wait;
@@ -73,7 +73,7 @@ Both produce a top-level slot holding `Code`.
 
 Anonymous `Code` is useful when you want to pass behavior:
 
-```froth
+```frothy
 twice is fn with action [
   action:;
   action:
@@ -88,10 +88,10 @@ and calls it.
 
 ## Coherent Redefinition
 
-Redefinition is one of Froth's central promises. If code resolves a top-level
+Redefinition is one of Frothy's central promises. If code resolves a top-level
 name at call time, it sees the current value in that slot.
 
-```froth
+```frothy
 to blink.fast [
   led.blink: 1, 40
 ]
@@ -116,7 +116,7 @@ holds different code.
 
 `Code` does not capture outer locals in the current language. This is rejected:
 
-```froth
+```frothy
 to make-blink with wait [
   fn with pin [
     gpio.high: pin;
@@ -126,10 +126,10 @@ to make-blink with wait [
 ]
 ```
 
-The inner `fn` tries to use `wait` from the outer function. Froth requires you
+The inner `fn` tries to use `wait` from the outer function. Frothy requires you
 to make that flow explicit. Usually the better definition is:
 
-```froth
+```frothy
 to blink.once with pin, wait [
   gpio.high: pin;
   ms: wait;

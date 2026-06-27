@@ -1,16 +1,16 @@
 ---
 title: "How FFI Works"
 weight: 1
-description: "How C functions become ordinary Froth words."
+description: "How C functions become ordinary Frothy words."
 ---
 
-A C binding becomes an ordinary Froth word by providing:
+A C binding becomes an ordinary Frothy word by providing:
 
 1. a native callback
 2. a metadata record with name, parameters, result type, stack effect, and help
 3. an entry in a null-terminated project or board binding table
 
-At boot, Froth installs those tables into the same top-level slot space used by
+At boot, Frothy installs those tables into the same top-level slot space used by
 language-defined words. After registration, there is no separate foreign-call
 syntax.
 
@@ -41,7 +41,7 @@ typedef struct {
 
 The important fields are:
 
-- `name`: the Froth word name
+- `name`: the Frothy word name
 - `params`: typed argument metadata
 - `arity`: how many arguments the word accepts
 - `result_type`: the single result class, or `FROTH_FFI_VALUE_VOID`
@@ -59,7 +59,7 @@ The public boundary is defined around:
 - `FROTH_FFI_VALUE_CELLS`
 - `FROTH_FFI_VALUE_VOID`
 
-Raw pointers are not ordinary Froth values. Native state behind an FFI word is
+Raw pointers are not ordinary Frothy values. Native state behind an FFI word is
 not saved into the live image.
 
 ## A Minimal Binding
@@ -95,9 +95,9 @@ static froth_error_t limit_word(froth_runtime_t *runtime,
 }
 ```
 
-From Froth, that word is just another call:
+From Frothy, that word is just another call:
 
-```froth
+```frothy
 limit: 42, 0, 10
 ```
 

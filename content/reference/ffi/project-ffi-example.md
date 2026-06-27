@@ -1,19 +1,19 @@
 ---
 title: "Project FFI Example"
 weight: 4
-description: "A complete project-local FFI example with manifest, C, and Froth code."
+description: "A complete project-local FFI example with manifest, C, and Frothy code."
 ---
 
 This example shows the intended project shape: one narrow binding in C, one
-`[ffi]` declaration in `froth.toml`, and ordinary Froth code above it.
+`[ffi]` declaration in `frothy.toml`, and ordinary Frothy code above it.
 
 ## Project Layout
 
 ```text
 my-project/
-  froth.toml
+  frothy.toml
   src/
-    main.froth
+    main.frothy
     ffi/
       bindings.c
 ```
@@ -23,7 +23,7 @@ my-project/
 ```toml
 [project]
 name = "ffi-demo"
-entry = "src/main.froth"
+entry = "src/main.frothy"
 
 [target]
 board = "posix"
@@ -78,9 +78,9 @@ const froth_ffi_entry_t froth_project_bindings[] = {
 };
 ```
 
-## `src/main.froth`
+## `src/main.frothy`
 
-```froth
+```frothy
 to clipped-sensor with n
   set scaled = scale.twice: n
   if scaled < 0 [ 0 ]
@@ -96,14 +96,14 @@ end
 Build the firmware after changing C:
 
 ```sh
-froth build
+frothy build
 ```
 
-Send Froth source after changing only the high-level program:
+Send Frothy source after changing only the high-level program:
 
 ```sh
-froth send
+frothy send
 ```
 
-That split is the point of project FFI: C is for the narrow binary edge; Froth
+That split is the point of project FFI: C is for the narrow binary edge; Frothy
 is where the program stays live and reshapeable.

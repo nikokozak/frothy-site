@@ -1,31 +1,31 @@
 ---
 title: "CLI"
 weight: 4
-description: "The maintained `froth` command surface and attendee-versus-maintainer paths."
+description: "The maintained `frothy` command surface and attendee-versus-maintainer paths."
 icon: terminal
 tags: [frothy, flash, connect]
 ---
 
-The public command is `froth`. Use it for environment checks, direct prompt
+The public command is `frothy`. Use it for environment checks, direct prompt
 sessions, source sends, project builds, and device flashing.
 
 ## Identity and Naming
 
-**`Froth product / froth CLI`** *(tooling surface)*
+**`Frothy product / frothy CLI`** *(tooling surface)*
 
 Layer: `core`  
 Behavior: Product, docs, release assets, Homebrew formula, and VS Code surface
-use `Froth` / `froth`.
+use `Frothy` / `frothy`.
 Example:
 
 ```sh
-froth --version
-froth doctor
+frothy --version
+frothy doctor
 ```
 
 ## Core Commands
 
-**`froth doctor`** *(CLI)*
+**`frothy doctor`** *(CLI)*
 
 Layer: `core`  
 Behavior: Checks the maintained machine and device path before you try to work
@@ -33,22 +33,22 @@ through the prompt or editor.
 Example:
 
 ```sh
-froth doctor
-froth --port <path> doctor
+frothy doctor
+frothy --port <path> doctor
 ```
 
-**`froth new`** *(CLI)*
+**`frothy new`** *(CLI)*
 
 Layer: `core`
-Behavior: Creates a Froth project with `froth.toml`, `src/main.froth`, and the
+Behavior: Creates a Frothy project with `frothy.toml`, `src/main.frothy`, and the
 selected target and board.
 Example:
 
 ```sh
-froth new blink --target esp-idf --board esp32-devkit-v1
+frothy new blink --target esp-idf --board esp32-devkit-v1
 ```
 
-**`froth setup esp-idf`** *(CLI)*
+**`frothy setup esp-idf`** *(CLI)*
 
 Layer: `core`
 Behavior: Installs the optional ESP-IDF toolchain used for custom ESP32 builds
@@ -56,10 +56,10 @@ and flashing.
 Example:
 
 ```sh
-froth setup esp-idf
+frothy setup esp-idf
 ```
 
-**`froth connect`** *(CLI)*
+**`frothy connect`** *(CLI)*
 
 Layer: `core`  
 Behavior: Opens the direct prompt path to the connected board. Use it when the
@@ -67,10 +67,10 @@ editor path is blocked or when you want a raw interactive session.
 Example:
 
 ```sh
-froth --port <path> connect
+frothy --port <path> connect
 ```
 
-**`froth send`** *(CLI)*
+**`frothy send`** *(CLI)*
 
 Layer: `core`  
 Behavior: Sends source to the connected target for evaluation. This is part of
@@ -78,10 +78,10 @@ the normal live workflow, not a separate deployment-only path.
 Example:
 
 ```sh
-froth send src/main.froth
+frothy send src/main.frothy
 ```
 
-**`froth build`** *(CLI)*
+**`frothy build`** *(CLI)*
 
 Layer: `core`  
 Behavior: Builds the selected project target. This is the sanctioned project
@@ -89,10 +89,10 @@ path when you need a board build rather than only a live prompt session.
 Example:
 
 ```sh
-froth build
+frothy build
 ```
 
-**`froth flash`** *(CLI)*
+**`frothy flash`** *(CLI)*
 
 Layer: `core`  
 Behavior: Flashes firmware to the connected board. Use it when you need to
@@ -101,7 +101,7 @@ redefinition.
 Example:
 
 ```sh
-froth --port <path> flash
+frothy --port <path> flash
 ```
 
 ## Maintained Paths

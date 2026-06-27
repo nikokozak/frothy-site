@@ -21,6 +21,6 @@ The main sections are:
 - [Editor](/reference/editor/) for the visible VS Code control surface
 - [Project and build](/reference/project-and-build/) for target, board, and
   project build conventions
-- [FFI](/reference/ffi/) for the Froth/C boundary
+- [FFI](/reference/ffi/) for the Frothy/C boundary
 - [Machine board reference](/reference/hardware/) for board words, display,
   input, utilities, and the shared base-image surface

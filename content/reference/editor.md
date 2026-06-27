@@ -22,7 +22,7 @@ enters the structured control session.
 Example:
 
 ```text
-Froth: Connect Device
+Frothy: Connect Device
 ```
 
 **`Send Selection / Form`** *(editor command)*
@@ -32,7 +32,7 @@ Behavior: Sends the current selected text or enclosing form to the connected
 device for evaluation. This is the normal edit-loop command.  
 Example:
 
-```froth
+```frothy
 to pulse with pin [
   gpio.high: pin;
   ms: 75;
@@ -49,7 +49,7 @@ session shape rather than one additive form.
 Example:
 
 ```text
-Froth: Send File
+Frothy: Send File
 ```
 
 **`Interrupt`** *(editor command)*
@@ -60,7 +60,7 @@ editor session to a usable prompt if the target is still responsive.
 Example:
 
 ```text
-Froth: Interrupt
+Frothy: Interrupt
 ```
 
 ## Inspection
@@ -83,7 +83,7 @@ copy of the image.
 **`froth.cliPath`** *(setting)*
 
 Layer: `tooling`  
-Behavior: Optional absolute path to the CLI binary. Leave it empty when `froth`
+Behavior: Optional absolute path to the CLI binary. Leave it empty when `frothy`
 is on `PATH`.
 
 **`froth.port`** *(setting)*

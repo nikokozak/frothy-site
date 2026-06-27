@@ -1,7 +1,7 @@
 ---
 title: "GPIO"
 weight: 5
-description: "Digital pin input and output words, plus the Froth helper layer over them."
+description: "Digital pin input and output words, plus the Frothy helper layer over them."
 ---
 
 GPIO is the shared digital I/O surface. Use the helper words for ordinary
@@ -24,7 +24,7 @@ physical pins. Hardware behavior requires a board target.
 
 Configures pin direction. `1` means output. `0` means input.
 
-```froth
+```frothy
 gpio.mode: LED_BUILTIN, 1
 gpio.mode: BOOT_BUTTON, 0
 ```
@@ -33,7 +33,7 @@ gpio.mode: BOOT_BUTTON, 0
 
 Writes a digital output level.
 
-```froth
+```frothy
 gpio.write: LED_BUILTIN, 1
 gpio.write: LED_BUILTIN, 0
 ```
@@ -43,7 +43,7 @@ gpio.write: LED_BUILTIN, 0
 Reads a digital input level. Most board helpers convert this to a `Bool` when
 the electrical meaning is known.
 
-```froth
+```frothy
 gpio.read: BOOT_BUTTON
 ```
 
@@ -51,7 +51,7 @@ gpio.read: BOOT_BUTTON
 
 The base library defines readable wrappers:
 
-```froth
+```frothy
 gpio.input: BOOT_BUTTON
 gpio.output: LED_BUILTIN
 gpio.high: LED_BUILTIN
@@ -66,7 +66,7 @@ intent rather than the numeric mode or level.
 
 Many buttons read `0` when pressed:
 
-```froth
+```frothy
 to boot.pressed? [
   (gpio.read: BOOT_BUTTON) == 0
 ]

@@ -10,7 +10,7 @@ words into board-level API.
 
 ## Manifest Contract
 
-Project FFI is declared under `[ffi]` in `froth.toml`:
+Project FFI is declared under `[ffi]` in `frothy.toml`:
 
 ```toml
 [ffi]
@@ -40,7 +40,7 @@ when project FFI is enabled.
 
 ## CLI Build Path
 
-When `froth build` runs in a project:
+When `frothy build` runs in a project:
 
 1. the manifest is loaded
 2. `[ffi]` is resolved and validated
@@ -49,7 +49,7 @@ When `froth build` runs in a project:
 5. the project C files are compiled into the selected target
 6. project bindings are installed at boot
 
-`froth send` does not rebuild project FFI. It evaluates Froth source against
+`frothy send` does not rebuild project FFI. It evaluates Frothy source against
 the already-running image.
 
 ## Validation Rules
@@ -83,6 +83,6 @@ inherit them.
 The intended layering is:
 
 - board FFI for target-owned hardware words
-- board library code for target-owned Froth wrappers
+- board library code for target-owned Frothy wrappers
 - project FFI for app-owned C
-- project Froth for the actual program
+- project Frothy for the actual program

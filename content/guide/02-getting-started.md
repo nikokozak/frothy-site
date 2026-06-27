@@ -9,31 +9,31 @@ readTime: "6 min"
 ---
 
 If you do not have a prompt yet, start with [Install](/install/). The rest of
-this chapter assumes the `froth` command is available and a board or local
+this chapter assumes the `frothy` command is available and a board or local
 target is reachable.
 
 Run the environment check first:
 
 ```sh
-froth doctor
+frothy doctor
 ```
 
 Then connect:
 
 ```sh
-froth connect
+frothy connect
 ```
 
 On a machine with more than one serial device, pass the port explicitly:
 
 ```sh
-froth --port /dev/tty.usbserial-XXXX connect
+frothy --port /dev/tty.usbserial-XXXX connect
 ```
 
 The exact prompt text is less important than the fact that the target is now
-waiting for complete Froth forms. Type a value:
+waiting for complete Frothy forms. Type a value:
 
-```froth
+```frothy
 42
 ```
 
@@ -47,14 +47,14 @@ expression, and names are the main way you keep useful state around.
 
 Create a top-level name:
 
-```froth
+```frothy
 delay is 75
 delay
 ```
 
 Now rebind it:
 
-```froth
+```frothy
 delay is 120
 delay
 ```
@@ -67,7 +67,7 @@ callers resolve the current value.
 
 Use the inspection words early:
 
-```froth
+```frothy
 words
 show @delay
 info @delay
@@ -82,16 +82,16 @@ are how you keep a live system legible.
 
 On a general ESP32 board, the smallest visible proof is the built-in LED:
 
-```froth
+```frothy
 gpio.output: LED_BUILTIN
 gpio.high: LED_BUILTIN
 ms: 200
 gpio.low: LED_BUILTIN
 ```
 
-On the Froth Machine, initialize the display and light one pixel:
+On the Frothy Machine, initialize the display and light one pixel:
 
-```froth
+```frothy
 matrix.init:
 grid.clear:
 grid.set: 1, 1, true
@@ -104,17 +104,17 @@ device and changing hardware.
 ## Send A File When The Line Gets Too Long
 
 The prompt is for short experiments. Once a definition grows past a few lines,
-put it in `src/main.froth` or another source file and send it:
+put it in `src/main.frothy` or another source file and send it:
 
 ```sh
-froth send src/main.froth
+frothy send src/main.frothy
 ```
 
 Project builds and firmware flashing use:
 
 ```sh
-froth build
-froth flash
+frothy build
+frothy flash
 ```
 
 You do not need those commands for every edit. Most learning happens through

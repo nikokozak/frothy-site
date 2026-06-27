@@ -2,29 +2,29 @@
 title: "Install"
 aliases:
   - /guide/00-installation/
-description: "Install Froth with Homebrew, direct release archives, or the VS Code extension."
+description: "Install Frothy with Homebrew, direct release archives, or the VS Code extension."
 ---
 
-Froth currently ships as public prerelease tooling. The maintained CLI command
+Frothy currently ships as public prerelease tooling. The maintained CLI command
 is:
 
 ```text
-froth
+frothy
 ```
 
 The source code and project history live in the
-[Froth source repository](https://github.com/nikokozak/froth); release files are
+[Frothy source repository](https://github.com/nikokozak/froth); release files are
 published from the same repo.
 
 ## Homebrew
 
-On macOS, use the Froth Homebrew tap:
+On macOS, use the Frothy Homebrew tap:
 
 ```sh
 brew tap nikokozak/froth
-brew install nikokozak/froth/froth
-froth --version
-froth doctor
+brew install nikokozak/froth/frothy
+frothy --version
+frothy doctor
 ```
 
 ## Direct Tarball
@@ -46,9 +46,9 @@ PLATFORM=darwin-arm64
 curl -LO https://github.com/nikokozak/froth/releases/download/v${VERSION}/froth-v${VERSION}-${PLATFORM}.tar.gz
 tar -xzf froth-v${VERSION}-${PLATFORM}.tar.gz
 mkdir -p ~/.local/bin
-install -m 0755 froth ~/.local/bin/froth
-froth --version
-froth doctor
+install -m 0755 frothy ~/.local/bin/froth
+frothy --version
+frothy doctor
 ```
 
 Use a directory already on `PATH`; on macOS, `/usr/local/bin` or
@@ -59,7 +59,7 @@ Use a directory already on `PATH`; on macOS, `/usr/local/bin` or
 Install the public VS Code extension as `NikolaiKozak.froth` from the
 Marketplace.
 
-The `v0.1.2` Froth release also carries a fallback VSIX:
+The `v0.1.2` Frothy release also carries a fallback VSIX:
 
 ```text
 froth-vscode-v0.1.1.vsix
@@ -73,26 +73,26 @@ code --install-extension froth-vscode-v0.1.1.vsix
 ```
 
 If VS Code cannot find the command on `PATH`, set `froth.cliPath` to the
-absolute path of the installed `froth` binary.
+absolute path of the installed `frothy` binary.
 
 ## First Check
 
 After installing the CLI, run:
 
 ```sh
-froth doctor
+frothy doctor
 ```
 
-If you have a preflashed Froth board plugged in, connect to it:
+If you have a preflashed Frothy board plugged in, connect to it:
 
 ```sh
-froth connect
+frothy connect
 ```
 
 If more than one serial device is visible, pass the port explicitly:
 
 ```sh
-froth --port /dev/tty.usbserial-XXXX connect
+frothy --port /dev/tty.usbserial-XXXX connect
 ```
 
 ## Flash An ESP32
@@ -100,29 +100,29 @@ froth --port /dev/tty.usbserial-XXXX connect
 Most workshop boards are preflashed. You only need this section when you are
 installing or recovering firmware yourself.
 
-Install the ESP-IDF toolchain through the Froth CLI:
+Install the ESP-IDF toolchain through the Frothy CLI:
 
 ```sh
-froth setup esp-idf
-froth doctor
+frothy setup esp-idf
+frothy doctor
 ```
 
 Then create an ESP32 project. Use `esp32-devkit-v1` for a plain DevKit-style
-board, or `esp32-devkit-v4-game-board` for the Froth Machine:
+board, or `esp32-devkit-v4-game-board` for the Frothy Machine:
 
 ```sh
-froth new blink --target esp-idf --board esp32-devkit-v1
+frothy new blink --target esp-idf --board esp32-devkit-v1
 cd blink
-froth doctor
-froth --port /dev/tty.usbserial-XXXX flash
+frothy doctor
+frothy --port /dev/tty.usbserial-XXXX flash
 ```
 
 After flashing, use the live path for ordinary changes:
 
 ```sh
-froth --port /dev/tty.usbserial-XXXX connect
-froth --port /dev/tty.usbserial-XXXX send src/main.froth
+frothy --port /dev/tty.usbserial-XXXX connect
+frothy --port /dev/tty.usbserial-XXXX send src/main.frothy
 ```
 
 For release files and checksums, use the
-[Froth v0.1.2 release](https://github.com/nikokozak/froth/releases/tag/v0.1.2).
+[Frothy v0.1.2 release](https://github.com/nikokozak/froth/releases/tag/v0.1.2).

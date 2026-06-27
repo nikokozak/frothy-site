@@ -56,7 +56,7 @@ logic itself becomes interesting.
 
 ## Light Pixels And Draw A Line
 
-```froth
+```frothy
 matrix.init:
 grid.clear:
 grid.set: 0, 0, true
@@ -74,7 +74,7 @@ If you forget the final `show`, the display does not change yet.
 
 ## Draw Rectangles
 
-```froth
+```frothy
 matrix.init:
 grid.clear:
 matrix.rect: 0, 0, 12, 8, true
@@ -90,7 +90,7 @@ sprites.
 When you want to compute each pixel rather than set them one by one, use
 `tm1629.populate`:
 
-```froth
+```frothy
 matrix.init:
 tm1629.populate: fn with x, y [ ((x + y) % 2) == 1 ]
 grid.show:
@@ -118,7 +118,7 @@ instead of drawing live into the current buffer pixel by pixel.
 
 The pattern looks like this:
 
-```froth
+```frothy
 tm1629.nextClear:
 tm1629.nextPixel!: 2, 3, true
 tm1629.nextPixel!: 3, 3, true

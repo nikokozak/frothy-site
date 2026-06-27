@@ -1,12 +1,12 @@
 ---
 title: "FFI"
 weight: 5
-description: "The Froth/C boundary, from runtime registration to project-local bindings."
+description: "The Frothy/C boundary, from runtime registration to project-local bindings."
 icon: plug-zap
 tags: [c, frothy.toml, bindings]
 ---
 
-Froth's FFI is intentionally narrow. It exists to expose hardware and native
+Frothy's FFI is intentionally narrow. It exists to expose hardware and native
 services without turning the language into raw C.
 
 Use these pages in order:

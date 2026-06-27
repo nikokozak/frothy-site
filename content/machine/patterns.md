@@ -10,7 +10,7 @@ than "what does this word take?" For exact arity, use the
 
 ## The Standard Game Loop
 
-Small Froth Machine games usually settle into the same rhythm:
+Small Frothy Machine games usually settle into the same rhythm:
 
 1. `setup` initializes the display and starting state
 2. `update` reads input and advances the model
@@ -18,7 +18,7 @@ Small Froth Machine games usually settle into the same rhythm:
 4. `frame` does one update-draw-show-sleep cycle
 5. `run` repeats frames until you stop
 
-```froth
+```frothy
 player.x is 5
 player.y is 3
 frame.ms is 60
@@ -64,7 +64,7 @@ scoring, mode state, and an exit condition such as `joy.click?:`.
 The joystick words return booleans, so movement is usually a set of small
 conditional updates.
 
-```froth
+```frothy
 to movePlayer [
   when joy.left?:  [ set player.x to player.x - 1 ];
   when joy.right?: [ set player.x to player.x + 1 ];
@@ -77,7 +77,7 @@ to movePlayer [
 
 Clamp coordinates when the player should stop at the edge:
 
-```froth
+```frothy
 to clampPlayer [
   set player.x to clamp: player.x, 0, (grid.width - 1);
   set player.y to clamp: player.y, 0, (grid.height - 1)
@@ -86,7 +86,7 @@ to clampPlayer [
 
 Wrap coordinates when leaving one side should re-enter from the other:
 
-```froth
+```frothy
 to wrapPlayer [
   set player.x to wrap: player.x, grid.width;
   set player.y to wrap: player.y, grid.height
@@ -97,7 +97,7 @@ to wrapPlayer [
 
 The friendly knob words return `0..100`. Scale that to the range you need.
 
-```froth
+```frothy
 to scaleKnob with percent, max [
   percent * max / 100
 ]
@@ -112,7 +112,7 @@ to readKnobPosition [
 
 Use point collision for a target pixel, pickup, or single-cell obstacle.
 
-```froth
+```frothy
 to hitPoint? with ax, ay, bx, by [
   ax == bx and ay == by
 ]
@@ -126,7 +126,7 @@ when hitPoint?: player.x, player.y, target.x, target.y [
 
 Use rectangle collision for paddles, walls, zones, and larger sprites.
 
-```froth
+```frothy
 to insideRect? with px, py, rx, ry, rw, rh [
   px >= rx and px < (rx + rw) and py >= ry and py < (ry + rh)
 ]
@@ -140,7 +140,7 @@ when insideRect?: player.x, player.y, wall.x, wall.y, wall.w, wall.h [
 
 Pick a new target with `random.below:` and the grid dimensions.
 
-```froth
+```frothy
 to placeTarget [
   set target.x to random.below: grid.width;
   set target.y to random.below: grid.height
@@ -152,7 +152,7 @@ to placeTarget [
 Use one top-level value for the frame delay so the whole game can speed up or
 slow down in one place.
 
-```froth
+```frothy
 frame.ms is 80
 
 game.frame is fn [
@@ -164,7 +164,7 @@ game.frame is fn [
 
 You can map a knob to timing too:
 
-```froth
+```frothy
 set frame.ms to 20 + knob.left:
 ```
 
@@ -174,7 +174,7 @@ For most sketches, `grid.clear:`, draw, then `grid.show:` is enough. Reach for
 the `tm1629.next*` words when you want to build the whole next frame before it
 becomes visible.
 
-```froth
+```frothy
 tm1629.nextClear:
 tm1629.nextPixel!: 2, 3, true
 tm1629.nextPixel!: 3, 3, true
@@ -186,7 +186,7 @@ grid.show:
 
 The board ships with a Pong-shaped demo in the base library.
 
-```froth
+```frothy
 demo.pong.setup:
 demo.pong.run:
 ```
@@ -200,7 +200,7 @@ What it does:
 
 Inspect the shape:
 
-```froth
+```frothy
 show @demo.pong.setup
 show @demo.pong.update
 show @demo.pong.draw
@@ -218,7 +218,7 @@ The board also has a built-in display helper for Conway's Game of Life:
 
 Seed a glider like this:
 
-```froth
+```frothy
 matrix.init:
 grid.clear:
 grid.set: 2, 1, true
@@ -231,7 +231,7 @@ grid.show:
 
 Then step it:
 
-```froth
+```frothy
 repeat 24 [
   tm1629.lifeStep:;
   grid.show:;

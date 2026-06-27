@@ -1,17 +1,17 @@
 ---
 title: "Read Inputs"
 weight: 5
-description: "Read joystick and knob inputs on the Froth Machine, then map them to display state."
+description: "Read joystick and knob inputs on the Frothy Machine, then map them to display state."
 ---
 
-This tutorial uses the Froth Machine input layer: joystick booleans and knob
+This tutorial uses the Frothy Machine input layer: joystick booleans and knob
 percent values.
 
 ## Read The Inputs Directly
 
 At the prompt:
 
-```froth
+```frothy
 joy.up?:
 joy.down?:
 joy.left?:
@@ -28,7 +28,7 @@ Each `joy.*?` word returns a boolean. The knob helpers return a value on the
 
 Define one scaling helper:
 
-```froth
+```frothy
 to scale with percent, max [
   percent * max / 100
 ]
@@ -36,7 +36,7 @@ to scale with percent, max [
 
 Use the left knob as an x coordinate:
 
-```froth
+```frothy
 input.frame is fn [
   here x is scale: (knob.left:), (grid.width - 1);
   grid.clear:;
@@ -47,7 +47,7 @@ input.frame is fn [
 
 Run a short loop:
 
-```froth
+```frothy
 repeat 100 [
   input.frame:;
   ms: 30
@@ -60,14 +60,14 @@ Turn the knob while the loop runs. The pixel should move across the display.
 
 Store a cursor position:
 
-```froth
+```frothy
 cursor.x is 5
 cursor.y is 3
 ```
 
 Update it from the joystick:
 
-```froth
+```frothy
 cursor.step is fn [
   when joy.left?: [ set cursor.x to wrap: cursor.x - 1, grid.width ];
   when joy.right?: [ set cursor.x to wrap: cursor.x + 1, grid.width ];
@@ -78,7 +78,7 @@ cursor.step is fn [
 
 Draw it:
 
-```froth
+```frothy
 cursor.frame is fn [
   cursor.step:;
   grid.clear:;
@@ -89,7 +89,7 @@ cursor.frame is fn [
 
 Run:
 
-```froth
+```frothy
 repeat 200 [
   cursor.frame:;
   ms: 35

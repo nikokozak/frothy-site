@@ -21,7 +21,7 @@ top-level expression evaluation, and keeps the prompt alive on recoverable
 errors.  
 Example:
 
-```froth
+```frothy
 1 + 1
 ```
 
@@ -32,7 +32,7 @@ Behavior: Keeps accumulating input while delimiters remain open. Incomplete
 input includes unclosed `(`, `[`, or string literals.  
 Example:
 
-```froth
+```frothy
 to blink with pin [
   gpio.high: pin;
   ms: 75;
@@ -75,7 +75,7 @@ Behavior: Inspect the live image through prompt-facing built-ins. `show` and
 reports metadata such as owner, kind, and persistability.  
 Example:
 
-```froth
+```frothy
 words
 show @boot
 info @matrix.init
@@ -100,7 +100,7 @@ The host tool opens the port, acquires the prompt, sends `.control`, and then us
 Layer: `core`  
 Behavior: The VS Code extension owns a helper child process which owns one
 control session at a time. There is no daemon and no concurrent shared port
-owner in the maintained Froth editor path.
+owner in the maintained Frothy editor path.
 Example:
 
 ```text
@@ -121,5 +121,5 @@ The interactive profile is only one layer of the public surface:
   selected board profile exposes them
 
 The old `profiles` page mixed language features with build-time capability
-selection. Current Froth keeps the split explicit: the language model is stable
+selection. Current Frothy keeps the split explicit: the language model is stable
 across targets, while the board surface depends on the selected base image.

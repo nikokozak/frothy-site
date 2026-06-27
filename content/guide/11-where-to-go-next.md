@@ -25,7 +25,7 @@ Use [Tutorials](/tutorials/) when you want one visible result at a time:
 Tutorials are allowed to repeat a little. Their job is to get a working shape
 under your fingers.
 
-## If You Have A Froth Machine
+## If You Have A Frothy Machine
 
 Go to [Machine](/machine/). It teaches the workshop board as an object you can
 use:
@@ -54,7 +54,7 @@ Use [Reference](/reference/) when the wording has to be exact:
 The reference is not a tutorial. It is the place to check names, arity,
 availability, and recovery behavior.
 
-## If You Are Extending Froth
+## If You Are Extending Frothy
 
 Read [FFI and C](/guide/12-ffi-and-c/) next, then the
 [FFI reference](/reference/ffi/). Project FFI is the path for adding
@@ -63,7 +63,7 @@ surfaces.
 
 ## Design Differences
 
-Read [How Froth Is Different](/what-makes-froth-different/) for the deeper
+Read [How Frothy Is Different](/what-makes-frothy-different/) for the deeper
 design notes: live image, coherent redefinition, recovery, small-device
 discipline, lexical values, and named places.
 

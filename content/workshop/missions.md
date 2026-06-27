@@ -1,16 +1,16 @@
 ---
 title: "Missions"
 weight: 2
-description: "Creative follow-on projects for the Froth Machine workshop."
+description: "Creative follow-on projects for the Frothy Machine workshop."
 ---
 
 Open the [workshop repo](https://github.com/nikokozak/froth-workshop). It has
 four starter files for the creative segment:
 
-- `drawing.froth`
-- `life.froth`
-- `snake.froth`
-- `pong.froth`
+- `drawing.frothy`
+- `life.frothy`
+- `snake.frothy`
+- `pong.frothy`
 
 Each file is a working sketch. Send one file to your board, run its command,
 then extend it. Pick the one you want to spend time with.
@@ -21,9 +21,9 @@ Use the joystick as a cursor and leave pixels behind.
 
 ### Start
 
-Send `drawing.froth` to the board. Then run:
+Send `drawing.frothy` to the board. Then run:
 
-```froth
+```frothy
 draw.run:
 ```
 
@@ -37,7 +37,7 @@ you can keep drawing without leaving the board.
 
 Make the right knob control drawing speed:
 
-```froth
+```frothy
 to draw.frame [
   draw.update:;
   draw.draw:;
@@ -67,9 +67,9 @@ Paint cells with the joystick, then watch the pattern evolve.
 
 ### Start
 
-Send `life.froth` to the board. Then run:
+Send `life.frothy` to the board. Then run:
 
-```froth
+```frothy
 life.run:
 ```
 
@@ -83,7 +83,7 @@ and click toggles a cell. In run mode, the board advances Conway's Life with
 
 Seed a random garden during setup:
 
-```froth
+```frothy
 to life.scatter with count [
   repeat count [
     grid.set:
@@ -125,9 +125,9 @@ Steer the snake, eat food, grow, and avoid your own body.
 
 ### Start
 
-Send `snake.froth` to the board. Then run:
+Send `snake.frothy` to the board. Then run:
 
-```froth
+```frothy
 snake.run:
 ```
 
@@ -141,7 +141,7 @@ in the starter file.
 
 Make the snake speed up as it grows:
 
-```froth
+```frothy
 to snake.frame [
   snake.update:;
   snake.draw:;
@@ -171,9 +171,9 @@ Inspect the built-in Pong program, then change selected parts of it.
 
 ### Start
 
-Send `pong.froth` to the board. Then run:
+Send `pong.frothy` to the board. Then run:
 
-```froth
+```frothy
 pong.run:
 ```
 
@@ -187,7 +187,7 @@ uses the built-in setup and run loop.
 
 Use `show` before you change more:
 
-```froth
+```frothy
 show @demo.pong.advanceBall
 show @demo.pong.draw
 show @demo.pong.update
@@ -201,7 +201,7 @@ time.
 
 Make the paddles shorter and the ball faster:
 
-```froth
+```frothy
 set demo.pong.paddleHeight to 3
 set demo.pong.maxPaddleTop to grid.height - demo.pong.paddleHeight
 set demo.pong.ballStepMs to 60

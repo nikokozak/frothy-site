@@ -19,7 +19,7 @@ Behavior: Creates or rebinds a stable top-level slot. Rebinding changes the
 current value stored in that slot without changing the slot's identity.  
 Example:
 
-```froth
+```frothy
 counter is 0
 counter is counter + 1
 ```
@@ -32,7 +32,7 @@ write zero-argument words as `name is fn [ ... ]` and use `to ... with ...`
 when the name and arguments read naturally together.  
 Example:
 
-```froth
+```frothy
 boot is fn [ led.on: ]
 
 to blink with pin, wait [
@@ -47,11 +47,11 @@ to blink with pin, wait [
 **`callee: arg1, arg2`** *(core call syntax)*
 
 Layer: `core`  
-Behavior: Calls a `Code` value with ordinary Froth syntax. Calling any
+Behavior: Calls a `Code` value with ordinary Frothy syntax. Calling any
 non-`Code` value is a runtime error.  
 Example:
 
-```froth
+```frothy
 blink: LED_BUILTIN, 75
 gpio.write: LED_BUILTIN, 1
 ```
@@ -63,7 +63,7 @@ Behavior: Calls the result of a computed expression rather than a literal name.
 Useful when the callee itself is selected at runtime.  
 Example:
 
-```froth
+```frothy
 call pickAction: with
 ```
 
@@ -74,7 +74,7 @@ Behavior: Left-to-right binary operators with equal precedence. Parentheses are
 the only grouping mechanism. Conditions require explicit `Bool` values.  
 Example:
 
-```froth
+```frothy
 (adc.percent: A0) > 50 and enabled
 ```
 
@@ -88,7 +88,7 @@ shadow outer locals and top-level names. Lookup always prefers the nearest
 reachable local before falling through to outer scopes and then the top level.  
 Example:
 
-```froth
+```frothy
 speed is 75
 
 demo is fn [
@@ -99,7 +99,7 @@ demo is fn [
 
 Worked example:
 
-```froth
+```frothy
 speed is 75
 
 nested is fn [
@@ -122,7 +122,7 @@ cells element. Record fields are also valid places. Missing places are an
 error.  
 Example:
 
-```froth
+```frothy
 set counter to counter + 1
 set frame[0] to 99
 set point->x to 12
@@ -137,7 +137,7 @@ Behavior: Conditional expressions that require `Bool` conditions. `if` without
 `else` yields `nil` when the condition is false.  
 Example:
 
-```froth
+```frothy
 when adc.percent: A0 > 50 [ led.on: ]
 ```
 
@@ -148,7 +148,7 @@ Behavior: Loops over a condition or a count. `while` yields `nil`, and
 `repeat ... as name` exposes the loop index as a local.  
 Example:
 
-```froth
+```frothy
 repeat 4 as i [ led.blink: i + 1, 30 ]
 ```
 
@@ -161,14 +161,14 @@ Behavior: `Cells` is the narrow fixed-size mutable indexed store. Use `cells(n)`
 at top level to create a fixed store you can read and update by index.  
 Example:
 
-```froth
+```frothy
 buffer is cells(8)
 set buffer[0] to 42
 ```
 
 Worked example:
 
-```froth
+```frothy
 levels is cells(3)
 set levels[0] to 20
 set levels[1] to 40
@@ -192,14 +192,14 @@ Behavior: Declares a fixed-layout record definition and uses the generated
 constructor slot to create shaped values.  
 Example:
 
-```froth
+```frothy
 record Point [ x, y ]
 origin is Point: 0, 0
 ```
 
 Worked example:
 
-```froth
+```frothy
 record Sprite [ x, y, visible ]
 
 player is Sprite: 3, 4, true
@@ -215,7 +215,7 @@ That is why `player->x` reads better than `player[0]`.
 
 Records may also be stored inside `Cells`:
 
-```froth
+```frothy
 pixels is cells(2)
 set pixels[0] to Sprite: 1, 2, true
 pixels[0]->y
@@ -229,7 +229,7 @@ body, and top-level names. It may not capture locals from an enclosing block or
 function.  
 Example:
 
-```froth
+```frothy
 wait is 75
 
 make-blink is fn [
@@ -243,7 +243,7 @@ make-blink is fn [
 
 Working shape:
 
-```froth
+```frothy
 step is 1
 
 make-stepper is fn [
@@ -258,7 +258,7 @@ This works because `step` is top-level.
 
 Rejected shape:
 
-```froth
+```frothy
 make-local-stepper is fn [
   here step is 1;
   fn with x [ x + step ]
@@ -269,7 +269,7 @@ This fails because the returned `Code` would need to capture the local `step`.
 
 Rewrite it one of two ways:
 
-```froth
+```frothy
 step is 1
 make-shared-stepper is fn [ fn with x [ x + step ] ]
 
@@ -289,7 +289,7 @@ Behavior: Inspect the live image: visible names, normalized binding view, core
 debug view, and binding metadata.  
 Example:
 
-```froth
+```frothy
 words
 info @blink
 see @blink
@@ -302,7 +302,7 @@ Behavior: Persist, rebuild, or clear the overlay image. `dangerous.wipe`
 returns the runtime to the base image.  
 Example:
 
-```froth
+```frothy
 save
 restore
 dangerous.wipe
@@ -310,7 +310,7 @@ dangerous.wipe
 
 Worked example:
 
-```froth
+```frothy
 record Counter [ value ]
 counter is Counter: 0
 

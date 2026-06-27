@@ -4,14 +4,14 @@ weight: 8
 description: "Turn display, input, and live redefinition into a tiny catch-the-dot game."
 ---
 
-This tutorial builds a small game loop for the Froth Machine. A player moves a
+This tutorial builds a small game loop for the Frothy Machine. A player moves a
 cursor. A target appears on the grid. Touch the target to score and move it.
 
 ## State
 
 Start with the values the game needs:
 
-```froth
+```frothy
 game.x is 0
 game.y is 0
 game.tx is 8
@@ -23,7 +23,7 @@ game.score is 0
 
 Read the joystick and wrap at the display edges:
 
-```froth
+```frothy
 game.move is fn [
   when joy.left?: [ set game.x to wrap: game.x - 1, grid.width ];
   when joy.right?: [ set game.x to wrap: game.x + 1, grid.width ];
@@ -36,7 +36,7 @@ game.move is fn [
 
 Move the target to a random position:
 
-```froth
+```frothy
 game.placeTarget is fn [
   set game.tx to random.below: grid.width;
   set game.ty to random.below: grid.height
@@ -45,7 +45,7 @@ game.placeTarget is fn [
 
 Check for a hit:
 
-```froth
+```frothy
 game.hit? is fn [
   (game.x == game.tx) and (game.y == game.ty)
 ]
@@ -55,7 +55,7 @@ game.hit? is fn [
 
 Draw the target and the player:
 
-```froth
+```frothy
 game.draw is fn [
   grid.clear:;
   grid.set: game.tx, game.ty, true;
@@ -68,7 +68,7 @@ game.draw is fn [
 
 One frame reads input, checks rules, and draws:
 
-```froth
+```frothy
 game.frame is fn [
   game.move:;
   when game.hit?: [
@@ -83,7 +83,7 @@ game.frame is fn [
 
 Seed randomness, initialize the display, and run:
 
-```froth
+```frothy
 game.run is fn [
   matrix.init:;
   matrix.brightness!: 1;
@@ -98,7 +98,7 @@ game.run is fn [
 
 Start the game:
 
-```froth
+```frothy
 game.run:
 ```
 
@@ -107,7 +107,7 @@ game.run:
 The first version draws player and target the same way. Redefine only
 `game.draw` to make the target flash:
 
-```froth
+```frothy
 game.draw is fn [
   grid.clear:;
   when ((millis:) % 300) < 180 [

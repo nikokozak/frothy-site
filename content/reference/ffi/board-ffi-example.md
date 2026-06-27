@@ -1,7 +1,7 @@
 ---
 title: "Board FFI Example"
 weight: 3
-description: "How maintained board bindings become Froth words and wrappers."
+description: "How maintained board bindings become Frothy words and wrappers."
 ---
 
 Board FFI belongs to the board package. It is how a maintained target exposes
@@ -10,7 +10,7 @@ hardware words that every project on that board can rely on.
 The pattern is:
 
 1. board-owned C code publishes narrow hardware primitives
-2. board library code builds small Froth wrappers
+2. board library code builds small Frothy wrappers
 3. user projects compose against the wrapper surface
 
 ## Raw Hardware Word
@@ -43,9 +43,9 @@ static froth_error_t board_gpio_write(froth_runtime_t *runtime,
 }
 ```
 
-The exposed Froth word stays small:
+The exposed Frothy word stays small:
 
-```froth
+```frothy
 gpio.write: LED_BUILTIN, 1
 ```
 
@@ -53,7 +53,7 @@ gpio.write: LED_BUILTIN, 1
 
 Board library code can then create a cleaner board-owned surface:
 
-```froth
+```frothy
 to led.on
   gpio.write: LED_BUILTIN, 1
 end
@@ -65,7 +65,7 @@ end
 
 User code should usually depend on the wrapper when it is clearer:
 
-```froth
+```frothy
 to blink with ms
   led.on
   wait: ms

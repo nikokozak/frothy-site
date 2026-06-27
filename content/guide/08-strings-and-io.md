@@ -6,7 +6,7 @@ icon: message-circle
 readTime: "5 min"
 ---
 
-Froth has `Text` values, but it does not pretend to be a desktop scripting
+Frothy has `Text` values, but it does not pretend to be a desktop scripting
 language. Text exists for names, messages, small payloads, simple parsing, and
 board-facing protocols. File systems and rich Unicode text processing are not
 part of the first public language surface.
@@ -15,7 +15,7 @@ part of the first public language surface.
 
 A text literal is immutable:
 
-```froth
+```frothy
 label is "ready"
 label
 ```
@@ -31,14 +31,14 @@ clusters or locale-sensitive characters.
 
 The prompt prints the result of top-level expression evaluation:
 
-```froth
+```frothy
 "hello"
 1 + 2
 ```
 
 Definitions need not print a result:
 
-```froth
+```frothy
 to hello [
   "hello"
 ]
@@ -46,13 +46,13 @@ to hello [
 
 Call the code when you want the value:
 
-```froth
+```frothy
 hello:
 ```
 
 For inspection, prefer the inspection words over improvised print debugging:
 
-```froth
+```frothy
 show @hello
 see @hello
 info @hello
@@ -65,7 +65,7 @@ return.
 
 Text is enough for compact local parsing exercises:
 
-```froth
+```frothy
 to digit with byte [
   byte - 48
 ]
@@ -78,17 +78,17 @@ general library.
 
 ## I/O Is Board Surface
 
-Froth separates language values from board I/O. GPIO, ADC, display, I2C, UART,
+Frothy separates language values from board I/O. GPIO, ADC, display, I2C, UART,
 and timing are base-image or board-provided bindings:
 
-```froth
+```frothy
 gpio.read: BOOT_BUTTON
 adc.read: A0
 grid.show:
 uart.write: 65, console
 ```
 
-Not every board exposes every I/O family. The Froth Machine exposes GPIO, ADC,
+Not every board exposes every I/O family. The Frothy Machine exposes GPIO, ADC,
 the TM1629 display layer, joystick helpers, and knob helpers. The source-level
 ESP32 DevKit V1 board also carries I2C, UART, and LEDC bindings.
 

@@ -8,13 +8,13 @@ icon: hash
 readTime: "5 min"
 ---
 
-Froth does not put a data stack in the center of the public language. The
+Frothy does not put a data stack in the center of the public language. The
 runtime still has internal machinery, but the language you write is organized
 around values, expressions, names, and calls.
 
 That shift is not cosmetic. It changes how you read code.
 
-```froth
+```frothy
 3 + 4
 ```
 
@@ -23,12 +23,12 @@ the expression grammar, not postfix stack words. Binary operators have equal
 precedence and associate left to right, so use parentheses when grouping
 matters:
 
-```froth
+```frothy
 (3 + 4) * 2
 3 + (4 * 2)
 ```
 
-Froth does not reward guessing precedence. Group the expression you mean.
+Frothy does not reward guessing precedence. Group the expression you mean.
 
 ## The Value Set
 
@@ -49,7 +49,7 @@ objects in the ordinary language.
 
 At top level, a name refers to a stable slot:
 
-```froth
+```frothy
 speed is 75
 speed is 120
 ```
@@ -62,7 +62,7 @@ That matters for live work. If one piece of code calls `pulse`, and you later
 rebind `pulse`, callers that resolve through that top-level slot see the new
 behavior.
 
-```froth
+```frothy
 to pulse with pin [
   gpio.high: pin;
   ms: 75;
@@ -82,9 +82,9 @@ The name is stable. The value changed. The image remains inspectable.
 
 ## Calls Read Like Calls
 
-Foreign bindings and Froth definitions use the same call surface:
+Foreign bindings and Frothy definitions use the same call surface:
 
-```froth
+```frothy
 gpio.write: LED_BUILTIN, 1
 ms: 100
 blink: LED_BUILTIN, 3, 75
@@ -94,7 +94,7 @@ The callee appears before the colon. Arguments follow after the colon,
 separated by commas. A zero-argument call still uses the colon when you are
 asking for the code to run:
 
-```froth
+```frothy
 matrix.init:
 grid.show:
 ```
@@ -104,7 +104,7 @@ be passed around like any other value.
 
 ## Lookup Order
 
-When Froth sees a name, it searches:
+When Frothy sees a name, it searches:
 
 1. the current local scope
 2. enclosing local scopes
@@ -112,7 +112,7 @@ When Froth sees a name, it searches:
 
 A local can shadow a top-level name:
 
-```froth
+```frothy
 speed is 75
 
 demo is fn [
@@ -125,7 +125,7 @@ Inside `demo`, `speed` means the local. Outside it, `speed` still means the
 top-level slot.
 
 The old stack chapter taught how to keep track of invisible intermediate
-values. In current Froth, the equivalent discipline is simpler: name the state
+values. In current Frothy, the equivalent discipline is simpler: name the state
 you intend to keep, group expressions that need grouping, and inspect the live
 image when you are not sure what a name currently holds.
 

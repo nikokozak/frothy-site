@@ -1,7 +1,7 @@
 ---
 title: "Input"
 weight: 3
-description: "Joystick, knob, and raw button input words for the Froth Machine."
+description: "Joystick, knob, and raw button input words for the Frothy Machine."
 ---
 
 Prefer `joy.*?` and `knob.*` for Machine sketches. Use raw GPIO only when you
@@ -13,7 +13,7 @@ are deliberately working below the workshop-friendly input layer.
 
 Behavior: True while the joystick is held up.
 
-```froth
+```frothy
 when joy.up?: [ set player.y to player.y - 1 ]
 ```
 
@@ -21,7 +21,7 @@ when joy.up?: [ set player.y to player.y - 1 ]
 
 Behavior: True while the joystick is held down.
 
-```froth
+```frothy
 when joy.down?: [ set player.y to player.y + 1 ]
 ```
 
@@ -29,7 +29,7 @@ when joy.down?: [ set player.y to player.y + 1 ]
 
 Behavior: True while the joystick is held left.
 
-```froth
+```frothy
 when joy.left?: [ set player.x to player.x - 1 ]
 ```
 
@@ -37,7 +37,7 @@ when joy.left?: [ set player.x to player.x - 1 ]
 
 Behavior: True while the joystick is held right.
 
-```froth
+```frothy
 when joy.right?: [ set player.x to player.x + 1 ]
 ```
 
@@ -45,7 +45,7 @@ when joy.right?: [ set player.x to player.x + 1 ]
 
 Behavior: True while the joystick is pressed.
 
-```froth
+```frothy
 when joy.click?: [ grid.clear: ]
 ```
 
@@ -56,7 +56,7 @@ when joy.click?: [ grid.clear: ]
 Behavior: Left knob as an easy-to-scale percentage-style value from `0` to
 `100`.
 
-```froth
+```frothy
 knob.left:
 ```
 
@@ -65,7 +65,7 @@ knob.left:
 Behavior: Right knob as an easy-to-scale percentage-style value from `0` to
 `100`.
 
-```froth
+```frothy
 knob.right:
 ```
 
@@ -73,7 +73,7 @@ knob.right:
 
 Behavior: Raw ADC reading for the left knob.
 
-```froth
+```frothy
 knob.left.raw:
 ```
 
@@ -81,7 +81,7 @@ knob.left.raw:
 
 Behavior: Raw ADC reading for the right knob.
 
-```froth
+```frothy
 knob.right.raw:
 ```
 
@@ -91,7 +91,7 @@ knob.right.raw:
 
 Behavior: Configure a pin for input.
 
-```froth
+```frothy
 gpio.input: BUTTON_2
 ```
 
@@ -99,13 +99,13 @@ gpio.input: BUTTON_2
 
 Behavior: Read the current pin level.
 
-```froth
+```frothy
 gpio.read: BUTTON_2
 ```
 
-If you need a semantic helper, define one at the Froth layer:
+If you need a semantic helper, define one at the Frothy layer:
 
-```froth
+```frothy
 button.two? is fn [
   gpio.input: BUTTON_2;
   (gpio.read: BUTTON_2) == 0

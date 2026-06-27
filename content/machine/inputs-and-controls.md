@@ -4,7 +4,7 @@ weight: 3
 description: "Joystick, knobs, raw buttons, and the usual way input enters a board sketch."
 ---
 
-The Froth Machine gives you two friendly input families first:
+The Frothy Machine gives you two friendly input families first:
 
 - `joy.*?` for the joystick
 - `knob.*` for the two potentiometers
@@ -15,7 +15,7 @@ That is enough for menus, drawing toys, cursor control, and small games.
 
 The joystick words are:
 
-```froth
+```frothy
 joy.up?:
 joy.down?:
 joy.left?:
@@ -27,7 +27,7 @@ Each one returns a boolean.
 
 That means the usual shape is:
 
-```froth
+```frothy
 when joy.left?:  [ ... ]
 when joy.right?: [ ... ]
 when joy.click?: [ ... ]
@@ -39,7 +39,7 @@ For first-time work, treat the joystick as "five little buttons with names".
 
 The knob words are:
 
-```froth
+```frothy
 knob.left:
 knob.right:
 knob.left.raw:
@@ -55,7 +55,7 @@ The `*.raw` variants are there when you want the ADC reading directly.
 
 Here is a simple board control loop driven by the knobs:
 
-```froth
+```frothy
 to scaleKnob with percent, max [
   percent * max / 100
 ]
@@ -88,7 +88,7 @@ The board also exposes raw button pin names such as `BUTTON_1`, `BUTTON_2`, and
 
 There is not a dedicated `button.*` helper family yet, so the raw shape is:
 
-```froth
+```frothy
 gpio.input: BUTTON_2
 gpio.read: BUTTON_2
 ```
@@ -96,7 +96,7 @@ gpio.read: BUTTON_2
 If you want a boolean helper, write one exactly the way the joystick helpers
 work:
 
-```froth
+```frothy
 button.two? is fn [
   gpio.input: BUTTON_2;
   (gpio.read: BUTTON_2) == 0

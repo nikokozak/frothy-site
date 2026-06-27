@@ -9,18 +9,18 @@ icon: plug-zap
 readTime: "9 min"
 ---
 
-The FFI is the boundary between Froth values and C code. It is deliberately
+The FFI is the boundary between Frothy values and C code. It is deliberately
 narrow. That narrowness is what lets a live, persistent image stay legible.
 
 Foreign bindings appear as ordinary top-level `Code` values in the base image:
 
-```froth
+```frothy
 gpio.write: LED_BUILTIN, 1
 ms: 250
 adc.read: A0
 ```
 
-From the Froth side, a foreign binding is just callable code with a name,
+From the Frothy side, a foreign binding is just callable code with a name,
 arity, result type, help text, and ownership metadata. The fact that C runs on
 the other side is an implementation detail until you are writing the binding.
 
@@ -34,12 +34,12 @@ The first public boundary is value-oriented:
 - `Text`, where supported by the binding
 
 Native runtime pointers, driver handles, interrupt tokens, and internal
-control objects do not become ordinary persistable Froth values. When a C
+control objects do not become ordinary persistable Frothy values. When a C
 binding needs a handle, it should normally expose a small integer handle or
 hide the native object behind board-owned state.
 
 That is why `i2c.init` can return a bus handle, but the raw ESP-IDF pointer is
-not a Froth value.
+not a Frothy value.
 
 ## Project FFI
 
@@ -56,7 +56,7 @@ Project FFI should be boring:
 
 - source files stay under the project root
 - generated bindings are registered explicitly
-- names should read like normal Froth names
+- names should read like normal Frothy names
 - ownership stays with the firmware build, not with the saved overlay
 
 Project FFI is for "this project needs one native helper." It is not a second
@@ -72,14 +72,14 @@ boards/esp32-devkit-v4-game-board/lib/base library
 ```
 
 The C side registers the raw bindings. The board library gives them a humane
-Froth surface:
+Frothy surface:
 
-```froth
+```frothy
 to gpio.high with pin [ gpio.write: pin, 1 ]
 to knob.left [ adc.percent: knob.left.pin ]
 ```
 
-That split is intentional. C should expose the necessary primitive. Froth
+That split is intentional. C should expose the necessary primitive. Frothy
 should name the workflow people actually use.
 
 ## Persistence Rule

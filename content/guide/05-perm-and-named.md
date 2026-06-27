@@ -6,21 +6,21 @@ icon: boxes
 readTime: "6 min"
 ---
 
-Froth keeps data flow explicit, but the public tools are named and lexical:
+Frothy keeps data flow explicit, but the public tools are named and lexical:
 
 - parameters for inputs
 - locals for intermediate values
 - `set` for mutation
 - top-level `Cells` for indexed persistent state
 
-You should not need a vocabulary of stack shuffles to read ordinary Froth.
+You should not need a vocabulary of stack shuffles to read ordinary Frothy.
 
 ## Locals
 
 A block introduces a lexical scope. Inside that scope, bind a local with
 `here`:
 
-```froth
+```frothy
 to scaleKnob with percent, max [
   here bounded is clamp: percent, 0, 100;
   bounded * max / 100
@@ -37,7 +37,7 @@ obvious in teaching examples. It says "this is local to the current block."
 
 Use `set name to expr` when you intend to update an existing place:
 
-```froth
+```frothy
 to countdown with n [
   here current is n;
   while current > 0 [
@@ -47,7 +47,7 @@ to countdown with n [
 ]
 ```
 
-`set` does not create a new name. If Froth cannot find an existing mutable
+`set` does not create a new name. If Frothy cannot find an existing mutable
 place, it is a runtime error. That rule catches a large class of misspellings
 that stack languages usually cannot see.
 
@@ -55,7 +55,7 @@ that stack languages usually cannot see.
 
 Top-level state is useful when the value is part of the live image:
 
-```froth
+```frothy
 player.x is 0
 player.y is 0
 
@@ -75,7 +75,7 @@ Elements may hold `Int`, `Bool`, `Nil`, or `Text`.
 
 Create cells at top level:
 
-```froth
+```frothy
 scores is cells(4)
 set scores[0] to 10
 set scores[1] to 25
@@ -83,14 +83,14 @@ scores[1]
 ```
 
 Cells are good for small tables, board-sized state, and simple buffers. They
-are not a general heap. In current Froth, `cells(n)` belongs in a top-level
+are not a general heap. In current Frothy, `cells(n)` belongs in a top-level
 binding so the image can reason about ownership and persistence.
 
 ## Prefer Named Data Flow
 
 When a value matters enough to reuse, give it a name or pass it as a parameter:
 
-```froth
+```frothy
 to weighted with value, scale [
   value + (scale * value)
 ]

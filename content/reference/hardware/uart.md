@@ -6,7 +6,7 @@ advanced: true
 ---
 
 UART is a source-board peripheral surface. It is for serial devices and, on
-some boards, explicit console routing. It is not part of the beginner Froth
+some boards, explicit console routing. It is not part of the beginner Frothy
 Machine path.
 
 ## Availability
@@ -21,7 +21,7 @@ attachment.
 
 Creates an auxiliary UART handle.
 
-```froth
+```frothy
 aux is uart.init: UART_TX, UART_RX, 115200
 ```
 
@@ -29,7 +29,7 @@ aux is uart.init: UART_TX, UART_RX, 115200
 
 Writes one byte.
 
-```froth
+```frothy
 uart.write: 65, aux
 ```
 
@@ -37,7 +37,7 @@ uart.write: 65, aux
 
 Reads one byte.
 
-```froth
+```frothy
 uart.read: aux
 ```
 
@@ -45,7 +45,7 @@ uart.read: aux
 
 Returns true when at least one byte is waiting.
 
-```froth
+```frothy
 when uart.key?: aux [
   uart.read: aux
 ]

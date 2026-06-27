@@ -6,14 +6,14 @@ description: "Recovery notes for workshop connection, display, loop, and saved-s
 
 ## Board Won't Connect
 
-Check the cable. Try `froth --port /dev/tty.usbserial-XXXX doctor` if
+Check the cable. Try `frothy --port /dev/tty.usbserial-XXXX doctor` if
 multiple ports are visible. Swap the cable if in doubt.
 
 ## Matrix Stays Dark
 
 Run:
 
-```froth
+```frothy
 matrix.init:
 grid.fill: true
 grid.show:
@@ -21,7 +21,7 @@ grid.show:
 
 If it is still dark, try:
 
-```froth
+```frothy
 matrix.brightness!: 4
 ```
 
@@ -32,7 +32,7 @@ If it remains dark after that, the board may need swapping.
 Press Ctrl-C to interrupt. If that does not work, unplug and replug the USB
 cable. Press Ctrl-C during the safe boot prompt, then run:
 
-```froth
+```frothy
 dangerous.wipe
 ```
 
@@ -50,9 +50,9 @@ command again.
 
 ## VS Code Cannot Find The CLI
 
-Set `froth.cliPath` in VS Code settings to the full path of the `froth`
+Set `froth.cliPath` in VS Code settings to the full path of the `frothy`
 binary. Or fall back to the terminal:
 
 ```sh
-froth connect
+frothy connect
 ```

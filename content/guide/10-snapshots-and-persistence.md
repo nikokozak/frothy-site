@@ -8,7 +8,7 @@ icon: save
 readTime: "5 min"
 ---
 
-Froth persists the overlay image, not the current execution.
+Frothy persists the overlay image, not the current execution.
 
 That distinction is the difference between a durable live system and a
 half-frozen call stack. A saved image remembers top-level user state. It does
@@ -26,7 +26,7 @@ At boot, the runtime rebuilds the base image:
 
 After boot, your top-level edits form the overlay:
 
-```froth
+```frothy
 speed is 75
 to pulse with pin [
   gpio.high: pin;
@@ -42,7 +42,7 @@ the next boot.
 
 Use `save` when the current overlay is worth keeping:
 
-```froth
+```frothy
 save
 ```
 
@@ -64,7 +64,7 @@ Put hardware setup in `boot` if it must happen after restore.
 
 Use `restore` when you want the saved overlay back:
 
-```froth
+```frothy
 restore
 ```
 
@@ -76,7 +76,7 @@ fails, the runtime is expected to remain usable in a base state.
 If the top-level name `boot` holds `Code` after restore, the runtime executes
 it before entering the prompt.
 
-```froth
+```frothy
 to boot [
   matrix.init:;
   matrix.brightness!: 1;
@@ -94,7 +94,7 @@ behavior. Do not hide a whole uninterruptible program behind it.
 
 Use `dangerous.wipe` when the saved overlay is wrong:
 
-```froth
+```frothy
 dangerous.wipe
 ```
 
