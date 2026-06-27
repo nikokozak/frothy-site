@@ -4,6 +4,8 @@ description: "Values, calls, grouping, and left-to-right evaluation."
 weight: 3
 aliases:
   - /guide/02-values-names-and-rebinding/
+icon: hash
+readTime: "5 min"
 ---
 
 Froth does not put a data stack in the center of the public language. The

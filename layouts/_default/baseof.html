@@ -1,77 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="arcade">
 <head>
   <script>
-    (function() {
+    (function () {
       var t = localStorage.getItem('theme');
-      if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      if (t === 'dark' || t === 'arcade') {
+        document.documentElement.setAttribute('data-theme', t);
+      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
         document.documentElement.setAttribute('data-theme', 'dark');
       }
     })();
   </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ if not .IsHome }}{{ .Title }} — {{ end }}{{ .Site.Title }}</title>
+  <title>{{ if .IsHome }}{{ .Site.Title }} — a small, live language for programmable devices{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}</title>
   <meta name="description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
-<body data-search-index="{{ "index.json" | relURL }}">
+<body data-search-index="{{ "index.json" | relURL }}"{{ if not .IsHome }} class="docs-body"{{ end }}>
+  <div class="bg-grid" aria-hidden="true"></div>
+
   <div class="prealpha-banner">
-    Froth is pre-alpha. The install notes here target the public v0.1.2 release.
+    Frothy is pre-alpha. The install notes here target the public v0.1.2 release.
   </div>
-  <header class="site-header">
-    <nav>
-      <a href="{{ "/" | relURL }}" class="site-title">Froth</a>
-      <div class="nav-links">
-        <a href="{{ "install/" | relURL }}">Install</a>
-        <a href="{{ "guide/" | relURL }}">Guide</a>
-        <a href="{{ "tutorials/" | relURL }}">Tutorials</a>
-        <a href="{{ "machine/" | relURL }}">Machine</a>
-        <a href="{{ "workshop/" | relURL }}">Workshop</a>
-        <a href="{{ "reference/" | relURL }}">Reference</a>
-        <a href="{{ "what-makes-froth-different/" | relURL }}">How It's Different</a>
-      </div>
-      <div class="nav-controls">
-        <button class="search-trigger" type="button" data-search-open aria-haspopup="dialog" aria-controls="site-search-dialog">
-          Search
-          <span class="search-shortcut">Ctrl/Cmd+K</span>
+
+  {{ $sec := .Section }}
+  <header class="nav" data-nav>
+    <div class="nav-inner">
+      <a href="{{ "/" | relURL }}" class="nav-brand">
+        {{ partial "brandmark" . }}
+        <span class="brand-name">frothy</span>
+        <span class="brand-ver mono">pre-alpha</span>
+      </a>
+      <nav class="nav-links">
+        <a href="{{ "install/" | relURL }}"{{ if eq $sec "install" }} class="active"{{ end }}>Install</a>
+        <a href="{{ "guide/" | relURL }}"{{ if eq $sec "guide" }} class="active"{{ end }}>Guide</a>
+        <a href="{{ "tutorials/" | relURL }}"{{ if eq $sec "tutorials" }} class="active"{{ end }}>Tutorials</a>
+        <a href="{{ "machine/" | relURL }}"{{ if eq $sec "machine" }} class="active"{{ end }}>Machine</a>
+        <a href="{{ "workshop/" | relURL }}"{{ if eq $sec "workshop" }} class="active"{{ end }}>Workshop</a>
+        <a href="{{ "reference/" | relURL }}"{{ if eq $sec "reference" }} class="active"{{ end }}>Reference</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="search-btn" type="button" data-search-open aria-haspopup="dialog" aria-controls="site-search-dialog">
+          {{ partial "icon" "search" }}
+          <span class="sb-label">Search docs</span>
+          <kbd>⌘K</kbd>
         </button>
-        <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">dark</button>
+        <button class="nav-theme" type="button" onclick="toggleTheme()" aria-label="Toggle theme" data-theme-toggle></button>
       </div>
-    </nav>
+    </div>
   </header>
 
-  <main>
-    {{- block "main" . }}{{- end }}
-  </main>
+  {{- block "main" . }}{{- end }}
 
-  <footer class="site-footer">
-    <p>Froth — a live lexical language for programmable devices</p>
-    <p>This site is a working public draft built from the source repo and checked examples.</p>
-  </footer>
-
+  {{ partial "footer" . }}
   {{ partial "search.html" . }}
 
   <script>
+    function currentTheme() { return document.documentElement.getAttribute('data-theme') || 'arcade'; }
+    function paintThemeIcon() {
+      var btn = document.querySelector('[data-theme-toggle]');
+      if (!btn) return;
+      btn.innerHTML = '<i data-lucide="' + (currentTheme() === 'dark' ? 'sun' : 'moon') + '" class="ic"></i>';
+      if (window.lucide) lucide.createIcons();
+    }
     function toggleTheme() {
-      var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      if (isDark) {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('theme', 'light');
-      } else {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-      }
-      updateToggleLabel();
+      var next = currentTheme() === 'dark' ? 'arcade' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      paintThemeIcon();
     }
-    function updateToggleLabel() {
-      var btn = document.querySelector('.theme-toggle');
-      if (btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    }
-    updateToggleLabel();
+    (function () {
+      function boot() { if (window.lucide) lucide.createIcons(); paintThemeIcon(); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+      else boot();
+    })();
   </script>
   <script defer src="{{ "js/search.js" | relURL }}"></script>
   <script defer src="{{ "js/froth-highlight.js" | relURL }}"></script>
   <script defer src="{{ "js/reference-layout.js" | relURL }}"></script>
+  {{ if .IsHome }}<script defer src="{{ "js/repl.js" | relURL }}"></script>{{ end }}
 </body>
 </html>

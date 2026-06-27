@@ -1,39 +1,56 @@
 {{ define "main" }}
-<article class="page{{ if eq .Section "reference" }} reference-page{{ end }}{{ with .File }} page-{{ .BaseFileName }}{{ end }}">
-  <header class="page-header">
-    <h1>{{ .Title }}</h1>
-  </header>
+{{ $isRef := eq .Section "reference" }}
+<div class="docs page">
+  {{ partial "docs-sidebar" . }}
 
-  {{ $section := .Parent }}
-  {{ $sectionPages := slice }}
-  {{ $prevPage := false }}
-  {{ $nextPage := false }}
-  {{ if and $section (ne $section.Kind "home") }}
-    {{ $sectionPages = where $section.RegularPages.ByWeight "Params.hidden" "!=" true }}
-    {{ range $i, $p := $sectionPages }}
-      {{ if eq $p.RelPermalink $.RelPermalink }}
-        {{ if gt $i 0 }}{{ $prevPage = index $sectionPages (sub $i 1) }}{{ end }}
-        {{ if lt (add $i 1) (len $sectionPages) }}{{ $nextPage = index $sectionPages (add $i 1) }}{{ end }}
+  <main class="docs-main{{ if $isRef }} reference-page{{ end }}">
+    <div class="crumb">
+      <a href="{{ "/" | relURL }}">Home</a>
+      {{ partial "icon" "chevron-right" }}
+      <a href="{{ .FirstSection.RelPermalink }}">{{ .FirstSection.Title }}</a>
+      {{ partial "icon" "chevron-right" }} <b>{{ .Title }}</b>
+    </div>
+
+    <span class="doc-kicker">{{ partial "icon" (or .Params.icon "book-open") }} {{ .FirstSection.Title }}</span>
+    <h1 class="doc-h1">{{ .Title }}</h1>
+    {{ with .Description }}<p class="doc-lede">{{ . }}</p>{{ end }}
+    {{ with .Params.readTime }}<p class="g-chap-time" style="margin-top:14px;color:var(--ink-3);font-size:13px;display:inline-flex;align-items:center;gap:6px">{{ partial "icon" "clock" }} {{ . }}</p>{{ end }}
+    <hr class="doc-rule">
+
+    <div class="content">
+      {{ .Content }}
+    </div>
+
+    {{/* prev / next pager within the section, by weight */}}
+    {{ $section := .Parent }}
+    {{ $prev := false }}{{ $next := false }}
+    {{ if and $section (ne $section.Kind "home") }}
+      {{ $sib := where $section.RegularPages.ByWeight "Params.hidden" "!=" true }}
+      {{ range $i, $p := $sib }}
+        {{ if eq $p.RelPermalink $.RelPermalink }}
+          {{ if gt $i 0 }}{{ $prev = index $sib (sub $i 1) }}{{ end }}
+          {{ if lt (add $i 1) (len $sib) }}{{ $next = index $sib (add $i 1) }}{{ end }}
+        {{ end }}
       {{ end }}
     {{ end }}
-  {{ end }}
+    {{ if or $prev $next }}
+    <nav class="g-pager">
+      {{ with $prev }}
+      <a class="g-pager-btn prev" href="{{ .RelPermalink }}">
+        <span class="g-pager-lab">{{ partial "icon" "arrow-left" }} Previous</span>
+        <span class="g-pager-title">{{ .Title }}</span>
+      </a>
+      {{ else }}<span></span>{{ end }}
+      {{ with $next }}
+      <a class="g-pager-btn next" href="{{ .RelPermalink }}">
+        <span class="g-pager-lab">Next {{ partial "icon" "arrow-right" }}</span>
+        <span class="g-pager-title">{{ .Title }}</span>
+      </a>
+      {{ else }}<span></span>{{ end }}
+    </nav>
+    {{ end }}
+  </main>
 
-  {{ if or $prevPage $nextPage }}
-  <nav class="page-nav-top">
-    {{ with $prevPage }}<a href="{{ .RelPermalink }}" class="prev">&larr; {{ .Title }}</a>{{ end }}
-    {{ with $nextPage }}<a href="{{ .RelPermalink }}" class="next">{{ .Title }} &rarr;</a>{{ end }}
-  </nav>
-  {{ end }}
-
-  <div class="content">
-    {{ .Content }}
-  </div>
-
-  {{ if or $prevPage $nextPage }}
-  <nav class="page-nav-bottom">
-    {{ with $prevPage }}<a href="{{ .RelPermalink }}" class="prev">&larr; {{ .Title }}</a>{{ end }}
-    {{ with $nextPage }}<a href="{{ .RelPermalink }}" class="next">{{ .Title }} &rarr;</a>{{ end }}
-  </nav>
-  {{ end }}
-</article>
+  {{ partial "docs-toc" . }}
+</div>
 {{ end }}

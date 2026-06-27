@@ -4,6 +4,8 @@ weight: 6
 description: "Project file names, target versus board selection, build directories, and flashing policy."
 aliases:
   - /reference/build-options/
+icon: boxes
+tags: [frothy.toml, target, board]
 ---
 
 Froth keeps project selection explicit. A target names the platform. A board

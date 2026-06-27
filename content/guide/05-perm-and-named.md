@@ -2,6 +2,8 @@
 title: "05. Locals, Names, and State"
 description: "Lexical locals, explicit mutation, and top-level Cells."
 weight: 5
+icon: boxes
+readTime: "6 min"
 ---
 
 Froth keeps data flow explicit, but the public tools are named and lexical:

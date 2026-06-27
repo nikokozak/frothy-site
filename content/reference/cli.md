@@ -2,6 +2,8 @@
 title: "CLI"
 weight: 4
 description: "The maintained `froth` command surface and attendee-versus-maintainer paths."
+icon: terminal
+tags: [frothy, flash, connect]
 ---
 
 The public command is `froth`. Use it for environment checks, direct prompt

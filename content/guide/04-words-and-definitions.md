@@ -4,6 +4,8 @@ description: "Define callable Code values, choose a house style, and understand 
 weight: 4
 aliases:
   - /guide/03-code-locals-and-blocks/
+icon: pen-line
+readTime: "7 min"
 ---
 
 In Froth, a word is just a named value that can be called. There is no separate

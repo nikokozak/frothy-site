@@ -4,6 +4,8 @@ weight: 2
 description: "REPL behavior, multiline input, interrupts, inspection, and the control-session path."
 aliases:
   - /reference/profiles/
+icon: terminal
+tags: [repl, multiline, interrupts]
 ---
 
 This page covers the maintained prompt-facing and tool-facing interactive

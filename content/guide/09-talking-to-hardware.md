@@ -4,6 +4,8 @@ description: "Use the base-image board layer first, then climb to Machine displa
 weight: 9
 aliases:
   - /guide/08-hardware-and-the-protoboard/
+icon: circuit-board
+readTime: "8 min"
 ---
 
 Froth is device-first. The host tools help you reach the board, but the board

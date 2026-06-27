@@ -4,6 +4,8 @@ description: "Use blocks as lexical scopes and Code values; choose, repeat, and 
 weight: 6
 aliases:
   - /guide/04-control-flow-cells-and-records/
+icon: repeat-2
+readTime: "7 min"
 ---
 
 Froth keeps code as a value, but the syntax is lexical and direct.

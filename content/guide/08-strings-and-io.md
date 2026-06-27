@@ -2,6 +2,8 @@
 title: "08. Text and I/O"
 description: "Text literals, byte-oriented indexing, prompt output, and the split between language values and board I/O."
 weight: 8
+icon: message-circle
+readTime: "5 min"
 ---
 
 Froth has `Text` values, but it does not pretend to be a desktop scripting

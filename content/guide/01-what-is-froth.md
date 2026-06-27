@@ -2,6 +2,8 @@
 title: "01. What Froth Is"
 description: "The core mental model: stable slots, lexical code, and a live image."
 weight: 1
+icon: lightbulb
+readTime: "4 min"
 ---
 
 Froth is easiest to learn if you start with three laws from the accepted

@@ -2,6 +2,8 @@
 title: "Word Reference"
 weight: 1
 description: "Core syntax, operators, state, collections, and prompt-facing built-ins."
+icon: hash
+tags: [syntax, operators, cells, records]
 ---
 
 This page covers the core language surface. Board and protoboard APIs live

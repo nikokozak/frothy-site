@@ -1,12 +1,315 @@
 {{ define "main" }}
-<article class="homepage">
-  {{ if fileExists "static/images/board.png" }}
-  <figure class="home-hero">
-    <img src="{{ "images/board.png" | relURL }}" alt="Froth board hero artwork">
-  </figure>
-  {{ end }}
-  <div class="content">
-    {{ .Content }}
-  </div>
-</article>
+<div class="page">
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div class="hero-text">
+        <div class="hero-eyebrow">{{ partial "icon" "plug-zap" }} A small, live language for programmable devices</div>
+        <h1 class="hero-title">Talk to your board.<br>Watch it <em>answer</em>.</h1>
+        <p class="hero-lede">
+          Frothy turns a microcontroller into something you can have a conversation with.
+          Type a line, the board does it — right now. Change your mind, type again.
+          No compiling, no uploading, no black box.
+        </p>
+        <div class="hero-cta">
+          <a href="{{ "install/" | relURL }}" class="btn btn-primary">{{ partial "icon" "download" }} Install Frothy</a>
+          <a href="#why" class="btn btn-ghost">{{ partial "icon" "compass" }} What is this?</a>
+        </div>
+        <div class="hero-meta">
+          <span>{{ partial "icon" "refresh-cw" }} redefine it while it runs</span>
+          <span>{{ partial "icon" "eye" }} read back everything it knows</span>
+          <span>{{ partial "icon" "cpu" }} runs on a $2 board</span>
+        </div>
+      </div>
+      <div class="hero-demo">
+        <div class="froth-ed">
+          <div class="ed-frame">
+            <div class="ed-bar">
+              <span class="ed-traffic"><i></i><i></i><i></i></span>
+              <span class="ed-tab"><span class="ed-tab-dot"></span><span class="mono">blink.frothy</span></span>
+              <span class="ed-spacer"></span>
+              <button class="ed-run" type="button" tabindex="-1" data-repl-run><span class="ed-run-tri"></span> Run</button>
+            </div>
+            <div class="ed-body">
+              <div class="ed-main" data-repl-editor></div>
+              <aside class="ed-console">
+                <div class="ed-console-h"><span class="ed-console-dot"></span>console</div>
+                <div class="ed-log" data-repl-log></div>
+                <div class="ed-board"><span class="ed-led" data-repl-led></span><span data-repl-board>LED_BUILTIN OFF</span></div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="why" class="why">
+    <div class="why-inner">
+      <div class="why-copy">
+        <span class="section-tag">{{ partial "icon" "compass" }} New here?</span>
+        <h2 class="section-title">What even <em class="serif">is</em> this?</h2>
+        <p class="why-p">
+          Normally, programming a microcontroller goes like this: you write code on your computer,
+          compile it, upload it to the board, and hope. Once it's on there, the board is a sealed box —
+          you can't ask it what it's doing or change your mind without starting the whole cycle over.
+        </p>
+        <p class="why-p">
+          Frothy flips that around. The <strong>board itself</strong> understands the language, so you
+          just talk to it. Type <code>led.on:</code> and the light comes on. Type a new version of a word
+          and it takes effect instantly. Ask the board to <code>show</code> you any part of itself, and it will.
+        </p>
+        <div class="why-quote">
+          <span class="why-quote-mark">“</span>
+          It feels like <strong>p5.js</strong>, but the canvas is a real circuit.
+        </div>
+      </div>
+      <div class="why-art">
+        <div class="why-scene">
+          <img src="{{ "images/home-hero.png" | relURL }}" alt="A typed line lighting up the board's LED">
+        </div>
+        <p class="why-cap mono">you type a line · the board lights up</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pillars">
+    <div class="section-head">
+      <span class="section-tag">{{ partial "icon" "sparkles" }} The big idea</span>
+      <h2 class="section-title">Three things that make Frothy feel different.</h2>
+    </div>
+    <div class="pillar-list">
+      <article class="pillar">
+        <div class="pillar-ic">{{ partial "icon" "refresh-cw" }}</div>
+        <div class="pillar-main">
+          <div class="pillar-kw">Live</div>
+          <h3 class="pillar-title">Change it<br>while it runs.</h3>
+          <p class="pillar-body">Redefine a word and every place that uses it picks up the new version on the spot. No build step, no re-upload, no waiting — the device never stops to listen.</p>
+        </div>
+        <div class="pillar-aside">
+<pre class="mini-code mono"><code class="language-frothy">to blink with n [
+  repeat n [
+    led.on:;  ms: 90    \ on, hold 90ms
+    led.off:; ms: 90    \ off, hold 90ms
+  ]
+]
+blink: 3                \ blink three times</code></pre>
+          <p class="mini-note">…then change <code>90</code> to <code>30</code> and run it again. Instantly faster.</p>
+        </div>
+      </article>
+      <article class="pillar">
+        <div class="pillar-ic">{{ partial "icon" "eye" }}</div>
+        <div class="pillar-main">
+          <div class="pillar-kw">Transparent</div>
+          <h3 class="pillar-title">Nothing is<br>hidden from you.</h3>
+          <p class="pillar-body">Ask the device <code>words</code> and it lists everything it knows. Ask it to <code>show</code> any word and it hands back the source — even on a board that was never yours to begin with.</p>
+        </div>
+        <div class="pillar-aside">
+<pre class="mini-code mono"><code class="language-frothy">> words                 \ list what it knows
+led.on  led.off  blink
+
+> show @blink           \ read any word's source
+to blink with n [ ... ]</code></pre>
+          <p class="mini-note">The whole device, readable, out in the open.</p>
+        </div>
+      </article>
+      <article class="pillar">
+        <div class="pillar-ic">{{ partial "icon" "pen-line" }}</div>
+        <div class="pillar-main">
+          <div class="pillar-kw">Readable</div>
+          <h3 class="pillar-title">If you can read it,<br>you can write it.</h3>
+          <p class="pillar-body">Frothy reads close to plain English. You name a word with <code>to</code>, say what it takes <code>with</code>, and put the steps in brackets. Drastically simpler than C, and friendly to beginners.</p>
+        </div>
+        <div class="pillar-aside">
+<pre class="mini-code mono"><code class="language-frothy">to pulse with pin, wait [   \ name it with 'to'
+  gpio.high: pin;           \ steps go in brackets
+  ms: wait;
+  gpio.low: pin
+]</code></pre>
+          <p class="mini-note">No semicolon soup, no toolchain, no datasheet first.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="showcase">
+    <div class="section-head">
+      <span class="section-tag">{{ partial "icon" "eye" }} See inside</span>
+      <h2 class="section-title">The whole device, out in the open.</h2>
+    </div>
+    <div class="showcase-grid">
+      <div class="showcase-term">
+        <div class="repl-chrome">
+          <span class="repl-dot"></span><span class="repl-dot"></span><span class="repl-dot"></span>
+          <span class="repl-title mono">frothy session</span>
+        </div>
+<pre class="showcase-body mono"><code class="language-frothy">> words
+boot   led.on   led.off   blink
+demo.pong.run   joy.click?   ...
+> show @boot
+to boot [ demo.pong.setup:; demo.pong.run: ]
+> save
+ok</code></pre>
+      </div>
+      <div class="showcase-points">
+        <div class="sc-point">
+          <div class="sc-ic">{{ partial "icon" "list" }}</div>
+          <div><div class="sc-word mono">words</div><div class="sc-t">List everything</div><div class="sc-d">Every function the device knows, named and ready to call.</div></div>
+        </div>
+        <div class="sc-point">
+          <div class="sc-ic">{{ partial "icon" "eye" }}</div>
+          <div><div class="sc-word mono">show @word</div><div class="sc-t">Read the source</div><div class="sc-d">Hand back any word's definition in plain, human-readable Frothy.</div></div>
+        </div>
+        <div class="sc-point">
+          <div class="sc-ic">{{ partial "icon" "save" }}</div>
+          <div><div class="sc-word mono">save</div><div class="sc-t">Keep it</div><div class="sc-d">Persist your words and your boot routine right on the device.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="play">
+    <div class="section-head">
+      <span class="section-tag">{{ partial "icon" "terminal" }} Play</span>
+      <h2 class="section-title">Four tiny programs to poke at.</h2>
+    </div>
+    <div class="play-card" data-play>
+      <div class="play-tabs">
+        <button class="play-tab is-active" data-play-tab="0">{{ partial "icon" "lightbulb" }} <span class="play-tab-l">blink an LED</span></button>
+        <button class="play-tab" data-play-tab="1">{{ partial "icon" "plug-zap" }} <span class="play-tab-l">talk to a pin</span></button>
+        <button class="play-tab" data-play-tab="2">{{ partial "icon" "mouse-pointer-click" }} <span class="play-tab-l">wait for a click</span></button>
+        <button class="play-tab" data-play-tab="3">{{ partial "icon" "wand-sparkles" }} <span class="play-tab-l">make your own word</span></button>
+      </div>
+      <div class="play-body">
+        <div class="play-pane play-pane--code">
+          <div class="play-pane-hd mono"><span data-play-name>blink.frothy</span></div>
+          <div data-play-code>
+<pre class="mono" data-play-code-pane="0"><code class="language-frothy">to blink with pin, n [
+  repeat n [
+    gpio.high: pin;
+    ms: 100;
+    gpio.low: pin;
+    ms: 100
+  ]
+]
+
+blink: LED_BUILTIN, 3</code></pre>
+<pre class="mono" data-play-code-pane="1" hidden><code class="language-frothy">gpio.output: LED_BUILTIN
+led.on:
+led.off:</code></pre>
+<pre class="mono" data-play-code-pane="2" hidden><code class="language-frothy">to wait.click [
+  while (not joy.click?:) [
+    ms: 20
+  ]
+]
+
+wait.click:</code></pre>
+<pre class="mono" data-play-code-pane="3" hidden><code class="language-frothy">to add with a, b [ a + b ]
+
+add: 2, 3
+2 + 3</code></pre>
+          </div>
+        </div>
+        <div class="play-pane play-pane--out">
+          <div class="play-pane-hd mono"><span>session</span><span class="play-running">{{ partial "icon" "zap" }} live</span></div>
+<pre class="mono play-out" data-play-out-pane="0">ok
+ok
+\ the LED blinks three times</pre>
+<pre class="mono play-out" data-play-out-pane="1" hidden>ok
+ok
+ok</pre>
+<pre class="mono play-out" data-play-out-pane="2" hidden>ok
+\ ...pauses until you click the stick</pre>
+<pre class="mono play-out" data-play-out-pane="3" hidden>ok
+5
+5</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="machine" class="machine">
+    <div class="section-head">
+      <span class="section-tag">{{ partial "icon" "gamepad-2" }} On real hardware</span>
+      <h2 class="section-title">Made for the workshop table.</h2>
+    </div>
+    <div class="machine-grid">
+      <div class="machine-card">
+        <img src="{{ "images/board.png" | relURL }}" alt="The Frothy Machine board">
+        <div class="machine-body">
+          <h3 class="machine-h">The Frothy Machine</h3>
+          <p class="machine-d">A little protoboard with a screen, a joystick, two knobs and a speaker — built for hands-on sessions at NYC Resistor and NYU ITP. Everything you need to learn by playing, with no datasheet required.</p>
+          <div class="machine-specs mono">
+            <span>{{ partial "icon" "monitor-smartphone" }} display</span>
+            <span>{{ partial "icon" "joystick" }} joystick</span>
+            <span>{{ partial "icon" "cpu" }} two knobs</span>
+          </div>
+        </div>
+      </div>
+      <div class="workshop-card">
+        <div class="workshop-ic">{{ partial "icon" "puzzle" }}</div>
+        <h3 class="machine-h">The Workshop</h3>
+        <p class="machine-d">A live puzzle activity: a set of small missions you solve by talking to the device, with a quick reference and troubleshooting close at hand.</p>
+        <ol class="mission-list mono">
+          <li><span class="mission-n">01</span> Make the onboard LED breathe</li>
+          <li><span class="mission-n">02</span> Read the joystick and move a dot</li>
+          <li><span class="mission-n">03</span> Print a knob's value to the screen</li>
+          <li><span class="mission-n">04</span> Build a two-line game of Pong</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="guide" class="learn">
+    <div class="section-head">
+      <span class="section-tag">{{ partial "icon" "graduation-cap" }} Learn Frothy</span>
+      <h2 class="section-title">Learn it in an afternoon.</h2>
+    </div>
+    <div class="docs-grid">
+      {{ $guide := site.GetPage "/guide" }}
+      {{ range first 6 (where $guide.RegularPages.ByWeight "Params.hidden" "!=" true) }}
+      <a class="doc-card" href="{{ .RelPermalink }}">
+        <div class="doc-card-hd">
+          <span class="doc-num mono">{{ with .Params.weight }}{{ printf "%02d" . }}{{ end }}</span>
+          {{ with .Params.readTime }}<span class="doc-card-k">{{ . }}</span>{{ end }}
+        </div>
+        <div class="doc-card-t">{{ .Title }}</div>
+        <div class="doc-card-d">{{ partial "icon" "arrow-up-right" }} Read</div>
+      </a>
+      {{ end }}
+    </div>
+  </section>
+
+  <section id="install" class="install">
+    <div class="install-inner">
+      <div class="install-text">
+        <span class="section-tag">{{ partial "icon" "download" }} Get started</span>
+        <h2 class="section-title">Two minutes from zero to blinking.</h2>
+        <p class="install-lede">Install the CLI, plug in an ESP32, type <code>frothy connect</code>, and you're in a live session.</p>
+        <ul class="install-checks">
+          <li><span class="check">{{ partial "icon" "check" }}</span> Ships today for ESP32 — more boards in the rewrite</li>
+          <li><span class="check">{{ partial "icon" "check" }}</span> Runs on macOS, Linux and Windows</li>
+          <li><span class="check">{{ partial "icon" "check" }}</span> No SDK, no toolchain, nothing to configure</li>
+        </ul>
+      </div>
+      <div class="install-card" data-install>
+        <div class="install-tabs">
+          <button class="install-tab is-active" data-install-tab="mac">macOS</button>
+          <button class="install-tab" data-install-tab="linux">Linux</button>
+          <button class="install-tab" data-install-tab="win">Windows</button>
+          <button class="install-tab" data-install-tab="src">from source</button>
+        </div>
+<pre class="install-code mono" data-install-pane="mac"><span class="install-prompt">$ </span>brew install frothlang/tap/frothy</pre>
+<pre class="install-code mono" data-install-pane="linux" hidden><span class="install-prompt">$ </span>curl -fsSL frothlang.org/install.sh | sh</pre>
+<pre class="install-code mono" data-install-pane="win" hidden><span class="install-prompt">$ </span>winget install frothlang.frothy</pre>
+<pre class="install-code mono" data-install-pane="src" hidden><span class="install-prompt">$ </span>git clone https://github.com/nikokozak/frothyrewrite
+cd frothyrewrite && make</pre>
+        <div class="install-foot mono">
+          <span>public release · v0.1.2</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
 {{ end }}

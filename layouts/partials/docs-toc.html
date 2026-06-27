@@ -1,0 +1,8 @@
+{{- /* Right-hand "on this page" TOC. Renders nothing if the page has < 2 headings. */ -}}
+{{- $headings := .Fragments.Headings -}}
+{{- if ge (len .Fragments.Identifiers) 2 -}}
+<aside class="docs-toc">
+  <div class="toc-h">On this page</div>
+  {{ .TableOfContents }}
+</aside>
+{{- end -}}

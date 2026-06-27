@@ -4,6 +4,8 @@ weight: 5
 description: "The visible VS Code control surface: connect, send, inspect, interrupt, and recover."
 aliases:
   - /reference/vscode/
+icon: pen-line
+tags: [vs code, send, inspect]
 ---
 
 The editor is a thin client over the device-owned image. It does not own a

@@ -5,6 +5,8 @@ weight: 12
 aliases:
   - /guide/09-extending-with-ffi/
 advanced: true
+icon: plug-zap
+readTime: "9 min"
 ---
 
 The FFI is the boundary between Froth values and C code. It is deliberately

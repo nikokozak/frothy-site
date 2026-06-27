@@ -4,6 +4,8 @@ description: "Recoverable runtime errors, interrupts, safe boot, inspection, and
 weight: 7
 aliases:
   - /guide/05-inspection-and-live-workflow/
+icon: rotate-cw
+readTime: "6 min"
 ---
 
 A live microcontroller language needs mistakes to be survivable. If a bad

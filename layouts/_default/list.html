@@ -1,54 +1,98 @@
 {{ define "main" }}
-<article class="section-page{{ if eq .Section "reference" }} reference-page{{ end }}{{ with .File }} page-{{ .BaseFileName }}{{ end }}">
-  <header class="page-header">
-    <h1>{{ .Title }}</h1>
-  </header>
+<div class="docs page">
+  {{ partial "docs-sidebar" . }}
 
-  <div class="content">
-    {{ .Content }}
-  </div>
+  <main class="docs-main">
+    <div class="crumb">
+      <a href="{{ "/" | relURL }}">Home</a> {{ partial "icon" "chevron-right" }} <b>{{ .Title }}</b>
+    </div>
+    <span class="doc-kicker">{{ partial "icon" "book-open" }} {{ .Title }}</span>
+    <h1 class="doc-h1">{{ .Title }}</h1>
+    {{ with .Description }}<p class="doc-lede">{{ . }}</p>{{ end }}
 
-  {{ $pages := where .Pages.ByWeight "Params.hidden" "!=" true }}
-  {{ if eq .Section "guide" }}
-  {{ $mainPages := where $pages "Params.advanced" "!=" true }}
-  {{ $advancedPages := where $pages "Params.advanced" true }}
+    {{ if .Content }}<div class="content">{{ .Content }}</div>{{ end }}
+    <hr class="doc-rule">
 
-  <ol class="page-list">
-    {{ range $mainPages }}
-    <li>
-      <a href="{{ .RelPermalink }}">
-        <span class="page-list-title">{{ .Title }}</span>
-        {{ with .Description }}<span class="page-list-desc">{{ . }}</span>{{ end }}
+    {{ $pages := where .RegularPages.ByWeight "Params.hidden" "!=" true }}
+
+    {{ if eq .Section "reference" }}
+    {{/* Reference: card grid over direct pages + sub-sections */}}
+    <div class="ref-grid">
+      {{ range .Pages.ByWeight }}
+      {{ if ne .Params.hidden true }}
+      <a class="ref-card" href="{{ .RelPermalink }}">
+        <div class="ref-card-top">
+          <span class="ref-card-ic">{{ partial "icon" (or .Params.icon "hash") }}</span>
+          {{ with .Params.weight }}<span class="ref-card-n mono">{{ printf "%02d" . }}</span>{{ end }}
+        </div>
+        <h3 class="ref-card-title">{{ .Title }}</h3>
+        <p class="ref-card-desc">{{ or .Description .Summary }}</p>
+        {{ with .Params.tags }}
+        <div class="ref-card-tags">{{ range . }}<span class="ref-tag">{{ . }}</span>{{ end }}</div>
+        {{ end }}
       </a>
-    </li>
-    {{ end }}
-  </ol>
+      {{ end }}
+      {{ end }}
+    </div>
 
-  {{ if gt (len $advancedPages) 0 }}
-  <h2 class="section-list-heading">Advanced</h2>
-  <ol class="page-list">
-    {{ range $advancedPages }}
-    <li>
-      <a href="{{ .RelPermalink }}">
-        <span class="page-list-title">{{ .Title }}</span>
-        {{ with .Description }}<span class="page-list-desc">{{ . }}</span>{{ end }}
-      </a>
-    </li>
+    {{ else if eq .Section "guide" }}
+    {{/* Guide: learning-arc timeline, main + advanced */}}
+    {{ $main := where $pages "Params.advanced" "!=" true }}
+    {{ $adv := where $pages "Params.advanced" true }}
+    <ol class="guide-arc">
+      {{ range $main }}
+      <li><a class="arc-item" href="{{ .RelPermalink }}">
+        <span class="arc-n">{{ with .Params.weight }}{{ printf "%02d" . }}{{ else }}·{{ end }}</span>
+        <span class="arc-body">
+          <span class="arc-title">{{ .Title }}</span>
+          <span class="arc-desc">{{ or .Description .Summary }}</span>
+        </span>
+        <span class="arc-meta">
+          {{ with .Params.readTime }}<span class="arc-time">{{ partial "icon" "clock" }} {{ . }}</span>{{ end }}
+          <span class="arc-go">{{ partial "icon" "arrow-right" }}</span>
+        </span>
+      </a></li>
+      {{ end }}
+    </ol>
+    {{ if $adv }}
+    <div class="guide-adv-h">Advanced</div>
+    <ol class="guide-arc adv">
+      {{ range $adv }}
+      <li><a class="arc-item" href="{{ .RelPermalink }}">
+        <span class="arc-n">{{ with .Params.weight }}{{ printf "%02d" . }}{{ else }}·{{ end }}</span>
+        <span class="arc-body">
+          <span class="arc-title">{{ .Title }}</span>
+          <span class="arc-desc">{{ or .Description .Summary }}</span>
+        </span>
+        <span class="arc-meta">
+          {{ with .Params.readTime }}<span class="arc-time">{{ partial "icon" "clock" }} {{ . }}</span>{{ end }}
+          <span class="arc-go">{{ partial "icon" "arrow-right" }}</span>
+        </span>
+      </a></li>
+      {{ end }}
+    </ol>
     {{ end }}
-  </ol>
-  {{ end }}
 
-  {{ else }}
-  <ol class="page-list">
-    {{ range $pages }}
-    <li>
-      <a href="{{ .RelPermalink }}">
-        <span class="page-list-title">{{ .Title }}</span>
-        {{ with .Description }}<span class="page-list-desc">{{ . }}</span>{{ end }}
-      </a>
-    </li>
+    {{ else }}
+    {{/* Generic section index: arc list */}}
+    <ol class="guide-arc">
+      {{ range $i, $p := $pages }}
+      <li><a class="arc-item" href="{{ $p.RelPermalink }}">
+        <span class="arc-n">{{ printf "%02d" (add $i 1) }}</span>
+        <span class="arc-body">
+          <span class="arc-title">{{ $p.Title }}</span>
+          <span class="arc-desc">{{ or $p.Description $p.Summary }}</span>
+        </span>
+        <span class="arc-meta">
+          {{ with $p.Params.readTime }}<span class="arc-time">{{ partial "icon" "clock" }} {{ . }}</span>{{ end }}
+          <span class="arc-go">{{ partial "icon" "arrow-right" }}</span>
+        </span>
+      </a></li>
+      {{ end }}
+    </ol>
     {{ end }}
-  </ol>
-  {{ end }}
-</article>
+  </main>
+
+  {{ partial "docs-toc" . }}
+</div>
 {{ end }}

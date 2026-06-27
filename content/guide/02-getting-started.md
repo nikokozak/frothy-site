@@ -4,6 +4,8 @@ description: "Your first live session: connect, evaluate small expressions, insp
 weight: 2
 aliases:
   - /guide/07-projects-build-and-flash/
+icon: play
+readTime: "6 min"
 ---
 
 If you do not have a prompt yet, start with [Install](/install/). The rest of

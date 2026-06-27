@@ -1,0 +1,15 @@
+{{- /* Callout box. Usage:
+     {{< callout tip "Read it back any time" >}}
+     Body markdown here.
+     {{< /callout >}}
+   kind (positional 0): note (default) | tip | warn. Title (positional 1) optional. */ -}}
+{{- $kind := .Get 0 | default "note" -}}
+{{- $title := .Get 1 -}}
+{{- $icon := index (dict "note" "info" "tip" "lightbulb" "warn" "triangle-alert") $kind | default "info" -}}
+<div class="g-callout g-callout-{{ $kind }}">
+  <span class="g-callout-ic">{{ partial "icon" $icon }}</span>
+  <div class="g-callout-body">
+    {{- with $title }}<div class="g-callout-title">{{ . }}</div>{{ end -}}
+    {{ .Inner | markdownify }}
+  </div>
+</div>

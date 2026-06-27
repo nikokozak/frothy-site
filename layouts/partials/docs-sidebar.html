@@ -1,0 +1,43 @@
+{{- /* Section-scoped sidebar nav. Lists the current top section's pages,
+       splitting guide into main + Advanced, and nesting sub-sections. */ -}}
+{{- $cur := .RelPermalink -}}
+{{- $top := .FirstSection -}}
+{{- $isGuide := eq $top.Section "guide" -}}
+<aside class="docs-side">
+  {{- $direct := where $top.RegularPages.ByWeight "Params.hidden" "!=" true -}}
+  {{- if $isGuide -}}
+    {{- $main := where $direct "Params.advanced" "!=" true -}}
+    {{- $adv := where $direct "Params.advanced" true -}}
+    <div class="side-group">
+      <div class="side-h">{{ $top.Title }}</div>
+      <a class="side-link{{ if eq $top.RelPermalink $cur }} active{{ end }}" href="{{ $top.RelPermalink }}">{{ partial "icon" "compass" }} Overview</a>
+      {{- range $main }}
+      <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "hash") }} {{ .Title }}</a>
+      {{- end }}
+    </div>
+    {{- if $adv }}
+    <div class="side-group">
+      <div class="side-h">Advanced</div>
+      {{- range $adv }}
+      <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "plug-zap") }} {{ .Title }}</a>
+      {{- end }}
+    </div>
+    {{- end }}
+  {{- else -}}
+    <div class="side-group">
+      <div class="side-h">{{ $top.Title }}</div>
+      <a class="side-link{{ if eq $top.RelPermalink $cur }} active{{ end }}" href="{{ $top.RelPermalink }}">{{ partial "icon" "compass" }} Overview</a>
+      {{- range $direct }}
+      <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "hash") }} {{ .Title }}</a>
+      {{- end }}
+    </div>
+    {{- range $sub := $top.Sections.ByWeight }}
+    <div class="side-group">
+      <div class="side-h">{{ $sub.Title }}</div>
+      {{- range where $sub.RegularPages.ByWeight "Params.hidden" "!=" true }}
+      <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "hash") }} {{ .Title }}</a>
+      {{- end }}
+    </div>
+    {{- end }}
+  {{- end -}}
+</aside>

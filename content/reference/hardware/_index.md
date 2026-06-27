@@ -2,6 +2,8 @@
 title: "Hardware"
 weight: 6
 description: "Machine board words for display, input, utilities, and the shared base-image surface."
+icon: circuit-board
+tags: [display, joystick, i2c]
 ---
 
 Froth's maintained hardware surface is layered:

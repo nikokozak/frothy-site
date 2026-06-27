@@ -4,6 +4,8 @@ description: "Save the overlay image, restore it, wipe it, and understand what d
 weight: 10
 aliases:
   - /guide/06-persistence-boot-and-recovery/
+icon: save
+readTime: "5 min"
 ---
 
 Froth persists the overlay image, not the current execution.

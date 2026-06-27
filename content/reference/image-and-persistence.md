@@ -4,6 +4,8 @@ weight: 3
 description: "Base versus overlay, rebinding, `save`, `restore`, `dangerous.wipe`, and `boot`."
 aliases:
   - /reference/snapshot-format/
+icon: save
+tags: [save, restore, boot]
 ---
 
 Froth persists the overlay image and rebuilds the base image at boot.

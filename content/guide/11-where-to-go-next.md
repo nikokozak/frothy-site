@@ -4,6 +4,8 @@ description: "Move from the guide into tutorials, Machine, Workshop, reference, 
 weight: 11
 aliases:
   - /guide/10-where-to-go-next/
+icon: compass
+readTime: "2 min"
 ---
 
 The guide gives you the model. The next page depends on what you are trying to
