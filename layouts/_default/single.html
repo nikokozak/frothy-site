@@ -1,0 +1,39 @@
+{{ define "main" }}
+<article class="page{{ if eq .Section "reference" }} reference-page{{ end }}{{ with .File }} page-{{ .BaseFileName }}{{ end }}">
+  <header class="page-header">
+    <h1>{{ .Title }}</h1>
+  </header>
+
+  {{ $section := .Parent }}
+  {{ $sectionPages := slice }}
+  {{ $prevPage := false }}
+  {{ $nextPage := false }}
+  {{ if and $section (ne $section.Kind "home") }}
+    {{ $sectionPages = where $section.RegularPages.ByWeight "Params.hidden" "!=" true }}
+    {{ range $i, $p := $sectionPages }}
+      {{ if eq $p.RelPermalink $.RelPermalink }}
+        {{ if gt $i 0 }}{{ $prevPage = index $sectionPages (sub $i 1) }}{{ end }}
+        {{ if lt (add $i 1) (len $sectionPages) }}{{ $nextPage = index $sectionPages (add $i 1) }}{{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  {{ if or $prevPage $nextPage }}
+  <nav class="page-nav-top">
+    {{ with $prevPage }}<a href="{{ .RelPermalink }}" class="prev">&larr; {{ .Title }}</a>{{ end }}
+    {{ with $nextPage }}<a href="{{ .RelPermalink }}" class="next">{{ .Title }} &rarr;</a>{{ end }}
+  </nav>
+  {{ end }}
+
+  <div class="content">
+    {{ .Content }}
+  </div>
+
+  {{ if or $prevPage $nextPage }}
+  <nav class="page-nav-bottom">
+    {{ with $prevPage }}<a href="{{ .RelPermalink }}" class="prev">&larr; {{ .Title }}</a>{{ end }}
+    {{ with $nextPage }}<a href="{{ .RelPermalink }}" class="next">{{ .Title }} &rarr;</a>{{ end }}
+  </nav>
+  {{ end }}
+</article>
+{{ end }}
