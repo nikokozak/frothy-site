@@ -2,5 +2,6 @@ public/
 resources/
 .hugo_build.lock
 .DS_Store
+.worktrees/
 
 .playwright-mcp/
