@@ -51,6 +51,7 @@ done
 grep -q 'Frothy' public/index.html        || fail "homepage missing 'Frothy'"
 grep -q 'data-repl-editor' public/index.html || fail "homepage missing REPL hero"
 grep -q 'docs-side' public/guide/index.html || fail "guide missing sidebar"
+grep -q 'prefers-color-scheme' public/index.html && fail "homepage defaults to system dark mode" || true
 
 # 4. old-URL alias for the renamed 'how it's different' page resolves
 test -f public/what-makes-froth-different/index.html || fail "missing alias for old how-its-different URL"
