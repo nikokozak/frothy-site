@@ -10,7 +10,7 @@ servo pulses, but it is not part of the first LED/button tutorial path.
 
 ## Timer And Channel Setup
 
-**`ledc.timer-config:`** `(speed_mode, timer, freq, resolution) -> nil`
+**`ledc.timer-config:`** *(pwm/ledc)* `(speed_mode, timer, freq, resolution) -> nil`
 
 Configures one LEDC timer.
 
@@ -18,7 +18,7 @@ Configures one LEDC timer.
 ledc.timer-config: 0, 0, 1000, 10
 ```
 
-**`ledc.channel-config:`** `(pin, speed_mode, channel, timer, duty) -> nil`
+**`ledc.channel-config:`** *(pwm/ledc)* `(pin, speed_mode, channel, timer, duty) -> nil`
 
 Attaches one pin to one LEDC channel.
 
@@ -28,11 +28,11 @@ ledc.channel-config: LED_BUILTIN, 0, 0, 0, 0
 
 ## Duty And Frequency
 
-**`ledc.set-duty:`** `(speed_mode, channel, duty) -> nil`
+**`ledc.set-duty:`** *(pwm/ledc)* `(speed_mode, channel, duty) -> nil`
 
 Sets duty but does not apply it.
 
-**`ledc.update-duty:`** `(speed_mode, channel) -> nil`
+**`ledc.update-duty:`** *(pwm/ledc)* `(speed_mode, channel) -> nil`
 
 Applies the duty change.
 
@@ -41,33 +41,33 @@ ledc.set-duty: 0, 0, 512
 ledc.update-duty: 0, 0
 ```
 
-**`ledc.get-duty:`** `(speed_mode, channel) -> Int`
+**`ledc.get-duty:`** *(pwm/ledc)* `(speed_mode, channel) -> Int`
 
 Reads duty.
 
-**`ledc.set-freq:`** `(speed_mode, timer, freq) -> nil`
+**`ledc.set-freq:`** *(pwm/ledc)* `(speed_mode, timer, freq) -> nil`
 
 Changes timer frequency.
 
-**`ledc.get-freq:`** `(speed_mode, timer) -> Int`
+**`ledc.get-freq:`** *(pwm/ledc)* `(speed_mode, timer) -> Int`
 
 Reads timer frequency.
 
-**`ledc.stop:`** `(speed_mode, channel, idle_level) -> nil`
+**`ledc.stop:`** *(pwm/ledc)* `(speed_mode, channel, idle_level) -> nil`
 
 Stops PWM output for a channel.
 
 ## Fade
 
-**`ledc.fade-install:`** `() -> nil`
+**`ledc.fade-install:`** *(pwm/ledc)* `() -> nil`
 
 Installs the ESP32 fade helper.
 
-**`ledc.fade-with-time:`** `(speed_mode, channel, target_duty, time_ms) -> nil`
+**`ledc.fade-with-time:`** *(pwm/ledc)* `(speed_mode, channel, target_duty, time_ms) -> nil`
 
 Configures a fade.
 
-**`ledc.fade-start:`** `(speed_mode, channel, fade_mode) -> nil`
+**`ledc.fade-start:`** *(pwm/ledc)* `(speed_mode, channel, fade_mode) -> nil`
 
 Starts the configured fade.
 

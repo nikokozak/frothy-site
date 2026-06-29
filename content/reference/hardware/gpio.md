@@ -14,7 +14,7 @@ The current public examples assume an ESP32 board flashed with the Frothy firmwa
 
 ## Raw Words
 
-**`gpio.mode:`** `(pin, mode) -> nil`
+**`gpio.mode:`** *(gpio)* `(pin, mode) -> nil`
 
 Configures pin direction. `1` means output. `0` means input.
 
@@ -23,7 +23,7 @@ gpio.mode: $led_builtin, 1
 gpio.mode: $boot_button, 0
 ```
 
-**`gpio.write:`** `(pin, level) -> nil`
+**`gpio.write:`** *(gpio)* `(pin, level) -> nil`
 
 Writes a digital output level.
 
@@ -32,7 +32,7 @@ gpio.write: $led_builtin, 1
 gpio.write: $led_builtin, 0
 ```
 
-**`gpio.read:`** `(pin) -> Int`
+**`gpio.read:`** *(gpio)* `(pin) -> Int`
 
 Reads a digital input level. Most board helpers convert this to a `Bool` when
 the electrical meaning is known.

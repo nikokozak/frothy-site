@@ -16,7 +16,7 @@ calls. Native ESP-IDF pointers do not become Frothy values.
 
 ## Bus And Device
 
-**`i2c.init:`** `(sda, scl, freq) -> Int`
+**`i2c.init:`** *(i2c)* `(sda, scl, freq) -> Int`
 
 Creates a bus handle.
 
@@ -24,7 +24,7 @@ Creates a bus handle.
 i2c.bus is i2c.init: SDA, SCL, 400000
 ```
 
-**`i2c.add-device:`** `(bus, addr, speed) -> Int`
+**`i2c.add-device:`** *(i2c)* `(bus, addr, speed) -> Int`
 
 Adds one 7-bit-addressed device and returns a device handle.
 
@@ -32,17 +32,17 @@ Adds one 7-bit-addressed device and returns a device handle.
 i2c.dev is i2c.add-device: i2c.bus, 104, 400000
 ```
 
-**`i2c.rm-device:`** `(device) -> nil`
+**`i2c.rm-device:`** *(i2c)* `(device) -> nil`
 
 Releases a device handle.
 
-**`i2c.del-bus:`** `(bus) -> nil`
+**`i2c.del-bus:`** *(i2c)* `(bus) -> nil`
 
 Releases a bus handle.
 
 ## Probe And Byte I/O
 
-**`i2c.probe:`** `(bus, addr) -> Bool`
+**`i2c.probe:`** *(i2c)* `(bus, addr) -> Bool`
 
 Checks whether one address responds.
 
@@ -50,17 +50,17 @@ Checks whether one address responds.
 i2c.probe: i2c.bus, 104
 ```
 
-**`i2c.write-byte:`** `(device, byte) -> nil`
+**`i2c.write-byte:`** *(i2c)* `(device, byte) -> nil`
 
 Writes one byte.
 
-**`i2c.read-byte:`** `(device) -> Int`
+**`i2c.read-byte:`** *(i2c)* `(device) -> Int`
 
 Reads one byte.
 
 ## Register I/O
 
-**`i2c.write-reg:`** `(byte, device, reg) -> nil`
+**`i2c.write-reg:`** *(i2c)* `(byte, device, reg) -> nil`
 
 Writes one byte to a register.
 
@@ -68,7 +68,7 @@ Writes one byte to a register.
 i2c.write-reg: 0, i2c.dev, 107
 ```
 
-**`i2c.read-reg:`** `(device, reg) -> Int`
+**`i2c.read-reg:`** *(i2c)* `(device, reg) -> Int`
 
 Reads one byte from a register.
 
@@ -76,7 +76,7 @@ Reads one byte from a register.
 i2c.read-reg: i2c.dev, 117
 ```
 
-**`i2c.read-reg16:`** `(device, reg) -> Int`
+**`i2c.read-reg16:`** *(i2c)* `(device, reg) -> Int`
 
 Reads a 16-bit register value.
 

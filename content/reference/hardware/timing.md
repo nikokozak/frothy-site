@@ -8,7 +8,7 @@ Timing words are simple on purpose: sleep for a while, or ask how long the board
 
 ## Words
 
-**`ms:`** `(durationMs) -> nil`
+**`ms:`** *(timing)* `(durationMs) -> nil`
 
 Blocks for the requested number of milliseconds.
 
@@ -19,7 +19,7 @@ ms: 75
 Use it for simple sketches, not hard real-time scheduling. While `ms` is
 running, no other Frothy code in that evaluation proceeds.
 
-**`millis:`** `() -> Int`
+**`millis:`** *(timing)* `() -> Int`
 
 Returns wrapped monotonic uptime in milliseconds.
 

@@ -17,7 +17,7 @@ attachment.
 
 ## Auxiliary UART
 
-**`uart.init:`** `(tx, rx, baud) -> Int`
+**`uart.init:`** *(uart)* `(tx, rx, baud) -> Int`
 
 Creates an auxiliary UART handle.
 
@@ -25,7 +25,7 @@ Creates an auxiliary UART handle.
 aux is uart.init: UART_TX, UART_RX, 115200
 ```
 
-**`uart.write:`** `(byte, uart) -> nil`
+**`uart.write:`** *(uart)* `(byte, uart) -> nil`
 
 Writes one byte.
 
@@ -33,7 +33,7 @@ Writes one byte.
 uart.write: 65, aux
 ```
 
-**`uart.read:`** `(uart) -> Int`
+**`uart.read:`** *(uart)* `(uart) -> Int`
 
 Reads one byte.
 
@@ -41,7 +41,7 @@ Reads one byte.
 uart.read: aux
 ```
 
-**`uart.key?:`** `(uart) -> Bool`
+**`uart.key?:`** *(uart)* `(uart) -> Bool`
 
 Returns true when at least one byte is waiting.
 
@@ -55,15 +55,15 @@ when uart.key?: aux [
 
 Boards that support console routing expose words for the active REPL transport:
 
-**`console.info:`** `() -> nil`
+**`console.info:`** *(uart)* `() -> nil`
 
 Reports the current console route.
 
-**`console.default:`** `() -> nil`
+**`console.default:`** *(uart)* `() -> nil`
 
 Returns the console to its default route.
 
-**`console.uart!:`** `(port, tx, rx, baud) -> nil`
+**`console.uart!:`** *(uart)* `(port, tx, rx, baud) -> nil`
 
 Moves the console to a selected UART route.
 
