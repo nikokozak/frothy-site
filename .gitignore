@@ -5,3 +5,4 @@ resources/
 .worktrees/
 
 .playwright-mcp/
+_internal/
