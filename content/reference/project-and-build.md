@@ -41,7 +41,7 @@ target = "esp32_devkit_v1"
 ## Send A File
 
 ```sh
-frothy send main.fr --port /dev/cu.usbserial-0001
+frothy send main.fr
 frothy send main.fr --dry-run
 ```
 

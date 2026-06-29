@@ -83,14 +83,14 @@ frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001
 
 `esp32_devkit_v1` is the board identifier Frothy currently uses for the ESP32 development board shape used during development. It is not meant to imply that only that exact retail board can work. Most classic Tensilica ESP32 development boards with USB serial should be plausible. Newer RISC-V ESP32 variants have not been tried yet.
 
-If only one serial device is attached, Frothy may be able to find it. Passing `--port` is clearer when you are learning.
+You usually don't need `--port` at all: when exactly one board is attached, Frothy finds it for you. Pass `--port` only when more than one serial device is connected, or when you want to be explicit — flashing is the common case for that.
 
 ## Connect
 
 Once the board is flashed, open the prompt:
 
 ```sh
-frothy connect --port /dev/cu.usbserial-0001
+frothy connect
 ```
 
 Try one harmless line:
@@ -122,7 +122,7 @@ frothy init
 That creates a tiny project with `frothy.toml` and `main.fr`. Send it to a connected board:
 
 ```sh
-frothy send main.fr --port /dev/cu.usbserial-0001
+frothy send main.fr
 ```
 
 ## VS Code

@@ -8,7 +8,7 @@ icon: pen-line
 tags: [vs code, send, inspect]
 ---
 
-You do not need a special editor to use Frothy. Any editor plus `frothy send file.fr --port ...` works.
+You do not need a special editor to use Frothy. Any editor plus `frothy send file.fr` works.
 
 The VS Code extension is a convenience layer over `frothy session`. It sends source, asks the device for inspection data, and leaves the live image on the board.
 

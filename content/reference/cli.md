@@ -34,19 +34,19 @@ frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001
 **`frothy connect`** opens the simple serial REPL.
 
 ```sh
-frothy connect --port /dev/cu.usbserial-0001
+frothy connect
 ```
 
 **`frothy session`** opens the richer session path used by editor tooling.
 
 ```sh
-frothy session --port /dev/cu.usbserial-0001
+frothy session
 ```
 
 **`frothy send`** compiles a source file and sends definitions or expressions line by line.
 
 ```sh
-frothy send main.fr --port /dev/cu.usbserial-0001
+frothy send main.fr
 frothy send main.fr --dry-run
 ```
 
@@ -83,7 +83,7 @@ frothy wipe esp32_devkit_v1 --port /dev/cu.usbserial-0001 --force
 **`frothy wipe-user`** clears user-tier definitions while leaving installed library code in place.
 
 ```sh
-frothy wipe-user --port /dev/cu.usbserial-0001
+frothy wipe-user
 ```
 
 **`frothy stop`** stops Frothy sessions that are holding serial ports.

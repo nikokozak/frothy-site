@@ -113,7 +113,7 @@
 
     setRun(true);
     if (logEl) logEl.innerHTML = "";
-    logRow("dim", "▸ frothy send blink.fr · /dev/cu.usbserial-0001");
+    logRow("dim", "▸ frothy send blink.fr");
     await wait(520);
     for (var b = 0; b < BLINK_COUNT; b++) {
       setLed(true); logRow("tick", "led.on   · " + (b + 1) + "/" + BLINK_COUNT);

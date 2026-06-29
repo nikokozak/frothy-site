@@ -114,7 +114,7 @@ to blink with pin, count, wait [ ... ]</code></pre>
       </div>
       <div class="fm-show-grid">
         <div class="fm-term">
-          <div class="fm-term-bar"><span class="dots"><i></i><i></i><i></i></span><span class="ti">frothy connect · /dev/cu.usbserial-0001</span></div>
+          <div class="fm-term-bar"><span class="dots"><i></i><i></i><i></i></span><span class="ti">frothy connect</span></div>
 <pre class="fm-term-body"><code class="language-frothy">frothy> words                       -- ask what it knows
 led.on  led.off  led.toggle  blink
 adc.read  ms  millis  boot  ...
@@ -343,7 +343,7 @@ save</code></pre>
 <span class="d">$ </span>make cli            <span class="cmt"># builds the `frothy` CLI</span>
 <span class="d">$ </span>frothy bootstrap    <span class="cmt"># one-time: fetch the ESP-IDF toolchain</span>
 <span class="d">$ </span>frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001
-<span class="d">$ </span>frothy connect --port /dev/cu.usbserial-0001</pre>
+<span class="d">$ </span>frothy connect
           <div class="fm-install-foot"><span>source only · pre-alpha</span></div>
         </div>
       </div>

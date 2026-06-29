@@ -13,7 +13,7 @@ If you do not have a prompt yet, start with [Install](/install/). The rest of th
 Connect:
 
 ```sh
-frothy connect --port /dev/cu.usbserial-0001
+frothy connect
 ```
 
 Type a value:
@@ -73,7 +73,7 @@ Redefine it and run it again. That is the basic live loop.
 When a definition grows past a few lines, put it in `main.fr` and send it:
 
 ```sh
-frothy send main.fr --port /dev/cu.usbserial-0001
+frothy send main.fr
 ```
 
 You do not need to flash for ordinary edits. Flashing is for installing or recovering firmware.
