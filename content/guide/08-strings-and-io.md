@@ -20,7 +20,7 @@ label is "ready"
 label
 ```
 
-Text is byte-oriented in the current profile. Unicode semantics are out of
+Text is byte-oriented in the current implementation. Unicode semantics are out of
 scope. That is a deliberate choice for a small device-first language.
 
 Where text operations are available, they should be understood as byte
@@ -88,7 +88,7 @@ grid.show:
 uart.write: 65, console
 ```
 
-Not every board exposes every I/O family. The Frothy Machine exposes GPIO, ADC,
+Not every board exposes every I/O family. The Frothy board exposes GPIO, ADC,
 the TM1629 display layer, joystick helpers, and knob helpers. The source-level
 ESP32 DevKit V1 board also carries I2C, UART, and LEDC bindings.
 

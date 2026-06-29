@@ -25,9 +25,7 @@ my-project/
 name = "ffi-demo"
 entry = "src/main.frothy"
 
-[target]
-board = "posix"
-platform = "posix"
+target = "esp32_devkit_v1"
 
 [ffi]
 sources = ["src/ffi/bindings.c"]

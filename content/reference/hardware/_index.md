@@ -1,32 +1,23 @@
 ---
 title: "Hardware"
 weight: 6
-description: "Machine board words for display, input, utilities, and the shared base-image surface."
+description: "ESP32 board words for GPIO, ADC, timing, UART, I2C, and PWM."
 icon: circuit-board
-tags: [display, joystick, i2c]
+tags: [gpio, adc, esp32]
 ---
 
-Frothy's maintained hardware surface is layered:
+This section is a lookup table for the hardware words currently worth documenting publicly.
 
-- [Board words](/reference/hardware/words/) for the one-page lookup table
-- [Display](/reference/hardware/display/) for `grid.*`, `matrix.*`,
-  `tm1629.*`, and `tm1629.raw.*`
-- [Input](/reference/hardware/input/) for `joy.*?`, `knob.*`, and the raw
-  button pattern
-- [Utilities](/reference/hardware/utilities/) for timing, random, and math
-  helpers used by Machine sketches
-- [Base image](/reference/hardware/base-image/) for GPIO, LED, ADC, and seeded
-  pins
-- [GPIO](/reference/hardware/gpio/) and [Timing](/reference/hardware/timing/)
-  for the low-level shared board words
-- [I2C](/reference/hardware/i2c/), [UART](/reference/hardware/uart/), and
-  [PWM/LEDC](/reference/hardware/pwm-and-ledc/) for source-board peripheral
-  surfaces outside the beginner Machine path
+Start with the simple board surface:
 
-This first public cut treats the TM1629-based `esp32-devkit-v4-game-board` as
-the protoboard target while still documenting the shared base-image board
-surface underneath it.
+- [Base image](/reference/hardware/base-image/) for seeded pins, LED helpers, ADC, timing, and convenience words
+- [GPIO](/reference/hardware/gpio/) for digital input and output
+- [Timing](/reference/hardware/timing/) for `ms` and `millis`
 
-If you want the applied board docs first, use [Machine](/machine/). That
-section teaches the Frothy Machine as a board you can draw on and play with,
-while this section stays focused on exact surface details.
+Then use the more specific peripheral pages only when your circuit needs them:
+
+- [I2C](/reference/hardware/i2c/) for sensors and register-style devices
+- [UART](/reference/hardware/uart/) for auxiliary serial devices
+- [PWM and LEDC](/reference/hardware/pwm-and-ledc/) for brightness and servo-style pulse work
+
+Examples use `esp32_devkit_v1` because that is the board identifier used during development. It names the development-board shape, not a promise that only that exact retail board can work. Most classic Tensilica ESP32 dev boards should be plausible. Newer RISC-V ESP32 variants have not been tried yet.

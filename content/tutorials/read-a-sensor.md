@@ -4,121 +4,47 @@ weight: 4
 description: "Read ADC values, scale them, and turn analog input into board behavior."
 ---
 
-Analog input gives you a range instead of a yes/no answer. On ESP32-class
-boards the raw ADC reading is usually a 12-bit count from `0` to `4095`.
+Analog input gives you a range instead of a yes/no answer. On ESP32-class boards the raw ADC reading is usually a count that moves as voltage changes.
 
-On the Frothy Machine, the easiest analog sensors are already mounted: the left
-and right knobs.
+Use a potentiometer, sensor breakout, or another safe analog source wired to the board's analog pin.
 
 ## Read A Raw ADC Pin
 
-On a general board:
-
 ```frothy
-adc.read: A0
+adc.read: $a0
 ```
 
-Turn the potentiometer or change the sensor voltage and read again. The number
-should move.
+Turn the potentiometer or change the sensor voltage and read again. The number should move.
 
-Convert a raw count to a percentage:
+## Convert To A Percentage
 
 ```frothy
 to adc.percent.of with raw [
   raw * 100 / 4095
 ]
 
-adc.percent.of: (adc.read: A0)
+adc.percent.of: (adc.read: $a0)
 ```
 
-The board library already provides the usual helper:
+The exact high value depends on ADC configuration and the board. Read real values from your circuit before you depend on precise thresholds.
+
+## Use A Threshold
 
 ```frothy
-adc.percent: A0
-```
-
-Use the helper unless you are teaching or debugging the conversion.
-
-## Read The Machine Knobs
-
-On the Frothy Machine:
-
-```frothy
-knob.left:
-knob.right:
-knob.left.raw:
-knob.right.raw:
-```
-
-The `knob.left` and `knob.right` helpers return a percentage-style value on the
-`0..100` scale. The `.raw` forms return the ADC sample.
-
-## Map A Sensor To A Pixel
-
-Initialize the display:
-
-```frothy
-matrix.init:
-matrix.brightness!: 1
-```
-
-Scale the left knob to an x coordinate:
-
-```frothy
-to knob.x [
-  (knob.left:) * (grid.width - 1) / 100
+to sensor.high? [
+  (adc.percent.of: (adc.read: $a0)) > 50
 ]
-```
 
-Draw one frame:
-
-```frothy
-sensor.frame is fn [
-  grid.clear:;
-  grid.set: knob.x:, 3, true;
-  grid.show:
-]
-```
-
-Run it:
-
-```frothy
-repeat 300 [
-  sensor.frame:;
-  ms: 25
-]
-```
-
-Turn the knob. The lit pixel should move across the display.
-
-## Add A Threshold
-
-Thresholds are clearer when named:
-
-```frothy
-alert.threshold is 70
-```
-
-Light the built-in LED when the knob crosses the threshold:
-
-```frothy
-alert.frame is fn [
-  if (knob.left:) > alert.threshold [
+to sensor.frame [
+  if sensor.high?: [
     led.on:
   ] else [
     led.off:
   ]
 ]
-```
 
-Run both the display and LED behavior in one frame:
-
-```frothy
-sensor.alertFrame is fn [
+repeat 500 [
   sensor.frame:;
-  alert.frame:
+  ms: 20
 ]
 ```
-
-That is the analog input pattern: read the raw world, scale it to the range
-your program uses, and keep the conversion in one named place.

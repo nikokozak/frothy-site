@@ -3,17 +3,32 @@ title: "Frothy"
 description: "Learn the live lexical language for programmable devices."
 ---
 
-**Frothy is a small live lexical language for programmable devices.**
+**Frothy is a small live language for programmable devices.**
 
-Frothy is in pre-pre-pre alpha and in ongoing development. It was designed as a thesis project by Nikolai Kozak at the NYU ITP program.
+It is early, rough, and changing quickly. The useful thing is already there: you can flash an ESP32, open a prompt, define words, inspect what the board knows, and save your work back onto the device.
 
-You can get in contact with me at: nkozak [at] nyu [dot] edu.
+If you are new here, treat Frothy less like a finished product and more like a small instrument on the bench. It can do real things, but it still asks for patience.
 
-Repos (again, a sort of primeval, but usable, soup at the moment):
+## A First Conversation
 
-[Frothy](https://github.com/nikokozak/froth) - Stable, ESP32 targeting.
+```text
+frothy> led.on:
+ok
+frothy> ms: 250
+ok
+frothy> led.off:
+ok
+frothy> 2 + 3
+5
+```
 
-[Experimental rewrite](https://github.com/nikokozak/frothyrewrite) - Ongoing rewrite, ATmega328P and other small profiles.
+The board is not a black box at the end of an upload. It is the computer you are talking to.
+
+## Why Frothy?
+
+Most embedded programming goes like this: write code, compile, upload, wait, and hope. Once the program is on the microcontroller, it can be hard to ask what is actually there.
+
+Frothy turns that into a conversation. You define a word. You run it. You redefine it. You ask the board to show you what it knows. When something works, you save it.
 
 ```frothy
 to pulse with pin, wait [
@@ -29,150 +44,29 @@ to blink with pin [
   ]
 ]
 
-blink: LED_BUILTIN
+blink: $led_builtin
 save
 ```
 
-## Why Frothy?
+If none of this made sense: **Frothy feels a bit like p5.js, but the canvas is a real circuit.**
 
-We're used to one major paradigm in embedded programming (think Arduino, etc.): code, compile, upload, and run. Once our program is on the microcontroller, it's basically in a black box. You can't really talk to it, inspect it, change it live.
+## What You Can Do Now
 
-Frothy allows you to do just that: the microcontroller becomes a transparent system. You can redefine functions live, save your progress, read back the source code that's on the device in a human-readable format, and much more. More importantly, **the device is the computer**.
+- build the `frothy` CLI from source
+- bootstrap the ESP32 toolchain
+- flash an ESP32 over USB serial
+- connect to a live prompt
+- send `.fr` files from a terminal or VS Code
+- inspect definitions with `words` and `see`
+- save and restore device state
+- write small C/native extensions when a project really needs one
 
-You can do all of the above with nothing but a typewriter.
-
-What this means is that you can code and explore an entire device without ever having to worry about a toolchain, or wonder what function is calling what - it's all there, out in the open, for you to see.
-
-The Frothy language was designed to be *as easy as possible* within reason. It is drastically simpler than C, and much better suited to beginners, and to quick iteration sessions.
-
-If none of this made sense: **working with Frothy kind of feels like p5.js but for hardware**.
-
-## A conversation
-
-In interactive mode (i.e. when connected to a device running Frothy), Frothy feels like this:
-
-```text
-> gpio.output: LED_BUILTIN
-ok
-> led.on:
-ok
-> led.off:
-ok
-> 2 + 3
-5
-```
-
-Of course, you can also program with files, on a normal editor.
-
-## What's in the device?
-
-Exploring what's saved in the device is easy. To get a list of every function, you can simply type **words**:
-
-```text
-> words
-boot
-led.on
-led.off
-led.blink
-matrix.init
-grid.set
-demo.pong.run
-...
-```
-
-If you're curious about a given word (function), you can simply **show** it:
-
-```text
-> show @led.blink
-to led.blink with count, wait [ blink: led.pin, count, wait ]
-```
-
-## Tracing a program.
-
-When a Frothy device starts up, it automatically executes the only special function in the language: the **boot** function. That means that if we take a look at boot, we can trace through what the code is actually doing.
-
-```text
-> show @boot
-to boot [
-  demo.pong.setup:;
-  demo.pong.run:
-]
-```
-
-Here we see that **boot** calls **demo.pong.setup** and **demo.pong.run**. We can then show demo.pong.run, to get an idea of what the microcontroller is actually doing:
-
-```text
-> show @demo.pong.run
-to demo.pong.run [
-  while (not joy.click?:) [
-    demo.pong.frame:
-  ]
-]
-```
-
-That's it! We now know what the microcontroller is running. This works **even if the microcontroller wasn't yours in the first place** - it's transparent, you can just "check it out". Of course, it can be gated for security later on.
-
-## Redefining functions and variables live.
-
-The nice thing about Frothy is not just that you can see your source, but also that you can *redefine* it while the system is running. No compile, no waiting.
-
-```frothy
-to led.blink with count, wait [
-  repeat count [
-    led.toggle:;
-    ms: wait
-  ]
-]
-
-led.blink: 6, 50
-```
-
-The redefinition is immediate, and all other words (functions) that depend on led.blink will point to the new version.
-
-## Saving.
-
-And of course, none of this would be particularly useful if you weren't able to save. With Frothy, it's as easy as executing **save**, and your function definitions, boot binding, etc. are all persisted in the device.
-
-```text
-> save
-ok
-```
-
-The more technical version of this story is on [How Frothy Is Different](/what-makes-frothy-different/).
-
-## Language Capabilities Right Now
-
-| Area | Released Frothy | Experimental rewrite |
-| --- | --- | --- |
-| Use today | ESP32 and POSIX host paths in the public `v0.1.2` release | Active rewrite, not the public install path yet |
-| Boards | `esp32-devkit-v1`, the Frothy Machine, and a host target | ATmega328P pressure profiles, host profiles, and an ESP32 proof profile |
-| Live work | `connect`, `send`, `words`, `show`, `info`, `save`, `restore`, `dangerous.wipe` | Serial/session work in progress |
-| Language | Names, lexical locals, `Code`, conditionals, loops, text literals, cells, records, explicit persistence | Profile-gated versions of the same core ideas |
-| Hardware | GPIO, LED, ADC, Machine display/input, I2C, UART, and LEDC on supported ESP32 boards | Board/platform glue in progress |
-| C extension | Board FFI and project FFI through `frothy.toml` | Not the public extension path yet |
-
-## Built For Real Boards
-
-At the moment, Frothy is only released for an ESP32 target. It is currently
-being updated and rewritten. An experimental rewrite with support for the
-ATmega328P, as well as more granular language profiles, can be found at:
-
-[Experimental rewrite](https://github.com/nikokozak/frothyrewrite)
-
-On this site, the protoboard introduced as the [Frothy Machine](/machine/) is covered. It was designed for a workshop at NYC Resistor, and I am actively using it to demonstrate Frothy: the display, joystick, knobs, and small game-shaped workflow allow you to learn in a workshop without reading low-level board reference first.
+The current happy path is an ESP32 development board. The command examples use `esp32_devkit_v1` because that is the board identifier used during development. Most classic Tensilica ESP32 dev boards should be plausible; newer RISC-V ESP32 boards have not been tried yet.
 
 ## Start Here
 
-- [Install Frothy](/install/) for the CLI, release archives, and editor
-  extension.
-- [Read the guide](/guide/) for the language and workflow from first
-  principles.
+- [Install Frothy](/install/) to build the CLI, bootstrap ESP-IDF, flash, and connect.
+- [Read the guide](/guide/) for the language and live workflow.
 - [Follow a tutorial](/tutorials/) when you want a task-shaped path.
-- [Explore the Machine](/machine/) for the Frothy Machine board, its words, its
-  controls, and its first games.
-- [Use the Workshop](/workshop/) for the live puzzle activity, missions, quick
-  reference, and troubleshooting.
-- [Use the reference](/reference/) when you need exact behavior or library
-  surface details.
-- [Read how Frothy is different](/what-makes-frothy-different/) for the deeper
-  design context.
+- [Use the reference](/reference/) when you need exact command or word behavior.
+- [Read how Frothy is different](/what-makes-frothy-different/) for the deeper design context.

@@ -1,26 +1,18 @@
 ---
 title: "Reference"
 weight: 2
-description: "Exact behavior, public surface details, and maintained board-library reference."
+description: "Exact behavior for the Frothy language, CLI, editor, project shape, persistence, hardware words, and C boundary."
 ---
 
-Use the reference when you need the exact surface rather than the teaching arc.
-
-If you want the board as a first-time user rather than as a reference reader,
-start with [Machine](/machine/).
+Use the reference when you need the exact surface rather than the teaching arc. If you are new, start with [Install](/install/) or [Getting Started](/guide/02-getting-started/) first.
 
 The main sections are:
 
-- [Word reference](/reference/words/) for syntax, operators, locals, `Cells`,
-  records, and the core inspection/persistence words
-- [Interactive profile](/reference/interactive-profile/) for REPL behavior,
-  multiline input, interrupts, and inspection
-- [Image and persistence](/reference/image-and-persistence/) for base versus
-  overlay and the recovery surface
-- [CLI](/reference/cli/) for the maintained command-line path
-- [Editor](/reference/editor/) for the visible VS Code control surface
-- [Project and build](/reference/project-and-build/) for target, board, and
-  project build conventions
-- [FFI](/reference/ffi/) for the Frothy/C boundary
-- [Machine board reference](/reference/hardware/) for board words, display,
-  input, utilities, and the shared base-image surface
+- [Word reference](/reference/words/) for syntax, operators, values, state, and core inspection words
+- [Interactive profile](/reference/interactive-profile/) for REPL behavior, multiline input, interrupts, and inspection
+- [Image and persistence](/reference/image-and-persistence/) for `save`, `restore`, boot, and recovery
+- [CLI](/reference/cli/) for the current command-line path
+- [Editor](/reference/editor/) for VS Code and browser/editor notes
+- [Project and build](/reference/project-and-build/) for `frothy.toml`, `frothy init`, `build`, `flash`, and library shape
+- [Hardware](/reference/hardware/) for ESP32 board words and peripheral surfaces
+- [FFI](/reference/ffi/) for build-time C/native extension support

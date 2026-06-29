@@ -1,121 +1,97 @@
 ---
 title: "CLI"
 weight: 4
-description: "The maintained `frothy` command surface and attendee-versus-maintainer paths."
+description: "The current `frothy` command surface: bootstrap, doctor, flash, connect, session, send, build, and recovery."
 icon: terminal
 tags: [frothy, flash, connect]
 ---
 
-The public command is `frothy`. Use it for environment checks, direct prompt
-sessions, source sends, project builds, and device flashing.
+The public command is `frothy`. It is still early, but the core verbs are usable.
 
-## Identity and Naming
+## First Commands
 
-**`Frothy product / frothy CLI`** *(tooling surface)*
-
-Layer: `core`  
-Behavior: Product, docs, release assets, Homebrew formula, and VS Code surface
-use `Frothy` / `frothy`.
-Example:
+**`frothy bootstrap`** installs the ESP-IDF toolchain under your Frothy home directory.
 
 ```sh
-frothy --version
-frothy doctor
+frothy bootstrap
+frothy bootstrap --force
 ```
 
-## Core Commands
-
-**`frothy doctor`** *(CLI)*
-
-Layer: `core`  
-Behavior: Checks the maintained machine and device path before you try to work
-through the prompt or editor.  
-Example:
+**`frothy doctor`** checks the local build, flash, and serial setup. It should not modify the board.
 
 ```sh
 frothy doctor
-frothy --port <path> doctor
 ```
 
-**`frothy new`** *(CLI)*
-
-Layer: `core`
-Behavior: Creates a Frothy project with `frothy.toml`, `src/main.frothy`, and the
-selected target and board.
-Example:
+**`frothy flash`** builds and flashes firmware for a board identifier.
 
 ```sh
-frothy new blink --target esp-idf --board esp32-devkit-v1
+frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001
 ```
 
-**`frothy setup esp-idf`** *(CLI)*
+`esp32_devkit_v1` is the development-board identifier used in Frothy today. Most classic Tensilica ESP32 dev boards with USB serial should be plausible; newer RISC-V ESP32 variants have not been tried yet.
 
-Layer: `core`
-Behavior: Installs the optional ESP-IDF toolchain used for custom ESP32 builds
-and flashing.
-Example:
+**`frothy connect`** opens the simple serial REPL.
 
 ```sh
-frothy setup esp-idf
+frothy connect --port /dev/cu.usbserial-0001
 ```
 
-**`frothy connect`** *(CLI)*
-
-Layer: `core`  
-Behavior: Opens the direct prompt path to the connected board. Use it when the
-editor path is blocked or when you want a raw interactive session.  
-Example:
+**`frothy session`** opens the richer session path used by editor tooling.
 
 ```sh
-frothy --port <path> connect
+frothy session --port /dev/cu.usbserial-0001
 ```
 
-**`frothy send`** *(CLI)*
-
-Layer: `core`  
-Behavior: Sends source to the connected target for evaluation. This is part of
-the normal live workflow, not a separate deployment-only path.  
-Example:
+**`frothy send`** compiles a source file and sends definitions or expressions line by line.
 
 ```sh
-frothy send src/main.frothy
+frothy send main.fr --port /dev/cu.usbserial-0001
+frothy send main.fr --dry-run
 ```
 
-**`frothy build`** *(CLI)*
+## Project Commands
 
-Layer: `core`  
-Behavior: Builds the selected project target. This is the sanctioned project
-path when you need a board build rather than only a live prompt session.  
-Example:
+**`frothy init`** scaffolds the current directory. Make the directory yourself first.
+
+```sh
+mkdir my-sketch
+cd my-sketch
+frothy init
+```
+
+**`frothy build`** resolves libraries and builds firmware artifacts.
 
 ```sh
 frothy build
 ```
 
-**`frothy flash`** *(CLI)*
-
-Layer: `core`  
-Behavior: Flashes firmware to the connected board. Use it when you need to
-recover or install firmware, not as a replacement for ordinary live
-redefinition.  
-Example:
+**`frothy install`** sends project library source to the board's library tier.
 
 ```sh
-frothy --port <path> flash
+frothy install --port /dev/cu.usbserial-0001
 ```
 
-## Maintained Paths
+## Recovery Commands
 
-**`attendee path versus maintainer path`** *(tooling policy)*
-
-Layer: `core`  
-Behavior: The attendee path is intentionally narrow: released CLI, matching
-VSIX, preflashed board. The maintainer path includes source builds, broader
-tests, and board-target development from the repo.  
-Example:
+**`frothy wipe`** erases persisted device state on a wedged ESP32. It requires `--force`.
 
 ```sh
-make build
-make test
-make test-publishability
+frothy wipe esp32_devkit_v1 --port /dev/cu.usbserial-0001 --force
 ```
+
+**`frothy wipe-user`** clears user-tier definitions while leaving installed library code in place.
+
+```sh
+frothy wipe-user --port /dev/cu.usbserial-0001
+```
+
+**`frothy stop`** stops Frothy sessions that are holding serial ports.
+
+```sh
+frothy stop
+```
+
+## Not Ready Yet
+
+`frothy fetch` appears in the command surface as a placeholder for future dependency fetching. Do not build a workflow around it yet.

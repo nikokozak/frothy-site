@@ -5,13 +5,13 @@ description: "Auxiliary UART handles and console-routing words for boards that e
 advanced: true
 ---
 
-UART is a source-board peripheral surface. It is for serial devices and, on
+UART is a ESP32 peripheral surface. It is for serial devices and, on
 some boards, explicit console routing. It is not part of the beginner Frothy
-Machine path.
+beginner path.
 
 ## Availability
 
-The `esp32-devkit-v1` board source exposes auxiliary UART bindings. The active
+The `esp32_devkit_v1` board source exposes auxiliary UART bindings. The active
 console itself is still special: it carries REPL input, output, and host
 attachment.
 

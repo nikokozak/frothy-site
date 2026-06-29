@@ -57,8 +57,7 @@ gpio.toggle: LED_BUILTIN
 **`blink`, `animate`** *(board library)*
 
 Layer: `board library`  
-Behavior: Tiny timing helpers baked into the base image for workshop and
-board-library work. `blink` drives a pin for a count and wait interval.
+Behavior: Tiny timing helpers baked into the base image for board-library work. `blink` drives a pin for a count and wait interval.
 `animate` repeatedly runs a step function.  
 Example:
 

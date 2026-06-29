@@ -255,33 +255,33 @@ threshold</code></pre>
     </div>
   </section>
 
-  <section id="machine" class="fm-mach">
+  <section id="hardware" class="fm-mach">
     <div class="wrap sec">
       <div class="sec-head">
-        <span class="eyebrow">{{ partial "icon" "gamepad-2" }} On real hardware</span>
-        <h2 class="sec-title">Made for the workshop table.</h2>
+        <span class="eyebrow">{{ partial "icon" "circuit-board" }} On real hardware</span>
+        <h2 class="sec-title">Built for the messy middle.</h2>
       </div>
       <div class="fm-mach-grid">
         <div class="fm-mach-card">
-          <img src="{{ "images/board.png" | relURL }}" alt="The Frothy Machine board">
+          <img src="{{ "images/board.png" | relURL }}" alt="An ESP32 development board on a workbench">
           <div class="fm-mach-body">
-            <h3 class="fm-mach-h">The Frothy Machine</h3>
-            <p class="fm-mach-d">A little protoboard with a screen, a joystick, two knobs and a speaker — built for hands-on sessions at NYC Resistor and NYU ITP. Everything you need to learn by playing, with no datasheet required.</p>
+            <h3 class="fm-mach-h">Start with an ESP32.</h3>
+            <p class="fm-mach-d">Frothy is early, but the basic loop is already useful: flash a board, keep it powered, ask pins what they read, and redefine small words until the circuit starts making sense.</p>
             <div class="fm-specs">
-              <span>{{ partial "icon" "monitor-smartphone" }} display</span>
-              <span>{{ partial "icon" "joystick" }} joystick</span>
-              <span>{{ partial "icon" "cpu" }} two knobs</span>
+              <span>{{ partial "icon" "usb" }} USB serial</span>
+              <span>{{ partial "icon" "lightbulb" }} LED first</span>
+              <span>{{ partial "icon" "cpu" }} ESP32 path</span>
             </div>
           </div>
         </div>
         <div class="fm-work-card">
           <div class="fm-work-ic">{{ partial "icon" "wrench" }}</div>
-          <h3 class="fm-mach-h">Built for the prototype stage</h3>
-          <p class="fm-mach-d">The hard part of a physical build is the messy middle — the wiring is half-right, the timing is off, and you're not sure what the sensor even returns. Frothy is good there. You leave the board powered and change it a word at a time, instead of editing, recompiling, and re-flashing to learn one fact.</p>
+          <h3 class="fm-mach-h">Change one fact at a time.</h3>
+          <p class="fm-mach-d">The hard part of a physical build is the messy middle — the wiring is half-right, the timing is off, and you're not sure what the sensor even returns. Frothy is good there. Leave the board powered and change it a word at a time.</p>
           <ol class="fm-missions">
-            <li>{{ partial "mascot" 15 }}<span class="n">01</span> Wire it up and leave it powered</li>
+            <li>{{ partial "mascot" 15 }}<span class="n">01</span> Flash an ESP32 and open the prompt</li>
             <li>{{ partial "mascot" 15 }}<span class="n">02</span> Ask a pin what it reads, right now</li>
-            <li>{{ partial "mascot" 15 }}<span class="n">03</span> Redefine a word; watch the behavior change</li>
+            <li>{{ partial "mascot" 15 }}<span class="n">03</span> Redefine a word; watch behavior change</li>
             <li>{{ partial "mascot" 15 }}<span class="n">04</span> <code>save</code> what works, and keep going</li>
           </ol>
         </div>
@@ -320,7 +320,7 @@ threshold</code></pre>
           <p>There's no package to install yet — you build the <code>frothy</code> CLI from source. It needs Go, and for an ESP32 a one-time toolchain fetch that takes the better part of twenty minutes. After that, flashing and connecting are quick.</p>
           <ul class="fm-checks">
             <li><span class="ck">{{ partial "icon" "check" }}</span> macOS and Linux — Windows isn't supported yet</li>
-            <li><span class="ck">{{ partial "icon" "check" }}</span> ESP32 and the Arduino Uno; a host target for trying it without a board</li>
+            <li><span class="ck">{{ partial "icon" "check" }}</span> ESP32 development boards are the public happy path for now</li>
             <li><span class="ck">{{ partial "icon" "check" }}</span> Go 1.19+ and a C compiler; the ESP-IDF toolchain installs itself</li>
           </ul>
         </div>
@@ -331,7 +331,7 @@ threshold</code></pre>
 <span class="d">$ </span>make cli            <span class="cmt"># builds the `frothy` CLI</span>
 <span class="d">$ </span>frothy bootstrap    <span class="cmt"># one-time: fetch the ESP-IDF toolchain</span>
 <span class="d">$ </span>frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001
-<span class="d">$ </span>frothy connect      <span class="cmt"># you're at the prompt</span></pre>
+<span class="d">$ </span>frothy connect --port /dev/cu.usbserial-0001</pre>
           <div class="fm-install-foot"><span>source only · pre-alpha</span></div>
         </div>
       </div>

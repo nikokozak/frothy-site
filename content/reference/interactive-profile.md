@@ -2,8 +2,6 @@
 title: "Interactive Profile"
 weight: 2
 description: "REPL behavior, multiline input, interrupts, inspection, and the control-session path."
-aliases:
-  - /reference/profiles/
 icon: terminal
 tags: [repl, multiline, interrupts]
 ---
@@ -109,17 +107,11 @@ VS Code connect, send line, send file, interrupt, and simple inspection all ride
 
 ## Capability Layers
 
-The interactive profile is only one layer of the public surface:
+The interactive surface is only one part of Frothy:
 
-- the core language: values, names, calls, blocks, control flow, `Cells`, and
-  `Code`
-- the interactive profile: prompt evaluation, multiline input, interrupts,
-  inspection, `save`, `restore`, and `dangerous.wipe`
-- tooling sessions: editor and CLI control paths over the same device-owned
-  image
-- board capabilities: GPIO, ADC, display, input, I2C, UART, or LEDC when the
-  selected board profile exposes them
+- the core language: values, names, calls, blocks, control flow, `Cells`, and `Code`
+- the prompt: evaluation, multiline input, interrupts, inspection, `save`, and `restore`
+- tooling sessions: editor and CLI control paths over the same device-owned image
+- board words: GPIO, ADC, I2C, UART, PWM, and other hardware words when the current board firmware exposes them
 
-The old `profiles` page mixed language features with build-time capability
-selection. Current Frothy keeps the split explicit: the language model is stable
-across targets, while the board surface depends on the selected base image.
+For day-one work, you do not need to memorize those layers. You need the prompt, `words`, `see`, `led.on:`, `led.off:`, and a willingness to try one small line at a time.
