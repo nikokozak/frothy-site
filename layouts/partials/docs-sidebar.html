@@ -3,12 +3,15 @@
 {{- $cur := .RelPermalink -}}
 <aside class="docs-side">
 {{- if and .IsPage (eq .Section "") -}}
-  {{/* root-level pages: Install + About, no home "Overview" link */}}
+  {{/* root-level pages (install, about): a single self link — each is its own top-nav page now */}}
   {{- $base := "" }}{{ with .File }}{{ $base = .BaseFileName }}{{ end -}}
   <div class="side-group">
     <div class="side-h">Frothy</div>
-    <a class="side-link{{ if eq $base "install" }} active{{ end }}" href="{{ "install/" | relURL }}">{{ partial "icon" "download" }} Install</a>
-    <a class="side-link{{ if eq $base "what-makes-frothy-different" }} active{{ end }}" href="{{ "what-makes-frothy-different/" | relURL }}">{{ partial "icon" "compass" }} About</a>
+    {{- if eq $base "what-makes-frothy-different" }}
+    <a class="side-link active" href="{{ "what-makes-frothy-different/" | relURL }}">{{ partial "icon" "compass" }} About</a>
+    {{- else }}
+    <a class="side-link active" href="{{ "install/" | relURL }}">{{ partial "icon" "download" }} Install</a>
+    {{- end }}
   </div>
 {{- else -}}
   {{- $top := .FirstSection -}}

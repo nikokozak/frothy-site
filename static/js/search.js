@@ -76,8 +76,15 @@
       .trim();
   }
 
+  // word signature line: **`name`** *(badge)* `stack`  — stack part optional
+  var SIG = /^\*\*`(.+?)`\*\*\s+\*\((.+?)\)\*(?:\s+`(.+?)`)?$/;
+
+  function isReferencePage(document) {
+    return document.permalink && document.permalink.indexOf("/reference/") === 0;
+  }
+
   function parseWordEntries(document) {
-    if (!document.rawContent || document.permalink !== "/reference/words/") {
+    if (!document.rawContent || !isReferencePage(document)) {
       return [];
     }
 
@@ -103,7 +110,7 @@
         continue;
       }
 
-      var signatureMatch = line.match(/^\*\*`(.+?)`\*\*\s+\*\((.+?)\)\*\s+`(.+?)`$/);
+      var signatureMatch = line.match(SIG);
 
       if (!signatureMatch) {
         i += 1;
@@ -111,8 +118,11 @@
       }
 
       var name = signatureMatch[1].trim();
+      // a real single-word signature has no backtick inside the name; a line that lists
+      // several code spans ( **`a`, `b`, `c`** ) over-captures — skip it as an entry.
+      if (name.indexOf("`") !== -1) { i += 1; continue; }
       var badge = signatureMatch[2].trim();
-      var stack = signatureMatch[3].trim();
+      var stack = (signatureMatch[3] || "").trim();
       var block = [line];
       var description = [];
       var definition = [];
@@ -128,7 +138,7 @@
           /^##\s+/.test(trimmed) ||
           /^###\s+/.test(trimmed) ||
           /^---\s*$/.test(trimmed) ||
-          /^\*\*`(.+?)`\*\*\s+\*\((.+?)\)\*\s+`(.+?)`$/.test(trimmed)
+          SIG.test(trimmed)
         ) {
           break;
         }
@@ -241,8 +251,46 @@
     return entries;
   }
 
+  // Parse a reference lookup table (e.g. hardware/words.md) into word entries.
+  // Rows look like:  | [`grid.set:`](/reference/.../#grid-set) | 3 | `nil` | Set ... |
+  function parseWordTables(document) {
+    if (!document.rawContent || !isReferencePage(document)) return [];
+    var lines = document.rawContent.split(/\r?\n/);
+    var section = "";
+    var entries = [];
+
+    lines.forEach(function (line) {
+      var t = line.trim();
+      var h2 = t.match(/^##\s+(.+?)\s*$/);
+      if (h2) { section = h2[1].trim(); return; }
+      if (t.charAt(0) !== "|") return;
+      if (/^\|[\s:|-]+$/.test(t)) return;                 // separator row
+      var cells = t.replace(/^\|/, "").replace(/\|$/, "").split("|").map(function (c) { return c.trim(); });
+      if (!cells.length) return;
+      var first = cells[0];
+      var code = first.match(/`([^`]+)`/);
+      if (!code) return;                                   // first cell must be a code-span word
+      var name = code[1].trim();
+      if (/^(word|name)$/i.test(name)) return;             // header row
+      var linkMatch = first.match(/\]\(([^)]+)\)/);
+      var permalink = linkMatch ? linkMatch[1] : (document.permalink + "#" + slugify(name));
+      var use = cells.length > 1 ? stripMarkdown(cells[cells.length - 1]) : "";
+      var location = makeLocation([document.section, document.title, section]);
+      entries.push({
+        title: name, section: location, location: location, parentTitle: document.title,
+        permalink: permalink, summary: use, content: stripMarkdown(cells.join(" ")),
+        detail: "word", kind: "word",
+        titleNorm: normalize(name), sectionNorm: normalize(location),
+        summaryNorm: normalize(use), contentNorm: normalize(cells.join(" ")),
+        parentTitleNorm: normalize(document.title), detailNorm: "word"
+      });
+    });
+
+    return entries;
+  }
+
   function parseMarkdownSections(document) {
-    if (!document.rawContent || document.permalink === "/reference/words/") {
+    if (!document.rawContent) {
       return [];
     }
 
@@ -330,16 +378,21 @@
   function hydrateDocuments(rawDocuments) {
     return rawDocuments.reduce(function (allDocuments, document) {
       var pageDocument = hydratePageDocument(document);
-      var sectionDocuments = parseMarkdownSections(document);
-      var wordDocuments = parseWordEntries(document);
 
-      if (wordDocuments.length) {
-        allDocuments.push.apply(allDocuments, wordDocuments);
-      }
+      // word entries from signature blocks + lookup tables, deduped within the page
+      var wordDocuments = parseWordEntries(document).concat(parseWordTables(document));
+      var seen = Object.create(null);
+      wordDocuments = wordDocuments.filter(function (w) {
+        if (seen[w.permalink]) return false;
+        seen[w.permalink] = true;
+        return true;
+      });
 
-      if (sectionDocuments.length) {
-        allDocuments.push.apply(allDocuments, sectionDocuments);
-      }
+      // a reference page that defines words doesn't also need its prose split into sections
+      var sectionDocuments = wordDocuments.length ? [] : parseMarkdownSections(document);
+
+      if (wordDocuments.length) allDocuments.push.apply(allDocuments, wordDocuments);
+      if (sectionDocuments.length) allDocuments.push.apply(allDocuments, sectionDocuments);
 
       allDocuments.push(pageDocument);
       return allDocuments;
@@ -388,8 +441,14 @@
       return 0;
     }
 
-    if (document.kind === "word") score += 56;
-    if (document.kind === "section") score += 20;
+    // A reference word/function is usually the thing people are after — so when the query
+    // hits the word's NAME, let it win decisively. A word that only mentions the query in
+    // its body gets no lift, so unrelated word entries don't crowd the results.
+    if (document.kind === "word") {
+      if (titleMatches) score += 380;
+    } else if (document.kind === "section") {
+      score += 20;
+    }
 
     return score;
   }
