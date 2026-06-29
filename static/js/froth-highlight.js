@@ -38,7 +38,7 @@
         var ce = nl === -1 ? src.length : nl;
         out += span("tk-c", src.slice(i, ce)); i = ce; prev = "cmt"; continue;
       }
-      if (c === "@") {                                   // @ref
+      if (c === "@" || c === "$") {                      // @ref / $constant slot
         var r = i + 1; while (r < src.length && isWord(src[r])) r++;
         out += span("tk-ref", src.slice(i, r)); i = r; prev = "ref"; continue;
       }

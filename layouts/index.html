@@ -23,7 +23,7 @@
             <div class="ed-frame">
               <div class="ed-bar">
                 <span class="ed-traffic"><i></i><i></i><i></i></span>
-                <span class="ed-tab"><span class="ed-tab-dot"></span><span class="mono">blink.frothy</span></span>
+                <span class="ed-tab"><span class="ed-tab-dot"></span><span class="mono">blink.fr</span></span>
                 <span class="ed-spacer"></span>
                 <button class="ed-run" type="button" tabindex="-1" data-repl-run><span class="ed-run-tri"></span> Run</button>
               </div>
@@ -54,7 +54,7 @@
         </div>
         <div>
           <div class="fm-scene">
-            <div class="fm-scene-bar">Live · /dev/ttyUSB0 <span class="dots"><i></i><i></i><i></i></span></div>
+            <div class="fm-scene-bar">Live · /dev/cu.usbserial-0001 <span class="dots"><i></i><i></i><i></i></span></div>
             <div class="fm-photo-slot" role="img" aria-label="Illustration placeholder">
               {{ partial "mascot" 56 }}
               <span>illustration goes here</span>
@@ -77,19 +77,21 @@
           <h3 class="icard-h">Change it<br>while it runs.</h3>
           <p class="icard-b">Redefine a word and every place that uses it picks up the new version on the spot. No build step, no re-upload — the device never stops to listen.</p>
 <pre class="icard-code"><code class="language-frothy">to blink with n [
-  repeat n [ led.toggle:; ms: 90 ]
+  repeat n [
+    led.toggle:; ms: 90
+  ]
 ]
-blink: 3        \ change 90 → 30</code></pre>
+blink: 3</code></pre>
           <p class="icard-note">…then change <code>90</code> to <code>30</code> and run again. Instantly faster.</p>
         </article>
         <article class="icard trans">
           <div class="icard-top"><span class="icard-ic">{{ partial "icon" "eye" }}</span><span class="icard-kw">Transparent</span></div>
           <h3 class="icard-h">Nothing is<br>hidden from you.</h3>
-          <p class="icard-b">Ask the device <code>words</code> and it lists everything it knows. Ask it to <code>show</code> any word and it hands back the source — even on a board that was never yours.</p>
-<pre class="icard-code"><code class="language-frothy">> words
+          <p class="icard-b">Ask the device <code>words</code> and it lists everything it knows. Ask it to <code>see</code> any one and it hands back the source — even on a board that was never yours.</p>
+<pre class="icard-code"><code class="language-frothy">frothy> words
 led.on  led.off  blink
-> show @blink
-to blink with n [ ... ]</code></pre>
+frothy> see blink
+to blink with pin, count, wait [ ... ]</code></pre>
           <p class="icard-note">The whole device, readable, out in the open.</p>
         </article>
         <article class="icard read">
@@ -101,7 +103,7 @@ to blink with n [ ... ]</code></pre>
   ms: wait;
   gpio.low: pin
 ]</code></pre>
-          <p class="icard-note">No semicolon soup, no toolchain, no datasheet first.</p>
+          <p class="icard-note">No headers, no build flags, no datasheet to read first.</p>
         </article>
       </div>
     </div>
@@ -115,19 +117,27 @@ to blink with n [ ... ]</code></pre>
       </div>
       <div class="fm-show-grid">
         <div class="fm-term">
-          <div class="fm-term-bar"><span class="dots"><i></i><i></i><i></i></span><span class="ti">frothy session · /dev/ttyUSB0</span></div>
-<pre class="fm-term-body"><code class="language-frothy">> words
-boot   led.on   led.off   blink
-demo.pong.run   joy.click?   ...
-> show @boot
-to boot [ demo.pong.setup:; demo.pong.run: ]
-> save
+          <div class="fm-term-bar"><span class="dots"><i></i><i></i><i></i></span><span class="ti">frothy connect · /dev/cu.usbserial-0001</span></div>
+<pre class="fm-term-body"><code class="language-frothy">frothy> words
+led.on   led.off   blink   boot
+ok
+frothy> see blink
+to blink with pin, count, wait [
+  repeat count [
+    gpio.high: pin;  ms: wait;
+    gpio.low: pin;   ms: wait
+  ]
+]
+ok
+frothy> blink: $led_builtin, 3, 200
+ok
+frothy> save
 ok</code></pre>
         </div>
         <div class="fm-show-points">
-          <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "list" }}</div><div><div class="scpoint-w">words</div><div class="scpoint-t">List everything</div><div class="scpoint-d">Every function the device knows, named and ready to call.</div></div></div>
-          <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "eye" }}</div><div><div class="scpoint-w">show @word</div><div class="scpoint-t">Read the source</div><div class="scpoint-d">Hand back any word's definition in plain, human-readable Frothy.</div></div></div>
-          <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "save" }}</div><div><div class="scpoint-w">save</div><div class="scpoint-t">Keep it</div><div class="scpoint-d">Persist your words and your boot routine right on the device.</div></div></div>
+          <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "list" }}</div><div><div class="scpoint-w">words</div><div class="scpoint-t">Ask what it knows</div><div class="scpoint-d">Lists every word currently on the device, by name. Nothing is hidden in a binary you can't read.</div></div></div>
+          <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "eye" }}</div><div><div class="scpoint-w">see blink</div><div class="scpoint-t">Read it back</div><div class="scpoint-d">Prints any word's definition the way the device stored it — even one you've never seen before.</div></div></div>
+          <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "save" }}</div><div><div class="scpoint-w">save · restore</div><div class="scpoint-t">Keep it, or take it back</div><div class="scpoint-d"><code>save</code> writes your overlay to flash; <code>clear</code> drops it; <code>restore</code> brings the saved one back.</div></div></div>
         </div>
       </div>
     </div>
@@ -136,57 +146,109 @@ ok</code></pre>
   <section class="fm-play">
     <div class="wrap sec">
       <div class="sec-head">
-        <span class="eyebrow">{{ partial "icon" "terminal" }} Play</span>
-        <h2 class="sec-title">Four tiny programs to poke at.</h2>
+        <span class="eyebrow">{{ partial "icon" "terminal" }} A look at the language</span>
+        <h2 class="sec-title">Seven small programs, read end to end.</h2>
       </div>
       <div class="fm-play-card" data-play>
         <div class="fm-play-tabs">
-          <button class="fm-play-tab cur" data-play-tab="0">{{ partial "icon" "lightbulb" }} blink an led</button>
-          <button class="fm-play-tab" data-play-tab="1">{{ partial "icon" "plug-zap" }} talk to a pin</button>
-          <button class="fm-play-tab" data-play-tab="2">{{ partial "icon" "mouse-pointer-click" }} wait for a click</button>
-          <button class="fm-play-tab" data-play-tab="3">{{ partial "icon" "wand-sparkles" }} make your own word</button>
+          <button class="fm-play-tab cur" data-play-tab="0">{{ partial "icon" "pen-line" }} define a word</button>
+          <button class="fm-play-tab" data-play-tab="1">{{ partial "icon" "lightbulb" }} blink</button>
+          <button class="fm-play-tab" data-play-tab="2">{{ partial "icon" "boxes" }} mutable state</button>
+          <button class="fm-play-tab" data-play-tab="3">{{ partial "icon" "git-branch" }} branch</button>
+          <button class="fm-play-tab" data-play-tab="4">{{ partial "icon" "infinity" }} run at boot</button>
+          <button class="fm-play-tab" data-play-tab="5">{{ partial "icon" "zap" }} interrupts</button>
+          <button class="fm-play-tab" data-play-tab="6">{{ partial "icon" "save" }} the image</button>
         </div>
-        <div class="fm-play-body">
+        <div class="fm-play-body fm-play-body--annot">
           <div class="fm-play-pane fm-play-pane--code">
-            <div class="fm-play-hd"><span data-play-name>blink.frothy</span><button class="copy">{{ partial "icon" "copy" }} copy</button></div>
-<pre class="fm-play-pre" data-play-code-pane="0"><code class="language-frothy">to blink with pin, n [
-  repeat n [
-    gpio.high: pin;
-    ms: 100;
-    gpio.low: pin;
-    ms: 100
-  ]
+            <div class="fm-play-hd"><span data-play-name>word.fr</span></div>
+<pre class="fm-play-pre" data-play-code-pane="0"><code class="language-frothy">to led.on [
+  gpio.high: $led_builtin
 ]
 
-blink: LED_BUILTIN, 3</code></pre>
-<pre class="fm-play-pre" data-play-code-pane="1" hidden><code class="language-frothy">gpio.output: LED_BUILTIN
 led.on:
 led.off:</code></pre>
-<pre class="fm-play-pre" data-play-code-pane="2" hidden><code class="language-frothy">to wait.click [
-  while (not joy.click?:) [
-    ms: 20
+<pre class="fm-play-pre" data-play-code-pane="1" hidden><code class="language-frothy">to blink with pin, count, wait [
+  repeat count [
+    gpio.high: pin;
+    ms: wait;
+    gpio.low: pin;
+    ms: wait
   ]
 ]
 
-wait.click:</code></pre>
-<pre class="fm-play-pre" data-play-code-pane="3" hidden><code class="language-frothy">to add with a, b [ a + b ]
+blink: $led_builtin, 5, 200</code></pre>
+<pre class="fm-play-pre" data-play-code-pane="2" hidden><code class="language-frothy">counter is cells(1)
+set counter[0] to 0
 
-add: 2, 3
-2 + 3</code></pre>
+repeat 10 [
+  set counter[0] to counter[0] + 1
+]
+
+counter[0]</code></pre>
+<pre class="fm-play-pre" data-play-code-pane="3" hidden><code class="language-frothy">to clamp with v, hi [
+  if v > hi [ hi ] else [ v ]
+]
+
+clamp: 12, 9
+clamp: 4, 9</code></pre>
+<pre class="fm-play-pre" data-play-code-pane="4" hidden><code class="language-frothy">to heartbeat [
+  forever [
+    led.on:;  ms: 60;
+    led.off:; ms: 940
+  ]
+]
+
+boot is fn [ heartbeat: ]
+save</code></pre>
+<pre class="fm-play-pre" data-play-code-pane="5" hidden><code class="language-frothy">hits is cells(1)
+
+to mark [
+  set hits[0] to hits[0] + 1
+]
+
+boot is fn [
+  on 7 rising [ mark: ]
+]</code></pre>
+<pre class="fm-play-pre" data-play-code-pane="6" hidden><code class="language-frothy">threshold is 25
+mode is "idle"
+
+save
+clear
+restore
+
+threshold</code></pre>
           </div>
-          <div class="fm-play-pane fm-play-pane--out">
-            <div class="fm-play-hd"><span>session</span><span class="run">{{ partial "icon" "zap" }} live</span></div>
-<pre class="fm-play-pre" data-play-out-pane="0">ok
-ok
-\ the LED blinks three times</pre>
-<pre class="fm-play-pre" data-play-out-pane="1" hidden>ok
-ok
-ok</pre>
-<pre class="fm-play-pre" data-play-out-pane="2" hidden>ok
-\ ...pauses until you click the stick</pre>
-<pre class="fm-play-pre" data-play-out-pane="3" hidden>ok
-5
-5</pre>
+          <div class="fm-play-pane fm-play-pane--note">
+            <div class="fm-play-hd"><span>notes</span></div>
+            <div class="fm-play-note" data-play-note-pane="0">
+              <p>A word is a name with code behind it. You write it with <code>to</code> and run it by putting a colon after the name. No parentheses, no <code>main</code>.</p>
+              <p><code>$led_builtin</code> is the onboard LED's pin. <code>led.on</code> and <code>led.off</code> already ship in the base image — this just shows what they're made of.</p>
+            </div>
+            <div class="fm-play-note" data-play-note-pane="1" hidden>
+              <p><code>with</code> names the things a word takes. <code>repeat count [ … ]</code> runs the block that many times; <code>ms:</code> waits in milliseconds; <code>;</code> ends one step.</p>
+              <p>Arguments go after the colon, separated by commas — here, the pin, how many times, and how long.</p>
+            </div>
+            <div class="fm-play-note" data-play-note-pane="2" hidden>
+              <p><code>is</code> binds a name once and leaves it alone. When you need something that changes, ask for <code>cells(n)</code> — a small run of mutable slots — and write to it with <code>set … to</code>.</p>
+              <p>Everything that isn't a cell stays put. The last line, <code>counter[0]</code>, reads the slot back: 10.</p>
+            </div>
+            <div class="fm-play-note" data-play-note-pane="3" hidden>
+              <p><code>if test [ … ] else [ … ]</code>. The test counts as true when it isn't zero, and the <code>else</code> arm is optional.</p>
+              <p>A block hands back its last value, so <code>clamp</code> returns the number itself — 9, then 4.</p>
+            </div>
+            <div class="fm-play-note" data-play-note-pane="4" hidden>
+              <p><code>forever [ … ]</code> loops until something stops it — a reset, or Ctrl-C at the prompt.</p>
+              <p>Bind the <code>boot</code> word and it runs the instant the board powers up. <code>save</code> writes that to flash, so the device wakes up keeping its own time.</p>
+            </div>
+            <div class="fm-play-note" data-play-note-pane="5" hidden>
+              <p><code>on 7 rising [ … ]</code> runs a handler when pin 7 goes high — a button, say.</p>
+              <p>Frothy only checks between steps — at calls, loop edges, long waits — so a handler never lands in the middle of a write. Cooperative, not preemptive.</p>
+            </div>
+            <div class="fm-play-note" data-play-note-pane="6" hidden>
+              <p>Your definitions and values sit in an <em>overlay</em> on top of the base image the board shipped with.</p>
+              <p><code>save</code> commits the overlay to flash. <code>clear</code> drops back to base. <code>restore</code> reloads the last save. The state is yours to see, and to take back.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -213,14 +275,14 @@ ok</pre>
           </div>
         </div>
         <div class="fm-work-card">
-          <div class="fm-work-ic">{{ partial "icon" "puzzle" }}</div>
-          <h3 class="fm-mach-h">The Workshop</h3>
-          <p class="fm-mach-d">A live puzzle activity: small missions you solve by talking to the device, with a quick reference close at hand.</p>
+          <div class="fm-work-ic">{{ partial "icon" "wrench" }}</div>
+          <h3 class="fm-mach-h">Built for the prototype stage</h3>
+          <p class="fm-mach-d">The hard part of a physical build is the messy middle — the wiring is half-right, the timing is off, and you're not sure what the sensor even returns. Frothy is good there. You leave the board powered and change it a word at a time, instead of editing, recompiling, and re-flashing to learn one fact.</p>
           <ol class="fm-missions">
-            <li>{{ partial "mascot" 15 }}<span class="n">01</span> Make the onboard LED breathe</li>
-            <li>{{ partial "mascot" 15 }}<span class="n">02</span> Read the joystick and move a dot</li>
-            <li>{{ partial "mascot" 15 }}<span class="n">03</span> Print a knob's value to the screen</li>
-            <li>{{ partial "mascot" 15 }}<span class="n">04</span> Build a two-line game of Pong</li>
+            <li>{{ partial "mascot" 15 }}<span class="n">01</span> Wire it up and leave it powered</li>
+            <li>{{ partial "mascot" 15 }}<span class="n">02</span> Ask a pin what it reads, right now</li>
+            <li>{{ partial "mascot" 15 }}<span class="n">03</span> Redefine a word; watch the behavior change</li>
+            <li>{{ partial "mascot" 15 }}<span class="n">04</span> <code>save</code> what works, and keep going</li>
           </ol>
         </div>
       </div>
@@ -254,27 +316,23 @@ ok</pre>
       <div class="fm-install-grid">
         <div>
           <span class="eyebrow">{{ partial "icon" "download" }} Get started</span>
-          <h2 class="sec-title" style="margin-top:14px">Two minutes from zero to <span class="flo">blinking</span>.</h2>
-          <p>Install the CLI, plug in an ESP32, type <code>frothy connect</code>, and you're in a live session.</p>
+          <h2 class="sec-title" style="margin-top:14px">From source to a live <span class="flo">board</span>.</h2>
+          <p>There's no package to install yet — you build the <code>frothy</code> CLI from source. It needs Go, and for an ESP32 a one-time toolchain fetch that takes the better part of twenty minutes. After that, flashing and connecting are quick.</p>
           <ul class="fm-checks">
-            <li><span class="ck">{{ partial "icon" "check" }}</span> Ships today for ESP32 — more boards in the rewrite</li>
-            <li><span class="ck">{{ partial "icon" "check" }}</span> Runs on macOS, Linux and Windows</li>
-            <li><span class="ck">{{ partial "icon" "check" }}</span> No SDK, no toolchain, nothing to configure</li>
+            <li><span class="ck">{{ partial "icon" "check" }}</span> macOS and Linux — Windows isn't supported yet</li>
+            <li><span class="ck">{{ partial "icon" "check" }}</span> ESP32 and the Arduino Uno; a host target for trying it without a board</li>
+            <li><span class="ck">{{ partial "icon" "check" }}</span> Go 1.19+ and a C compiler; the ESP-IDF toolchain installs itself</li>
           </ul>
         </div>
-        <div class="fm-install-card" data-install>
-          <div class="fm-install-tabs">
-            <button class="fm-install-tab cur" data-install-tab="mac">macOS</button>
-            <button class="fm-install-tab" data-install-tab="linux">Linux</button>
-            <button class="fm-install-tab" data-install-tab="win">Windows</button>
-            <button class="fm-install-tab" data-install-tab="src">source</button>
-          </div>
-<pre class="fm-install-code" data-install-pane="mac"><span class="d">$ </span>brew install frothlang/tap/frothy</pre>
-<pre class="fm-install-code" data-install-pane="linux" hidden><span class="d">$ </span>curl -fsSL frothlang.org/install.sh | sh</pre>
-<pre class="fm-install-code" data-install-pane="win" hidden><span class="d">$ </span>winget install frothlang.frothy</pre>
-<pre class="fm-install-code" data-install-pane="src" hidden><span class="d">$ </span>git clone https://github.com/nikokozak/frothyrewrite
-cd frothyrewrite && make</pre>
-          <div class="fm-install-foot"><span>public release · v0.1.2</span></div>
+        <div class="fm-install-card">
+          <div class="fm-install-tabs"><span class="fm-install-tab cur">build from source</span></div>
+<pre class="fm-install-code"><span class="d">$ </span>git clone https://github.com/nikokozak/frothyrewrite
+<span class="d">$ </span>cd frothyrewrite
+<span class="d">$ </span>make cli            <span class="cmt"># builds the `frothy` CLI</span>
+<span class="d">$ </span>frothy bootstrap    <span class="cmt"># one-time: fetch the ESP-IDF toolchain</span>
+<span class="d">$ </span>frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001
+<span class="d">$ </span>frothy connect      <span class="cmt"># you're at the prompt</span></pre>
+          <div class="fm-install-foot"><span>source only · pre-alpha</span></div>
         </div>
       </div>
     </div>

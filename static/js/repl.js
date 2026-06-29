@@ -36,13 +36,13 @@
 
   var play = document.querySelector("[data-play]");
   if (play) {
-    var names = ["blink.frothy", "pin.frothy", "joystick.frothy", "word.frothy"];
+    var names = ["word.fr", "blink.fr", "counter.fr", "clamp.fr", "heartbeat.fr", "button.fr", "image.fr"];
     var nameEl = play.querySelector("[data-play-name]");
-    // keep code + output panes in sync, and update filename
+    // keep the code pane + its commentary in sync, and update the filename
     wireTabs(play, "data-play-tab", "data-play-code-pane", {
       onChange: function (key) {
-        play.querySelectorAll("[data-play-out-pane]").forEach(function (p) {
-          p.hidden = p.getAttribute("data-play-out-pane") !== key;
+        play.querySelectorAll("[data-play-note-pane]").forEach(function (p) {
+          p.hidden = p.getAttribute("data-play-note-pane") !== key;
         });
         if (nameEl && names[+key]) nameEl.textContent = names[+key];
       }
@@ -113,7 +113,7 @@
 
     setRun(true);
     if (logEl) logEl.innerHTML = "";
-    logRow("dim", "▸ running blink.frothy on /dev/ttyUSB0");
+    logRow("dim", "▸ frothy send blink.fr · /dev/cu.usbserial-0001");
     await wait(520);
     for (var b = 0; b < BLINK_COUNT; b++) {
       setLed(true); logRow("tick", "led.on   · " + (b + 1) + "/" + BLINK_COUNT);
