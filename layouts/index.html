@@ -142,7 +142,7 @@ ok</code></pre>
     <div class="wrap sec">
       <div class="sec-head">
         <span class="eyebrow">{{ partial "icon" "terminal" }} A look at the language</span>
-        <h2 class="sec-title">Seven small programs.</h2>
+        <h2 class="sec-title">Nine small programs.</h2>
       </div>
       <div class="fm-play-card" data-play>
         <div class="fm-play-tabs">
@@ -153,6 +153,8 @@ ok</code></pre>
           <button class="fm-play-tab" data-play-tab="4">{{ partial "icon" "zap" }} interrupts</button>
           <button class="fm-play-tab" data-play-tab="5">{{ partial "icon" "moon" }} deep sleep</button>
           <button class="fm-play-tab" data-play-tab="6">{{ partial "icon" "save" }} the image</button>
+          <button class="fm-play-tab" data-play-tab="7">{{ partial "icon" "wifi" }} stay online</button>
+          <button class="fm-play-tab" data-play-tab="8">{{ partial "icon" "shield-check" }} watchdog</button>
         </div>
         <div class="fm-play-body fm-play-body--annot">
           <div class="fm-play-pane fm-play-pane--code">
@@ -208,6 +210,18 @@ save              -- snapshot the overlay to flash
 
 blink.rate is 40  -- try a faster rate, live...
 restore           -- ...snap back to the saved 200</code></pre>
+<pre class="fm-play-pre" data-play-code-pane="7" hidden><code class="language-frothy">boot is fn [
+  on wifi.disconnected [ wifi.connect: ];
+  on wifi.reconnected  [ led.blink: 1, 40 ]
+]
+
+save</code></pre>
+<pre class="fm-play-pre" data-play-code-pane="8" hidden><code class="language-frothy">boot is fn [
+  watchdog.arm: 8000;
+  every 2000 [ watchdog.feed: ]
+]
+
+save</code></pre>
           </div>
           <div class="fm-play-pane fm-play-pane--note">
             <div class="fm-play-hd"><span>notes</span></div>
@@ -238,6 +252,14 @@ restore           -- ...snap back to the saved 200</code></pre>
             <div class="fm-play-note" data-play-note-pane="6" hidden>
               <p>Your top-level names — <code>blink.rate</code> and <code>pulse</code> here — sit in an <em>overlay</em> on top of the base image the board shipped with. <code>save</code> writes that overlay to flash, so it survives a power cycle.</p>
               <p><code>restore</code> snaps the live overlay back to the last save — a cheap undo for a session that wandered. <code>dangerous.wipe</code> erases the saved overlay entirely, back to the bare base. Save a state worth keeping; restore to recover; wipe to start clean.</p>
+            </div>
+            <div class="fm-play-note" data-play-note-pane="7" hidden>
+              <p><code>on wifi.disconnected</code> and <code>on wifi.reconnected</code> are events like any other. The device watches its own link, calls <code>wifi.connect:</code> to bring it back, and blinks once when it's online again.</p>
+              <p>Network resilience that usually takes a state machine — in two lines you can read.</p>
+            </div>
+            <div class="fm-play-note" data-play-note-pane="8" hidden>
+              <p><code>watchdog.arm: 8000</code> means "reset the board if I go quiet for 8 seconds." A timer feeds it every 2&nbsp;s while things are healthy.</p>
+              <p>If the code ever wedges and the feeds stop, the watchdog reboots the device on its own — the embedded world's dead-man's switch.</p>
             </div>
           </div>
         </div>

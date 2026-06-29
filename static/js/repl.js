@@ -36,7 +36,7 @@
 
   var play = document.querySelector("[data-play]");
   if (play) {
-    var names = ["scale.fr", "blink.fr", "sensor.fr", "redefine.fr", "events.fr", "sleep.fr", "image.fr"];
+    var names = ["scale.fr", "blink.fr", "sensor.fr", "redefine.fr", "events.fr", "sleep.fr", "image.fr", "wifi.fr", "watchdog.fr"];
     var nameEl = play.querySelector("[data-play-name]");
     // keep the code pane + its commentary in sync, and update the filename
     wireTabs(play, "data-play-tab", "data-play-code-pane", {

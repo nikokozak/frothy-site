@@ -252,6 +252,14 @@ body.search-open{overflow:hidden}
 .ed-board{display:flex;align-items:center;gap:9px;font-family:var(--font-mono);font-size:11px;color:var(--slate);background:var(--card);border-top:1.5px solid var(--paper-3);padding:10px 14px}
 .ed-led{width:10px;height:10px;border-radius:50%;background:#e0d4c0;border:1px solid var(--stone);transition:all .05s}
 .ed-led.on{background:var(--clay);border-color:var(--clay);box-shadow:0 0 10px var(--clay)}
+/* Mobile: stack the console BELOW the code so the code stays full-width and legible. */
+@media (max-width:640px){
+  .ed-frame{height:auto}
+  .ed-body{flex-direction:column}
+  .ed-main{min-height:300px}
+  .ed-console{width:auto;border-left:0;border-top:2px solid var(--ink)}
+  .ed-log{min-height:60px}
+}
 
 /* ============================ HOMEPAGE SECTIONS ============================ */
 .sec{padding-top:74px;padding-bottom:74px}
