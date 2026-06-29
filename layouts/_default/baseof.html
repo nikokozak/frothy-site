@@ -28,9 +28,11 @@
     </symbol>
   </svg>
 
-  <div class="prealpha-banner">Frothy is pre-alpha · install notes target v0.1.2</div>
-
   {{ $sec := .Section }}
+  <div class="site-top">
+    <div class="prealpha-banner" aria-label="Frothy is pre-alpha. It is primeval, but usable, goop.">
+      <div class="ticker" aria-hidden="true">{{ range seq 12 }}<span>Frothy is pre-alpha</span><span class="t-sep">·</span><span>It is primeval, but usable, goop</span><span class="t-sep">·</span>{{ end }}</div>
+    </div>
   <header class="fm-nav" data-nav>
     <div class="fm-nav-in">
       <a href="{{ "/" | relURL }}" class="fm-brand">
@@ -51,6 +53,7 @@
       </div>
     </div>
   </header>
+  </div>
 
   {{- block "main" . }}{{- end }}
 

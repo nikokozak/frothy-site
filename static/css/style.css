@@ -117,7 +117,8 @@ img{max-width:100%}
 .fmbtn .ic{width:17px;height:17px}
 
 /* ============================ NAV (shared) ============================ */
-.fm-nav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 88%,transparent);
+.site-top{position:sticky;top:0;z-index:100}
+.fm-nav{background:color-mix(in srgb,var(--bg) 88%,transparent);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:2px solid var(--ink)}
 .fm-nav-in{max-width:var(--wrap);margin:0 auto;padding:0 var(--pad);height:72px;display:flex;align-items:center;justify-content:space-between;gap:24px}
 .fm-brand{display:flex;align-items:center;gap:11px}
@@ -146,9 +147,11 @@ img{max-width:100%}
 .fm-iconbtn .ic{width:18px;height:18px}
 @media (max-width:880px){.fm-nav-links{display:none}.fm-status{display:none}.fm-search .sb-label,.fm-search kbd{display:none}}
 
-/* pre-alpha banner */
-.prealpha-banner{text-align:center;font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.1em;
-  text-transform:uppercase;padding:7px 16px;color:var(--ink);background:var(--amber);border-bottom:2px solid var(--ink)}
+/* pre-alpha banner — repeating ticker (clipped, not animated) */
+.prealpha-banner{overflow:hidden;white-space:nowrap;padding:7px 0;color:var(--ink);background:var(--amber);border-bottom:2px solid var(--ink)}
+.prealpha-banner .ticker{display:block;white-space:nowrap}
+.prealpha-banner span{font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.prealpha-banner .t-sep{margin:0 14px;opacity:.55}
 
 /* ============================ FOOTER (shared) ============================ */
 .fm-foot{background:var(--ink);color:var(--paper);border-top:2px solid var(--ink);position:relative;overflow:hidden;margin-top:auto}
@@ -331,9 +334,10 @@ body.search-open{overflow:hidden}
 .fm-play-pre[hidden]{display:none}
 .fm-play-pane--out .fm-play-pre{background:#15120d;color:#9fe07f;min-height:230px}
 .fm-play-pane--out .fm-play-hd{background:#0d0b07;color:#a79e8b;border-bottom-color:#2a251c}
-@media (max-width:760px){.fm-play-body{grid-template-columns:1fr}.fm-play-pane--code{border-right:0;border-bottom:2px solid var(--ink)}}
+@media (max-width:760px){.fm-play-body,.fm-play-body--annot{grid-template-columns:1fr}.fm-play-pane--code{border-right:0;border-bottom:2px solid var(--ink)}}
 /* annotated examples: code | commentary */
 .fm-play-body--annot{grid-template-columns:1fr 1fr}
+@media (max-width:760px){.fm-play-body--annot{grid-template-columns:1fr}}
 .fm-play-pane--note{display:flex;flex-direction:column;background:var(--card)}
 .fm-play-note{padding:20px 22px}
 .fm-play-note p{font-size:14px;line-height:1.62;color:var(--ink-2);margin:0 0 14px;max-width:46ch}

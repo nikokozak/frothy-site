@@ -15,7 +15,7 @@
           <div class="fm-meta">
             <span>{{ partial "mascot" 14 }} redefine while it runs</span>
             <span>{{ partial "mascot" 14 }} read back everything</span>
-            <span>{{ partial "mascot" 14 }} runs on a microcontroller</span>
+            <span>{{ partial "mascot" 14 }} runs on ESP32s</span>
           </div>
         </div>
         <div class="fm-hero-demo">
@@ -118,25 +118,25 @@ to blink with pin, count, wait [ ... ]</code></pre>
       <div class="fm-show-grid">
         <div class="fm-term">
           <div class="fm-term-bar"><span class="dots"><i></i><i></i><i></i></span><span class="ti">frothy connect · /dev/cu.usbserial-0001</span></div>
-<pre class="fm-term-body"><code class="language-frothy">frothy> words
-led.on   led.off   blink   boot
+<pre class="fm-term-body"><code class="language-frothy">frothy> words                 \ ask what it knows
+led.on  led.off  led.toggle  blink
+adc.read  button?  ms  boot  ...
 ok
-frothy> see blink
-to blink with pin, count, wait [
-  repeat count [
-    gpio.high: pin;  ms: wait;
-    gpio.low: pin;   ms: wait
-  ]
-]
+frothy> see led.toggle        \ read any word's source back
+to led.toggle [ gpio.toggle: $led_builtin ]
 ok
-frothy> blink: $led_builtin, 3, 200
+frothy> beat is fn [ led.toggle: ]   \ teach it a new word
 ok
-frothy> save
+frothy> save                  \ write the overlay to flash
+ok
+frothy> clear                 \ wipe to base — beat is gone
+ok
+frothy> restore               \ the saved copy comes back
 ok</code></pre>
         </div>
         <div class="fm-show-points">
           <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "list" }}</div><div><div class="scpoint-w">words</div><div class="scpoint-t">Ask what it knows</div><div class="scpoint-d">Lists every word currently on the device, by name. Nothing is hidden in a binary you can't read.</div></div></div>
-          <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "eye" }}</div><div><div class="scpoint-w">see blink</div><div class="scpoint-t">Read it back</div><div class="scpoint-d">Prints any word's definition the way the device stored it — even one you've never seen before.</div></div></div>
+          <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "eye" }}</div><div><div class="scpoint-w">see led.toggle</div><div class="scpoint-t">Read it back</div><div class="scpoint-d">Prints any word's definition the way the device stored it — even one you've never seen before.</div></div></div>
           <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "save" }}</div><div><div class="scpoint-w">save · restore</div><div class="scpoint-t">Keep it, or take it back</div><div class="scpoint-d"><code>save</code> writes your overlay to flash; <code>clear</code> drops it; <code>restore</code> brings the saved one back.</div></div></div>
         </div>
       </div>
