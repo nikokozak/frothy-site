@@ -17,7 +17,7 @@ That script:
 ## Deploy
 
 GitHub Pages deployment lives in `.github/workflows/deploy-pages.yml`.
-The public custom domain is `frothlang.org`.
+The public custom domain is `frothy.dev`.
 
 ## Source Of Truth
 
