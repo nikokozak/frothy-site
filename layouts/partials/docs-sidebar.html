@@ -1,9 +1,18 @@
-{{- /* Section-scoped sidebar nav. Lists the current top section's pages,
-       splitting guide into main + Advanced, and nesting sub-sections. */ -}}
+{{- /* Section-scoped sidebar nav. Root-level pages (install, about) get a small
+       fixed group; section pages list their own pages, guide split into Advanced. */ -}}
 {{- $cur := .RelPermalink -}}
-{{- $top := .FirstSection -}}
-{{- $isGuide := eq $top.Section "guide" -}}
 <aside class="docs-side">
+{{- if and .IsPage (eq .Section "") -}}
+  {{/* root-level pages: Install + About, no home "Overview" link */}}
+  {{- $base := "" }}{{ with .File }}{{ $base = .BaseFileName }}{{ end -}}
+  <div class="side-group">
+    <div class="side-h">Frothy</div>
+    <a class="side-link{{ if eq $base "install" }} active{{ end }}" href="{{ "install/" | relURL }}">{{ partial "icon" "download" }} Install</a>
+    <a class="side-link{{ if eq $base "what-makes-frothy-different" }} active{{ end }}" href="{{ "what-makes-frothy-different/" | relURL }}">{{ partial "icon" "compass" }} About</a>
+  </div>
+{{- else -}}
+  {{- $top := .FirstSection -}}
+  {{- $isGuide := eq $top.Section "guide" -}}
   {{- $direct := where $top.RegularPages.ByWeight "Params.hidden" "!=" true -}}
   {{- if $isGuide -}}
     {{- $main := where $direct "Params.advanced" "!=" true -}}
@@ -40,4 +49,5 @@
     </div>
     {{- end }}
   {{- end -}}
+{{- end -}}
 </aside>

@@ -1,17 +1,18 @@
 {{ define "main" }}
 {{ $isRef := eq .Section "reference" }}
+{{ $isTop := eq .Section "" }}
 <div class="docs page">
   {{ partial "docs-sidebar" . }}
 
   <main class="docs-main{{ if $isRef }} reference-page{{ end }}">
     <div class="crumb">
       <a href="{{ "/" | relURL }}">Home</a>
-      {{ partial "icon" "chevron-right" }}
-      <a href="{{ .FirstSection.RelPermalink }}">{{ .FirstSection.Title }}</a>
+      {{ if not $isTop }}{{ partial "icon" "chevron-right" }}
+      <a href="{{ .FirstSection.RelPermalink }}">{{ .FirstSection.Title }}</a>{{ end }}
       {{ partial "icon" "chevron-right" }} <b>{{ .Title }}</b>
     </div>
 
-    <span class="doc-kicker">{{ partial "icon" (or .Params.icon "book-open") }} {{ .FirstSection.Title }}</span>
+    <span class="doc-kicker">{{ partial "icon" (or .Params.icon "book-open") }} {{ if $isTop }}Frothy{{ else }}{{ .FirstSection.Title }}{{ end }}</span>
     <h1 class="doc-h1">{{ .Title }}</h1>
     {{ with .Description }}<p class="doc-lede">{{ . }}</p>{{ end }}
     {{ with .Params.readTime }}<p class="g-chap-time" style="margin-top:14px;color:var(--ink-3);font-size:13px;display:inline-flex;align-items:center;gap:6px">{{ partial "icon" "clock" }} {{ . }}</p>{{ end }}

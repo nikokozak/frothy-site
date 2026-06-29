@@ -28,7 +28,9 @@
     </symbol>
   </svg>
 
-  {{ $sec := .Section }}
+  {{/* top-section key: section name, or the base filename for root-level pages (install, about) */}}
+  {{ $cur := .Section }}
+  {{ if and (eq $cur "") .IsPage .File }}{{ $cur = .File.BaseFileName }}{{ end }}
   <div class="site-top">
     <div class="prealpha-banner" aria-label="Frothy is pre-alpha. It is primeval, but usable, goop.">
       <div class="ticker" aria-hidden="true">{{ range seq 12 }}<span>Frothy is pre-alpha</span><span class="t-sep">·</span><span>It is primeval, but usable, goop</span><span class="t-sep">·</span>{{ end }}</div>
@@ -40,10 +42,10 @@
         <span class="word">Frothy</span>
       </a>
       <nav class="fm-nav-links">
-        <a href="{{ "install/" | relURL }}"{{ if eq $sec "install" }} class="active"{{ end }}>Install</a>
-        <a href="{{ "guide/" | relURL }}"{{ if eq $sec "guide" }} class="active"{{ end }}>Guide</a>
-        <a href="{{ "tutorials/" | relURL }}"{{ if eq $sec "tutorials" }} class="active"{{ end }}>Tutorials</a>
-        <a href="{{ "reference/" | relURL }}"{{ if eq $sec "reference" }} class="active"{{ end }}>Reference</a>
+        <a href="{{ "install/" | relURL }}"{{ if eq $cur "install" }} class="active"{{ end }}>Install</a>
+        <a href="{{ "guide/" | relURL }}"{{ if eq $cur "guide" }} class="active"{{ end }}>Guide</a>
+        <a href="{{ "tutorials/" | relURL }}"{{ if eq $cur "tutorials" }} class="active"{{ end }}>Tutorials</a>
+        <a href="{{ "reference/" | relURL }}"{{ if eq $cur "reference" }} class="active"{{ end }}>Reference</a>
       </nav>
       <div class="fm-nav-right">
         <button class="fm-search" type="button" data-search-open aria-haspopup="dialog" aria-controls="site-search-dialog">
