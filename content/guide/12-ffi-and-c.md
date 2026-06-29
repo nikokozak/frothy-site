@@ -67,8 +67,8 @@ runtime plugin system.
 Use board FFI when the binding is part of a board profile:
 
 ```text
-boards/esp32-devkit-v4-game-board/ffi.c
-boards/esp32-devkit-v4-game-board/lib/base library
+boards/esp32_devkit_v1/board_defs.c
+base/core.frothy
 ```
 
 The C side registers the raw bindings. The board library gives them a humane

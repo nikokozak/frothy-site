@@ -6,8 +6,8 @@ advanced: true
 ---
 
 This tutorial is board-specific. It uses the ESP32 LEDC bindings exposed by
-the source-board path, not the Frothy Machine workshop surface. If you are using
-the Machine, treat this as reference practice for a lower-level board.
+the ESP32 path, not the first LED/button tutorial path. If you are using
+a first board, treat this as an advanced ESP32 exercise.
 
 PWM works by switching a pin quickly enough that your eye sees average
 brightness. Higher duty means more on-time and a brighter LED.

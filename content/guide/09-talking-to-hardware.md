@@ -1,110 +1,70 @@
 ---
 title: "09. Talking to Hardware"
-description: "Use the base-image board layer first, then climb to Machine display and input helpers."
+description: "Use the ESP32 board layer: LED, GPIO, ADC, timing, and lower-level peripherals when needed."
 weight: 9
 aliases:
   - /guide/08-hardware-and-the-protoboard/
 icon: circuit-board
-readTime: "8 min"
+readTime: "7 min"
 ---
 
-Frothy is device-first. The host tools help you reach the board, but the board
-is the real environment.
+Frothy is device-first. The host tools help you reach the board, but the board is the real environment.
 
-The hardware surface is layered:
+Start with the small surface: `led.*`, `gpio.*`, `adc.read`, `ms`, and `millis`. Reach for I2C, UART, or PWM only when your circuit needs them.
 
-- base-image words such as `gpio.*`, `adc.read`, `ms`, `millis`, `led.*`, and
-  `blink`
-- board-specific convenience words such as `joy.*?`, `knob.*`, `grid.*`, and
-  `matrix.*`
-- lower-level driver words such as `tm1629.*`, `i2c.*`, `uart.*`, and `ledc.*`
-  on boards that expose them
+## The Development Board Identifier
 
-Start as high as you can. Drop lower only when the higher layer no longer says
-what you mean.
+Most examples use:
+
+```text
+esp32_devkit_v1
+```
+
+That is Frothy's current board identifier for the ESP32 development-board shape used during development. It should be read as "the current ESP32 dev-board path," not "only this exact branded board works." Most classic Tensilica ESP32 development boards with USB serial should be plausible. Newer RISC-V ESP32 variants have not been tried yet.
+
+## LED
+
+```frothy
+led.on:
+ms: 100
+led.off:
+```
+
+The base library defines those helpers over the board pin:
+
+```frothy
+to led.on [ gpio.high: $led_builtin ]
+to led.off [ gpio.low: $led_builtin ]
+```
 
 ## GPIO
 
-The raw digital shape is:
-
 ```frothy
-gpio.output: LED_BUILTIN
-gpio.high: LED_BUILTIN
+gpio.mode: $led_builtin, 1
+gpio.write: $led_builtin, 1
 ms: 100
-gpio.low: LED_BUILTIN
+gpio.write: $led_builtin, 0
 ```
 
-The helper words are ordinary Frothy definitions over the lower-level FFI
-binding:
+Digital input:
 
 ```frothy
-gpio.mode: LED_BUILTIN, 1
-gpio.write: LED_BUILTIN, 1
-gpio.read: LED_BUILTIN
+gpio.mode: $boot_button, 0
+gpio.read: $boot_button
 ```
 
-Use named pins such as `LED_BUILTIN` and `BOOT_BUTTON` instead of raw numbers.
-The board metadata seeds those names into the base image.
+Many board buttons are active-low: pressed reads `0`, released reads `1`. Name that once in your own code instead of remembering it everywhere.
 
 ## ADC
 
-Analog input is board-specific but follows the same idea:
-
 ```frothy
-adc.read: A0
-adc.percent: A0
+adc.read: $a0
 ```
 
-On the Frothy Machine, the friendly layer names the two knobs:
+Treat raw ADC values as something you calibrate. Read a few values, move the sensor or knob, and decide what range matters for your circuit.
 
-```frothy
-knob.left:
-knob.right:
-knob.left.raw:
-knob.right.raw:
-```
+## Other Peripherals
 
-Use percentage helpers for sketches. Use raw readings when you are calibrating
-or debugging.
-
-## Frothy Machine Display And Controls
-
-For the Machine, initialize the display once:
-
-```frothy
-matrix.init:
-matrix.brightness!: 1
-grid.clear:
-grid.show:
-```
-
-Then work through the canvas layer:
-
-```frothy
-grid.set: 4, 3, true
-grid.show:
-```
-
-Read the joystick through booleans:
-
-```frothy
-joy.up?:
-joy.down?:
-joy.left?:
-joy.right?:
-joy.click?:
-```
-
-Those helpers configure and sample the underlying GPIO pins for you.
-
-## Board Availability
-
-The first public protoboard on this site is the TM1629-based
-`esp32-devkit-v4-game-board`. It is the board behind the [Machine](/machine/)
-and [Workshop](/workshop/) sections.
-
-The `esp32-devkit-v1` source board remains useful for lower-level hardware
-examples such as I2C, UART, and LEDC/PWM. Those pages are reference material,
-not the beginner Machine path.
+Frothy has early I2C, UART, PWM, networking, and power words. They are useful, but they are not the first lesson. Use the [hardware reference](/reference/hardware/) when you need exact names and examples.
 
 Next: [Snapshots and persistence](/guide/10-snapshots-and-persistence/).

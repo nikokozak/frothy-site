@@ -2,127 +2,146 @@
 title: "Install"
 aliases:
   - /guide/00-installation/
-description: "Install Frothy with Homebrew, direct release archives, or the VS Code extension."
+description: "Build the early Frothy toolchain, check it, flash an ESP32, and connect."
 ---
 
-Frothy currently ships as public prerelease tooling. The maintained CLI command
-is:
+Frothy is still early. There is no polished installer yet. For now, the honest path is to clone the repo, build the `frothy` command, let it fetch the ESP32 toolchain, and then talk to a board over USB serial.
+
+The command you will use is:
 
 ```text
 frothy
 ```
 
-The source code and project history live in the
-[Frothy source repository](https://github.com/nikokozak/froth); release files are
-published from the same repo.
+## What You Need
 
-## Homebrew
+- macOS or Linux
+- Go 1.22 or newer
+- `git`, `make`, and a C compiler
+- an ESP32 development board with USB serial
+- Chrome, Edge, VS Code, or any terminal/editor you like
 
-On macOS, use the Frothy Homebrew tap:
+Windows is not a supported local CLI path yet.
 
-```sh
-brew tap nikokozak/froth
-brew install nikokozak/froth/frothy
-frothy --version
-frothy doctor
-```
+## Build Frothy
 
-## Direct Tarball
-
-The current CLI release is `v0.1.2`. Download the archive for your platform:
-
-```text
-froth-v0.1.2-darwin-arm64.tar.gz
-froth-v0.1.2-darwin-amd64.tar.gz
-froth-v0.1.2-linux-amd64.tar.gz
-```
-
-Use `darwin-arm64` for Apple Silicon macOS, `darwin-amd64` for Intel macOS,
-or `linux-amd64` for x86_64 Linux:
+Clone the source and build the CLI:
 
 ```sh
-VERSION=0.1.2
-PLATFORM=darwin-arm64
-curl -LO https://github.com/nikokozak/froth/releases/download/v${VERSION}/froth-v${VERSION}-${PLATFORM}.tar.gz
-tar -xzf froth-v${VERSION}-${PLATFORM}.tar.gz
-mkdir -p ~/.local/bin
-install -m 0755 frothy ~/.local/bin/froth
-frothy --version
-frothy doctor
+git clone https://github.com/nikokozak/FrothyRewrite
+cd FrothyRewrite
+make cli
 ```
 
-Use a directory already on `PATH`; on macOS, `/usr/local/bin` or
-`/opt/homebrew/bin` may be more appropriate than `~/.local/bin`.
+`make cli` builds the `frothy` command. If the build prints a `PATH` line, add that to your shell profile or run it in the current terminal before continuing.
 
-## VS Code
-
-Install the public VS Code extension as `NikolaiKozak.froth` from the
-Marketplace.
-
-The `v0.1.2` Frothy release also carries a fallback VSIX:
-
-```text
-froth-vscode-v0.1.1.vsix
-```
-
-Install it from a shell where the VS Code `code` command is available:
+Check that the command is visible:
 
 ```sh
-curl -LO https://github.com/nikokozak/froth/releases/download/v0.1.2/froth-vscode-v0.1.1.vsix
-code --install-extension froth-vscode-v0.1.1.vsix
+frothy --help
 ```
 
-If VS Code cannot find the command on `PATH`, set `froth.cliPath` to the
-absolute path of the installed `frothy` binary.
+## Bootstrap The ESP32 Toolchain
+
+The first ESP32 build needs Espressif's ESP-IDF toolchain. Let Frothy install it into your user directory:
+
+```sh
+frothy bootstrap
+```
+
+This is a one-time download and setup step. It installs under `~/.froth/` by default, uses no `sudo`, and can take a while.
+
+If you need to start over:
+
+```sh
+frothy bootstrap --force
+```
 
 ## First Check
 
-After installing the CLI, run:
+Run the doctor before flashing anything:
 
 ```sh
 frothy doctor
 ```
 
-If you have a preflashed Frothy board plugged in, connect to it:
-
-```sh
-frothy connect
-```
-
-If more than one serial device is visible, pass the port explicitly:
-
-```sh
-frothy --port /dev/tty.usbserial-XXXX connect
-```
+`doctor` checks the host build, flash tooling, and serial setup. It should not change the board or your files.
 
 ## Flash An ESP32
 
-Most workshop boards are preflashed. You only need this section when you are
-installing or recovering firmware yourself.
+Plug in your board and find its serial port. On macOS it often looks like:
 
-Install the ESP-IDF toolchain through the Frothy CLI:
-
-```sh
-frothy setup esp-idf
-frothy doctor
+```text
+/dev/cu.usbserial-0001
 ```
 
-Then create an ESP32 project. Use `esp32-devkit-v1` for a plain DevKit-style
-board, or `esp32-devkit-v4-game-board` for the Frothy Machine:
+Then flash the firmware:
 
 ```sh
-frothy new blink --target esp-idf --board esp32-devkit-v1
-cd blink
-frothy doctor
-frothy --port /dev/tty.usbserial-XXXX flash
+frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001
 ```
 
-After flashing, use the live path for ordinary changes:
+`esp32_devkit_v1` is the board identifier Frothy currently uses for the ESP32 development board shape used during development. It is not meant to imply that only that exact retail board can work. Most classic Tensilica ESP32 development boards with USB serial should be plausible. Newer RISC-V ESP32 variants have not been tried yet.
+
+If only one serial device is attached, Frothy may be able to find it. Passing `--port` is clearer when you are learning.
+
+## Connect
+
+Once the board is flashed, open the prompt:
 
 ```sh
-frothy --port /dev/tty.usbserial-XXXX connect
-frothy --port /dev/tty.usbserial-XXXX send src/main.frothy
+frothy connect --port /dev/cu.usbserial-0001
 ```
 
-For release files and checksums, use the
-[Frothy v0.1.2 release](https://github.com/nikokozak/froth/releases/tag/v0.1.2).
+Try one harmless line:
+
+```frothy
+status
+```
+
+Then try the built-in LED:
+
+```frothy
+led.on:
+ms: 250
+led.off:
+```
+
+If that works, the hard part is done. Most day-to-day Frothy work happens with `connect`, `session`, `send`, and your editor. You do not flash for every small change.
+
+## Start A Small Project
+
+`frothy init` scaffolds the current directory. Make a folder first:
+
+```sh
+mkdir my-sketch
+cd my-sketch
+frothy init
+```
+
+That creates a tiny project with `frothy.toml` and `main.fr`. Send it to a connected board:
+
+```sh
+frothy send main.fr --port /dev/cu.usbserial-0001
+```
+
+## VS Code
+
+The VS Code extension is built from the same repo:
+
+```sh
+make vsix
+code --install-extension editors/vscode/frothy-0.2.1.vsix
+```
+
+If VS Code cannot find the command, set `frothy.binaryPath` to the absolute path of the `frothy` binary you built.
+
+## Browser Tools
+
+There are also browser-based tools for WebSerial. They are useful when you want to try the flasher or editor without setting up VS Code. Use a desktop browser with WebSerial support, such as Chrome or Edge.
+
+## What To Read Next
+
+- [Getting Started](/guide/02-getting-started/) walks through your first prompt.
+- [Blink an LED](/tutorials/blink-an-led/) gives you the smallest hardware proof.
+- [CLI](/reference/cli/) lists the current command surface.

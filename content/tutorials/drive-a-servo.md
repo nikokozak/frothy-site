@@ -5,8 +5,8 @@ description: "Generate hobby-servo pulses with LEDC and wrap the low-level timin
 advanced: true
 ---
 
-This is a lower-level ESP32 tutorial. It is not part of the Frothy Machine
-workshop path. Use a source board that exposes the LEDC bindings, a powered
+This is a lower-level ESP32 tutorial. It is not part of the Frothy board
+first LED/button path. Use an ESP32 board that exposes the LEDC bindings, a powered
 hobby servo, and a signal pin that is safe for your board.
 
 A hobby servo expects a pulse about every 20 ms. The pulse width encodes the

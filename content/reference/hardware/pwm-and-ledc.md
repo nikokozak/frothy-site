@@ -5,8 +5,8 @@ description: "ESP32 LEDC words for PWM duty, frequency, fade, and servo-style pu
 advanced: true
 ---
 
-PWM/LEDC is a source-board ESP32 surface. It is useful for LED brightness and
-servo pulses, but it is not part of the Frothy Machine workshop front door.
+PWM/LEDC is a ESP32 ESP32 surface. It is useful for LED brightness and
+servo pulses, but it is not part of the first LED/button tutorial path.
 
 ## Timer And Channel Setup
 

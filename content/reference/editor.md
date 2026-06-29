@@ -1,113 +1,70 @@
 ---
 title: "Editor"
 weight: 5
-description: "The visible VS Code control surface: connect, send, inspect, interrupt, and recover."
+description: "VS Code and browser editor support for connecting, sending source, inspecting words, and interrupting the board."
 aliases:
   - /reference/vscode/
 icon: pen-line
 tags: [vs code, send, inspect]
 ---
 
-The editor is a thin client over the device-owned image. It does not own a
-separate shadow runtime. It opens one helper-owned control session, sends
-source, asks the device for inspection data, and gets out of the way.
+You do not need a special editor to use Frothy. Any editor plus `frothy send file.fr --port ...` works.
 
-## Core Commands
+The VS Code extension is a convenience layer over `frothy session`. It sends source, asks the device for inspection data, and leaves the live image on the board.
 
-**`Connect Device`** *(editor command)*
+## Install VS Code Support
 
-Layer: `tooling`  
-Behavior: Finds or uses the configured serial port, starts the helper, and
-enters the structured control session.  
-Example:
+From the Frothy repo:
+
+```sh
+make vsix
+code --install-extension editors/vscode/frothy-0.2.1.vsix
+```
+
+The extension handles `.fr` and `.frothy` files.
+
+## Useful Commands
+
+- `Frothy: Connect`
+- `Frothy: Disconnect`
+- `Frothy: Run Line`
+- `Frothy: Send Selection`
+- `Frothy: Run Last Form`
+- `Frothy: Send File`
+- `Frothy: See Word`
+- `Frothy: List Words`
+- `Frothy: Show Status`
+- `Frothy: Memory`
+- `Frothy: Save Overlay`
+- `Frothy: Restore Overlay`
+- `Frothy: Interrupt`
+- `Frothy: Show Output`
+
+## Shortcuts
 
 ```text
-Frothy: Connect Device
+Shift+Enter             run current line
+Cmd/Ctrl+Enter          run selection, or current line
+Cmd/Ctrl+Alt+R          run last form
+Cmd/Ctrl+Shift+Enter    send current file
+Cmd/Ctrl+Alt+B          see word under cursor
+Cmd/Ctrl+Alt+.          interrupt device
 ```
-
-**`Send Selection / Form`** *(editor command)*
-
-Layer: `tooling`  
-Behavior: Sends the current selected text or enclosing form to the connected
-device for evaluation. This is the normal edit-loop command.  
-Example:
-
-```frothy
-to pulse with pin [
-  gpio.high: pin;
-  ms: 75;
-  gpio.low: pin
-]
-```
-
-**`Send File`** *(editor command)*
-
-Layer: `tooling`  
-Behavior: Sends the whole file through the reset-and-eval path when supported
-by the connected firmware. Use it when you want the file to be the current
-session shape rather than one additive form.  
-Example:
-
-```text
-Frothy: Send File
-```
-
-**`Interrupt`** *(editor command)*
-
-Layer: `tooling`  
-Behavior: Sends the interrupt path to a running evaluation and returns the
-editor session to a usable prompt if the target is still responsive.  
-Example:
-
-```text
-Frothy: Interrupt
-```
-
-## Inspection
-
-The editor exposes the same inspection surface as the prompt:
-
-- `Words`
-- `See Binding`
-- `Show Core Binding`
-- `Show Slot Info`
-- `Save Snapshot`
-- `Restore Snapshot`
-- `Dangerous Wipe Snapshot`
-
-These commands call into the live target. They do not inspect a stale host-side
-copy of the image.
 
 ## Settings
 
-**`froth.cliPath`** *(setting)*
+**`frothy.binaryPath`** is an optional absolute path to the `frothy` binary.
 
-Layer: `tooling`  
-Behavior: Optional absolute path to the CLI binary. Leave it empty when `frothy`
-is on `PATH`.
+**`frothy.port`** is an optional preferred serial port.
 
-**`froth.port`** *(setting)*
+**`frothy.baud`** is the serial baud rate.
 
-Layer: `tooling`  
-Behavior: Optional preferred serial port. Leave it empty to auto-connect when
-one supported device is visible or to choose from a prompt when several are
-visible.
+**`frothy.autoConnect`** controls automatic connection.
+
+## Browser Editor
+
+The browser editor uses WebSerial and stores sketches in localStorage. Use Chrome or Edge on desktop.
 
 ## Recovery
 
-If the target is running old code or the serial session is unsettled, start
-with `Interrupt`. If that does not settle the helper, use `Force Reconnect`.
-If saved state is bad after reboot, use the safe-boot path, inspect `boot`, and
-run `dangerous.wipe` only when you are intentionally returning to the base
-image.
-
-## Extension Identity
-
-The public extension identity is `NikolaiKozak.froth`. If VS Code cannot find
-the CLI on `PATH`, set `froth.cliPath` to the absolute path of the installed
-binary.
-
-The extension is deliberately thin. Syntax highlighting, send commands,
-inspection commands, interrupt, and recovery all point back at the connected
-target. There is no hidden host-side interpreter whose state needs to be
-reconciled with the board.
+If a program runs away, use the editor interrupt command or press Ctrl-C in a terminal session. If saved state is bad after reboot, use the CLI recovery commands from the [CLI reference](/reference/cli/).

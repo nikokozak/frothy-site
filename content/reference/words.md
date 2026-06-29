@@ -6,9 +6,7 @@ icon: hash
 tags: [syntax, operators, cells, records]
 ---
 
-This page covers the core language surface. Board and protoboard APIs live
-under [Machine board reference](/reference/hardware/). CLI and editor behavior live under
-[CLI](/reference/cli/) and [Interactive Profile](/reference/interactive-profile/).
+This page covers the core language surface. Hardware APIs live under [Hardware](/reference/hardware/). CLI and editor behavior live under [CLI](/reference/cli/) and [Interactive Profile](/reference/interactive-profile/).
 
 ## Top-Level Forms
 
@@ -267,7 +265,7 @@ make-local-stepper is fn [
 
 This fails because the returned `Code` would need to capture the local `step`.
 
-Rewrite it one of two ways:
+Write it one of two ways:
 
 ```frothy
 step is 1
@@ -277,7 +275,7 @@ adder is fn with x, step [ x + step ]
 ```
 
 `make-shared-stepper` is valid because `step` is top-level. `adder` shows the
-other rewrite: if the value is not top-level, pass it as an argument at call
+other version: if the value is not top-level, pass it as an argument at call
 time instead of trying to smuggle it in through closure capture.
 
 ## Inspection and Persistence Built-Ins

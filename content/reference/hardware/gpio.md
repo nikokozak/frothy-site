@@ -10,13 +10,7 @@ boundary.
 
 ## Availability
 
-| Surface | Boards |
-| --- | --- |
-| `gpio.mode`, `gpio.write`, `gpio.read` | ESP32 board profiles and POSIX stubs |
-| `gpio.input`, `gpio.output`, `gpio.high`, `gpio.low`, `gpio.toggle` | Board base libraries |
-
-The POSIX target may expose stub behavior so source can be exercised without
-physical pins. Hardware behavior requires a board target.
+The current public examples assume an ESP32 board flashed with the Frothy firmware. GPIO behavior depends on the board and the pin you choose, so start with the built-in LED and boot button before wiring more.
 
 ## Raw Words
 
@@ -25,8 +19,8 @@ physical pins. Hardware behavior requires a board target.
 Configures pin direction. `1` means output. `0` means input.
 
 ```frothy
-gpio.mode: LED_BUILTIN, 1
-gpio.mode: BOOT_BUTTON, 0
+gpio.mode: $led_builtin, 1
+gpio.mode: $boot_button, 0
 ```
 
 **`gpio.write:`** `(pin, level) -> nil`
@@ -34,8 +28,8 @@ gpio.mode: BOOT_BUTTON, 0
 Writes a digital output level.
 
 ```frothy
-gpio.write: LED_BUILTIN, 1
-gpio.write: LED_BUILTIN, 0
+gpio.write: $led_builtin, 1
+gpio.write: $led_builtin, 0
 ```
 
 **`gpio.read:`** `(pin) -> Int`
@@ -44,7 +38,7 @@ Reads a digital input level. Most board helpers convert this to a `Bool` when
 the electrical meaning is known.
 
 ```frothy
-gpio.read: BOOT_BUTTON
+gpio.read: $boot_button
 ```
 
 ## Helper Words
@@ -52,11 +46,11 @@ gpio.read: BOOT_BUTTON
 The base library defines readable wrappers:
 
 ```frothy
-gpio.input: BOOT_BUTTON
-gpio.output: LED_BUILTIN
-gpio.high: LED_BUILTIN
-gpio.low: LED_BUILTIN
-gpio.toggle: LED_BUILTIN
+gpio.input: $boot_button
+gpio.output: $led_builtin
+gpio.high: $led_builtin
+gpio.low: $led_builtin
+gpio.toggle: $led_builtin
 ```
 
 Prefer helpers in tutorials and application code. They keep the code about the
@@ -68,7 +62,7 @@ Many buttons read `0` when pressed:
 
 ```frothy
 to boot.pressed? [
-  (gpio.read: BOOT_BUTTON) == 0
+  (gpio.read: $boot_button) == 0
 ]
 ```
 

@@ -4,8 +4,7 @@ weight: 6
 description: "Board timing words for sleeping and reading monotonic uptime."
 ---
 
-Timing words are target-facing because they depend on the platform. ESP32
-uses the board/RTOS delay path. POSIX uses host-side sleep.
+Timing words are simple on purpose: sleep for a while, or ask how long the board has been awake.
 
 ## Words
 
@@ -43,6 +42,4 @@ to blink.poll [
 
 ## Relationship To Utilities
 
-The [Utilities](/reference/hardware/utilities/) page lists timing alongside
-random and math helpers because those words often appear together in Machine
-sketches. This page is the low-level timing contract.
+Timing often appears alongside random and math helpers in small board sketches. This page is the low-level timing contract.

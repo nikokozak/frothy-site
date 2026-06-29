@@ -5,14 +5,11 @@ description: "Source-board I2C bus, device, probe, byte, and register words."
 advanced: true
 ---
 
-I2C is a source-board peripheral surface. It is useful for sensors and small
-external devices, but it is not part of the beginner Frothy Machine workshop
-path.
+I2C is a ESP32 peripheral surface. It is useful for sensors and small external devices, but it is not part of the first LED/button path.
 
 ## Availability
 
-The `esp32-devkit-v1` board source exposes I2C bindings. The Frothy Machine
-public workshop board does not currently teach I2C as a front-door feature.
+The `esp32_devkit_v1` board source exposes I2C bindings. Treat this as an advanced hardware page, not the first thing to try.
 
 Handles are small integers returned by setup words and passed back into later
 calls. Native ESP-IDF pointers do not become Frothy values.
