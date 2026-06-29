@@ -33,10 +33,22 @@
         var end = k === -1 ? src.length : k + 1;
         out += span("tk-s", src.slice(i, end)); i = end; prev = "str"; continue;
       }
-      if (c === "\\") {                                  // \ line comment
-        var nl = src.indexOf("\n", i);
-        var ce = nl === -1 ? src.length : nl;
-        out += span("tk-c", src.slice(i, ce)); i = ce; prev = "cmt"; continue;
+      // Frothy comments: `-- line` and `-* block *-`. A comment may start at
+      // the line start or after whitespace / [ ( : , ; (mirrors the parser).
+      if (c === "-" && (src[i + 1] === "-" || src[i + 1] === "*")) {
+        var pc = i > 0 ? src[i - 1] : " ";
+        var canStart = i === 0 || pc === " " || pc === "\t" || pc === "\n" || pc === "\r" ||
+          pc === "[" || pc === "(" || pc === ":" || pc === "," || pc === ";";
+        if (canStart) {
+          if (src[i + 1] === "-") {                      // line comment
+            var nl = src.indexOf("\n", i);
+            var ce = nl === -1 ? src.length : nl;
+            out += span("tk-c", src.slice(i, ce)); i = ce; prev = "cmt"; continue;
+          }
+          var close = src.indexOf("*-", i + 2);          // block comment
+          var be = close === -1 ? src.length : close + 2;
+          out += span("tk-c", src.slice(i, be)); i = be; prev = "cmt"; continue;
+        }
       }
       if (c === "@" || c === "$") {                      // @ref / $constant slot
         var r = i + 1; while (r < src.length && isWord(src[r])) r++;

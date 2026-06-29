@@ -115,26 +115,24 @@ to blink with pin, count, wait [ ... ]</code></pre>
       <div class="fm-show-grid">
         <div class="fm-term">
           <div class="fm-term-bar"><span class="dots"><i></i><i></i><i></i></span><span class="ti">frothy connect · /dev/cu.usbserial-0001</span></div>
-<pre class="fm-term-body"><code class="language-frothy">frothy> words                 \ ask what it knows
+<pre class="fm-term-body"><code class="language-frothy">frothy> words                       -- ask what it knows
 led.on  led.off  led.toggle  blink
-adc.read  button?  ms  boot  ...
+adc.read  ms  millis  boot  ...
 ok
-frothy> see led.toggle        \ read any word's source back
+frothy> see led.toggle              -- read any word's source
 to led.toggle [ gpio.toggle: $led_builtin ]
 ok
-frothy> beat is fn [ led.toggle: ]   \ teach it a new word
+frothy> beat is fn [ led.toggle: ]  -- teach it a new word
 ok
-frothy> save                  \ write the overlay to flash
+frothy> save                        -- snapshot it to flash
 ok
-frothy> clear                 \ wipe to base — beat is gone
-ok
-frothy> restore               \ the saved copy comes back
+frothy> restore                     -- revert to the last save
 ok</code></pre>
         </div>
         <div class="fm-show-points">
           <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "list" }}</div><div><div class="scpoint-w">words</div><div class="scpoint-t">Ask what it knows</div><div class="scpoint-d">Lists every word currently on the device, by name. Nothing is hidden in a binary you can't read.</div></div></div>
           <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "eye" }}</div><div><div class="scpoint-w">see led.toggle</div><div class="scpoint-t">Read it back</div><div class="scpoint-d">Prints any word's definition the way the device stored it — even one you've never seen before.</div></div></div>
-          <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "save" }}</div><div><div class="scpoint-w">save · restore</div><div class="scpoint-t">Keep it, or take it back</div><div class="scpoint-d"><code>save</code> writes your overlay to flash; <code>clear</code> drops it; <code>restore</code> brings the saved one back.</div></div></div>
+          <div class="scpoint"><div class="scpoint-ic">{{ partial "icon" "save" }}</div><div><div class="scpoint-w">save · restore</div><div class="scpoint-t">Keep it, or take it back</div><div class="scpoint-d"><code>save</code> writes your overlay to flash; <code>restore</code> brings the saved one back; <code>dangerous.wipe</code> clears it to the bare base.</div></div></div>
         </div>
       </div>
     </div>
@@ -144,107 +142,102 @@ ok</code></pre>
     <div class="wrap sec">
       <div class="sec-head">
         <span class="eyebrow">{{ partial "icon" "terminal" }} A look at the language</span>
-        <h2 class="sec-title">Seven small programs, read end to end.</h2>
+        <h2 class="sec-title">Seven small programs.</h2>
       </div>
       <div class="fm-play-card" data-play>
         <div class="fm-play-tabs">
           <button class="fm-play-tab cur" data-play-tab="0">{{ partial "icon" "pen-line" }} define a word</button>
           <button class="fm-play-tab" data-play-tab="1">{{ partial "icon" "lightbulb" }} blink</button>
-          <button class="fm-play-tab" data-play-tab="2">{{ partial "icon" "boxes" }} mutable state</button>
-          <button class="fm-play-tab" data-play-tab="3">{{ partial "icon" "git-branch" }} branch</button>
-          <button class="fm-play-tab" data-play-tab="4">{{ partial "icon" "infinity" }} run at boot</button>
-          <button class="fm-play-tab" data-play-tab="5">{{ partial "icon" "zap" }} interrupts</button>
+          <button class="fm-play-tab" data-play-tab="2">{{ partial "icon" "gauge" }} read a sensor</button>
+          <button class="fm-play-tab" data-play-tab="3">{{ partial "icon" "refresh-cw" }} redefine live</button>
+          <button class="fm-play-tab" data-play-tab="4">{{ partial "icon" "zap" }} interrupts</button>
+          <button class="fm-play-tab" data-play-tab="5">{{ partial "icon" "moon" }} deep sleep</button>
           <button class="fm-play-tab" data-play-tab="6">{{ partial "icon" "save" }} the image</button>
         </div>
         <div class="fm-play-body fm-play-body--annot">
           <div class="fm-play-pane fm-play-pane--code">
-            <div class="fm-play-hd"><span data-play-name>word.fr</span></div>
-<pre class="fm-play-pre" data-play-code-pane="0"><code class="language-frothy">to led.on [
-  gpio.high: $led_builtin
+            <div class="fm-play-hd"><span data-play-name>scale.fr</span></div>
+<pre class="fm-play-pre" data-play-code-pane="0"><code class="language-frothy">to scale with percent, max [
+  here bounded is clamp: percent, 0, 100;
+  bounded * max / 100
 ]
 
-led.on:
-led.off:</code></pre>
+scale: 80, 255</code></pre>
 <pre class="fm-play-pre" data-play-code-pane="1" hidden><code class="language-frothy">to blink with pin, count, wait [
   repeat count [
-    gpio.high: pin;
-    ms: wait;
-    gpio.low: pin;
-    ms: wait
+    gpio.high: pin; ms: wait;
+    gpio.low: pin;  ms: wait
   ]
 ]
 
 blink: $led_builtin, 5, 200</code></pre>
-<pre class="fm-play-pre" data-play-code-pane="2" hidden><code class="language-frothy">counter is cells(1)
-set counter[0] to 0
-
-repeat 10 [
-  set counter[0] to counter[0] + 1
-]
-
-counter[0]</code></pre>
-<pre class="fm-play-pre" data-play-code-pane="3" hidden><code class="language-frothy">to clamp with v, hi [
-  if v > hi [ hi ] else [ v ]
-]
-
-clamp: 12, 9
-clamp: 4, 9</code></pre>
-<pre class="fm-play-pre" data-play-code-pane="4" hidden><code class="language-frothy">to heartbeat [
-  forever [
-    led.on:;  ms: 60;
-    led.off:; ms: 940
+<pre class="fm-play-pre" data-play-code-pane="2" hidden><code class="language-frothy">to watch.light [
+  here level is adc.read: $a0;
+  if level > 2000 [
+    led.on:
+  ] else [
+    led.off:
   ]
 ]
 
-boot is fn [ heartbeat: ]
-save</code></pre>
-<pre class="fm-play-pre" data-play-code-pane="5" hidden><code class="language-frothy">hits is cells(1)
+watch.light:</code></pre>
+<pre class="fm-play-pre" data-play-code-pane="3" hidden><code class="language-frothy">to signal [ led.blink: 2, 120 ]
 
-to mark [
-  set hits[0] to hits[0] + 1
+to warn [ signal: ]
+
+to signal [ led.blink: 8, 40 ]
+
+warn:</code></pre>
+<pre class="fm-play-pre" data-play-code-pane="4" hidden><code class="language-frothy">boot is fn [
+  on $boot_button falling debounce 30 [
+    led.toggle:
+  ]
 ]
 
-boot is fn [
-  on 7 rising [ mark: ]
-]</code></pre>
-<pre class="fm-play-pre" data-play-code-pane="6" hidden><code class="language-frothy">threshold is 25
-mode is "idle"
+save</code></pre>
+<pre class="fm-play-pre" data-play-code-pane="5" hidden><code class="language-frothy">to doze [
+  sleep.wake-on-gpio: $boot_button, 0;
+  sleep.deep: 30000
+]
 
-save
-clear
-restore
+doze:</code></pre>
+<pre class="fm-play-pre" data-play-code-pane="6" hidden><code class="language-frothy">blink.rate is 200
+to pulse [ led.blink: 3, blink.rate ]
 
-threshold</code></pre>
+save              -- snapshot the overlay to flash
+
+blink.rate is 40  -- try a faster rate, live...
+restore           -- ...snap back to the saved 200</code></pre>
           </div>
           <div class="fm-play-pane fm-play-pane--note">
             <div class="fm-play-hd"><span>notes</span></div>
             <div class="fm-play-note" data-play-note-pane="0">
-              <p>A word is a name with code behind it. You write it with <code>to</code> and run it by putting a colon after the name. No parentheses, no <code>main</code>.</p>
-              <p><code>$led_builtin</code> is the onboard LED's pin. <code>led.on</code> and <code>led.off</code> already ship in the base image — this just shows what they're made of.</p>
+              <p>A word is a name with code behind it — write it with <code>to</code>, run it with a trailing colon. <code>with</code> names its arguments.</p>
+              <p><code>here</code> binds a value that's local to the block, so <code>bounded</code> exists only inside <code>scale</code>. A block hands back its last line — here, the scaled number.</p>
             </div>
             <div class="fm-play-note" data-play-note-pane="1" hidden>
-              <p><code>with</code> names the things a word takes. <code>repeat count [ … ]</code> runs the block that many times; <code>ms:</code> waits in milliseconds; <code>;</code> ends one step.</p>
-              <p>Arguments go after the colon, separated by commas — here, the pin, how many times, and how long.</p>
+              <p>The hello-world of hardware — and it already ships in the base image. <code>repeat</code> runs the block a fixed number of times, <code>ms:</code> waits, <code>$led_builtin</code> is the onboard LED.</p>
+              <p>Arguments follow the colon, comma-separated: a pin, a count, a delay.</p>
             </div>
             <div class="fm-play-note" data-play-note-pane="2" hidden>
-              <p><code>is</code> binds a name once and leaves it alone. When you need something that changes, ask for <code>cells(n)</code> — a small run of mutable slots — and write to it with <code>set … to</code>.</p>
-              <p>Everything that isn't a cell stays put. The last line, <code>counter[0]</code>, reads the slot back: 10.</p>
+              <p>Read an analog pin with <code>adc.read:</code>, keep the reading in a local, and branch on it. <code>if … else</code> takes the first block when the test is true.</p>
+              <p>Sense, decide, act — the whole loop of physical computing, in seven lines.</p>
             </div>
             <div class="fm-play-note" data-play-note-pane="3" hidden>
-              <p><code>if test [ … ] else [ … ]</code>. The test counts as true when it isn't zero, and the <code>else</code> arm is optional.</p>
-              <p>A block hands back its last value, so <code>clamp</code> returns the number itself — 9, then 4.</p>
+              <p><code>warn</code> calls <code>signal</code> by name. Redefine <code>signal</code> and every caller picks up the new version on the next call.</p>
+              <p>No recompile, no re-flash, nothing to restart. This is the thing Frothy is really for: changing a running device one word at a time.</p>
             </div>
             <div class="fm-play-note" data-play-note-pane="4" hidden>
-              <p><code>forever [ … ]</code> loops until something stops it — a reset, or Ctrl-C at the prompt.</p>
-              <p>Bind the <code>boot</code> word and it runs the instant the board powers up. <code>save</code> writes that to flash, so the device wakes up keeping its own time.</p>
+              <p><code>on $boot_button falling debounce 30 [ … ]</code> toggles the LED on a falling edge — a button press — with 30&nbsp;ms of debounce, so one push registers once. <code>every &lt;ms&gt; [ … ]</code> does the same on a timer.</p>
+              <p>Handlers fire cooperatively, at safe points between steps — never mid-write. Register them in <code>boot</code>, <code>save</code>, and the device reacts on its own from power-on.</p>
             </div>
             <div class="fm-play-note" data-play-note-pane="5" hidden>
-              <p><code>on 7 rising [ … ]</code> runs a handler when pin 7 goes high — a button, say.</p>
-              <p>Frothy only checks between steps — at calls, loop edges, long waits — so a handler never lands in the middle of a write. Cooperative, not preemptive.</p>
+              <p>Arm a wake source, then power the core down. <code>sleep.wake-on-gpio:</code> says "come back when this pin goes low"; <code>sleep.deep:</code> sleeps up to that many milliseconds.</p>
+              <p>The thing a battery project lives or dies on — one line each.</p>
             </div>
             <div class="fm-play-note" data-play-note-pane="6" hidden>
-              <p>Your definitions and values sit in an <em>overlay</em> on top of the base image the board shipped with.</p>
-              <p><code>save</code> commits the overlay to flash. <code>clear</code> drops back to base. <code>restore</code> reloads the last save. The state is yours to see, and to take back.</p>
+              <p>Your top-level names — <code>blink.rate</code> and <code>pulse</code> here — sit in an <em>overlay</em> on top of the base image the board shipped with. <code>save</code> writes that overlay to flash, so it survives a power cycle.</p>
+              <p><code>restore</code> snaps the live overlay back to the last save — a cheap undo for a session that wandered. <code>dangerous.wipe</code> erases the saved overlay entirely, back to the bare base. Save a state worth keeping; restore to recover; wipe to start clean.</p>
             </div>
           </div>
         </div>
