@@ -1,34 +1,32 @@
-{{- $rel := .RelPermalink -}}
-<footer class="foot">
-  <div class="foot-inner">
-    <div class="foot-mark">
-      <div class="foot-brand">{{ partial "brandmark" . }} frothy</div>
-      <p class="foot-tag">A small, live language that turns a programmable device into a conversation.</p>
-      <p class="foot-credit">A thesis project by Nikolai Kozak · NYU ITP</p>
+<footer class="fm-foot">
+  <div class="fm-foot-band" aria-hidden="true">{{ range seq 28 }}{{ partial "mascot" 46 }}{{ end }}</div>
+  <div class="fm-foot-in">
+    <div>
+      <div class="fm-foot-brand">{{ partial "mascot" 26 }} Frothy</div>
+      <p class="fm-foot-tag">A small, live language that turns a programmable device into a conversation.</p>
+      <p class="fm-foot-credit">A thesis project by Nikolai Kozak · NYU ITP</p>
     </div>
-    <div class="foot-cols">
-      <div>
-        <div class="foot-h">Docs</div>
-        <a href="{{ "install/" | relURL }}">Install</a>
-        <a href="{{ "guide/" | relURL }}">Guide</a>
-        <a href="{{ "tutorials/" | relURL }}">Tutorials</a>
-        <a href="{{ "reference/" | relURL }}">Reference</a>
-      </div>
-      <div>
-        <div class="foot-h">Hardware</div>
-        <a href="{{ "machine/" | relURL }}">The Machine</a>
-        <a href="{{ "workshop/" | relURL }}">Workshop</a>
-        <a href="https://github.com/nikokozak/frothyrewrite" rel="noopener">GitHub</a>
-      </div>
-      <div>
-        <div class="foot-h">About</div>
-        <a href="{{ "what-makes-frothy-different/" | relURL }}">Why Frothy</a>
-        <a href="https://github.com/nikokozak/frothyrewrite" rel="noopener">The rewrite</a>
-      </div>
+    <div class="fm-foot-col">
+      <div class="fm-foot-h">Docs</div>
+      <a href="{{ "install/" | relURL }}">Install</a>
+      <a href="{{ "guide/" | relURL }}">Guide</a>
+      <a href="{{ "tutorials/" | relURL }}">Tutorials</a>
+      <a href="{{ "reference/" | relURL }}">Reference</a>
+    </div>
+    <div class="fm-foot-col">
+      <div class="fm-foot-h">Hardware</div>
+      <a href="{{ "machine/" | relURL }}">The Machine</a>
+      <a href="{{ "workshop/" | relURL }}">Workshop</a>
+      <a href="https://github.com/nikokozak/frothyrewrite" rel="noopener">GitHub</a>
+    </div>
+    <div class="fm-foot-col">
+      <div class="fm-foot-h">About</div>
+      <a href="{{ "what-makes-frothy-different/" | relURL }}">Why Frothy</a>
+      <a href="https://github.com/nikokozak/frothyrewrite" rel="noopener">The rewrite</a>
     </div>
   </div>
-  <div class="foot-base">
+  <div class="fm-foot-base">
     <span>Frothy · pre-alpha · still a primeval but usable soup</span>
-    <span class="foot-status">{{ partial "icon" "check" }} the device is the computer</span>
+    <span class="fm-foot-status">{{ partial "icon" "check" }} the device is the computer</span>
   </div>
 </footer>

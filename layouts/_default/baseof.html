@@ -1,42 +1,43 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="arcade">
+<html lang="en">
 <head>
   <script>
     (function () {
       var t = localStorage.getItem('theme');
-      if (t === 'dark' || t === 'arcade') {
-        document.documentElement.setAttribute('data-theme', t);
-      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+      else if (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)
         document.documentElement.setAttribute('data-theme', 'dark');
-      }
     })();
   </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ if .IsHome }}{{ .Site.Title }} — a small, live language for programmable devices{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}</title>
+  <title>{{ if .IsHome }}{{ .Site.Title }} — a live language for programmable devices{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}</title>
   <meta name="description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body data-search-index="{{ "index.json" | relURL }}"{{ if not .IsHome }} class="docs-body"{{ end }}>
-  <div class="bg-grid" aria-hidden="true"></div>
 
-  <div class="prealpha-banner">
-    Frothy is pre-alpha. The install notes here target the public v0.1.2 release.
-  </div>
+  {{/* shared mascot symbol */}}
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="mascot" viewBox="0 0 62.156 61.815">
+      <path fill-rule="evenodd" fill="currentColor" d="M 0 33.469 L 0 61.815 L 46.788 61.815 L 46.788 44.056 C 46.788 41.87 48.154 41.324 48.837 41.324 L 62.156 41.324 L 62.156 32.786 L 49.52 32.786 C 48.154 32.786 47.812 31.647 47.812 31.078 L 47.812 0 L 38.933 0 L 38.933 22.54 C 38.933 24.248 37.567 24.248 37.567 24.248 L 22.882 24.248 C 20.833 24.248 20.833 22.54 20.833 22.54 L 20.833 0 L 9.562 0 L 9.562 31.42 C 9.562 33.469 8.196 33.469 8.196 33.469 L 0 33.469 Z M 33.5 36.4 A 4.3 4.3 0 1 1 24.9 36.4 A 4.3 4.3 0 1 1 33.5 36.4 Z"></path>
+    </symbol>
+  </svg>
+
+  <div class="prealpha-banner">Frothy is pre-alpha · install notes target v0.1.2</div>
 
   {{ $sec := .Section }}
-  <header class="nav" data-nav>
-    <div class="nav-inner">
-      <a href="{{ "/" | relURL }}" class="nav-brand">
-        {{ partial "brandmark" . }}
-        <span class="brand-name">frothy</span>
-        <span class="brand-ver mono">pre-alpha</span>
+  <header class="fm-nav" data-nav>
+    <div class="fm-nav-in">
+      <a href="{{ "/" | relURL }}" class="fm-brand">
+        {{ partial "mascot" 28 }}
+        <span class="word">Frothy</span>
       </a>
-      <nav class="nav-links">
+      <nav class="fm-nav-links">
         <a href="{{ "install/" | relURL }}"{{ if eq $sec "install" }} class="active"{{ end }}>Install</a>
         <a href="{{ "guide/" | relURL }}"{{ if eq $sec "guide" }} class="active"{{ end }}>Guide</a>
         <a href="{{ "tutorials/" | relURL }}"{{ if eq $sec "tutorials" }} class="active"{{ end }}>Tutorials</a>
@@ -44,13 +45,12 @@
         <a href="{{ "workshop/" | relURL }}"{{ if eq $sec "workshop" }} class="active"{{ end }}>Workshop</a>
         <a href="{{ "reference/" | relURL }}"{{ if eq $sec "reference" }} class="active"{{ end }}>Reference</a>
       </nav>
-      <div class="nav-actions">
-        <button class="search-btn" type="button" data-search-open aria-haspopup="dialog" aria-controls="site-search-dialog">
-          {{ partial "icon" "search" }}
-          <span class="sb-label">Search docs</span>
-          <kbd>⌘K</kbd>
+      <div class="fm-nav-right">
+        <span class="fm-status"><i></i> Device live</span>
+        <button class="fm-search" type="button" data-search-open aria-haspopup="dialog" aria-controls="site-search-dialog">
+          {{ partial "icon" "search" }} <span class="sb-label">Search</span> <kbd>⌘K</kbd>
         </button>
-        <button class="nav-theme" type="button" onclick="toggleTheme()" aria-label="Toggle theme" data-theme-toggle></button>
+        <button class="fm-iconbtn" type="button" onclick="toggleTheme()" aria-label="Toggle theme" data-theme-toggle></button>
       </div>
     </div>
   </header>
@@ -61,24 +61,20 @@
   {{ partial "search.html" . }}
 
   <script>
-    function currentTheme() { return document.documentElement.getAttribute('data-theme') || 'arcade'; }
-    function paintThemeIcon() {
-      var btn = document.querySelector('[data-theme-toggle]');
-      if (!btn) return;
-      btn.innerHTML = '<i data-lucide="' + (currentTheme() === 'dark' ? 'sun' : 'moon') + '" class="ic"></i>';
-      if (window.lucide) lucide.createIcons();
+    function currentTheme(){ return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
+    function paintThemeIcon(){
+      var b = document.querySelector('[data-theme-toggle]');
+      if(!b) return;
+      b.innerHTML = '<i data-lucide="'+(currentTheme()==='dark'?'sun':'moon')+'" class="ic"></i>';
+      if(window.lucide) lucide.createIcons();
     }
-    function toggleTheme() {
-      var next = currentTheme() === 'dark' ? 'arcade' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
+    function toggleTheme(){
+      if(currentTheme()==='dark'){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','light'); }
+      else { document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark'); }
       paintThemeIcon();
     }
-    (function () {
-      function boot() { if (window.lucide) lucide.createIcons(); paintThemeIcon(); }
-      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
-      else boot();
-    })();
+    (function(){ function boot(){ if(window.lucide) lucide.createIcons(); paintThemeIcon(); }
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot(); })();
   </script>
   <script defer src="{{ "js/search.js" | relURL }}"></script>
   <script defer src="{{ "js/froth-highlight.js" | relURL }}"></script>

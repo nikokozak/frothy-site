@@ -25,7 +25,7 @@
     tabs.forEach(function (tab) {
       tab.addEventListener("click", function () {
         var key = tab.getAttribute(tabAttr);
-        tabs.forEach(function (t) { t.classList.toggle("is-active", t === tab); });
+        tabs.forEach(function (t) { t.classList.toggle("cur", t === tab); });
         root.querySelectorAll("[" + paneAttr + "]").forEach(function (pane) {
           pane.hidden = pane.getAttribute(paneAttr) !== key;
         });
