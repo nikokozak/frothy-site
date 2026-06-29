@@ -33,11 +33,14 @@ for route in \
   public/reference/hardware/index.html \
   public/reference/hardware/gpio/index.html \
   public/reference/ffi/index.html \
-  public/machine/index.html \
-  public/workshop/index.html \
   public/what-makes-frothy-different/index.html
 do
   test -f "$route" || fail "missing route: $route"
+done
+
+# Machine/Workshop/OldFroth were removed in the content pass — make sure they stay gone.
+for gone in public/machine public/workshop public/oldfroth; do
+  test ! -e "$gone" || fail "removed section still present: $gone"
 done
 
 # 3. homepage carries the new identity + interactive hooks
