@@ -5,7 +5,7 @@
     <div class="fm-hero-in grid-bg">
       <div class="wrap fm-hero-grid">
         <div>
-          <span class="fm-badge"><span class="dot"></span> A live language for $2 boards</span>
+          <span class="fm-badge"><span class="dot"></span> A live language for microcontrollers</span>
           <h1 class="fm-h1">Talk to your board.<br>Watch it <span class="flo">answer</span>.</h1>
           <p class="fm-lede">Type a line — the board runs it right now and replies <b>ok</b>. Change your mind, type again. No compiling, no uploading, no black box.</p>
           <div class="fm-cta">
@@ -15,7 +15,7 @@
           <div class="fm-meta">
             <span>{{ partial "mascot" 14 }} redefine while it runs</span>
             <span>{{ partial "mascot" 14 }} read back everything</span>
-            <span>{{ partial "mascot" 14 }} runs on a $2 board</span>
+            <span>{{ partial "mascot" 14 }} runs on a microcontroller</span>
           </div>
         </div>
         <div class="fm-hero-demo">
@@ -55,9 +55,11 @@
         <div>
           <div class="fm-scene">
             <div class="fm-scene-bar">Live · /dev/ttyUSB0 <span class="dots"><i></i><i></i><i></i></span></div>
-            <img src="{{ "images/home-hero.png" | relURL }}" alt="A typed line lighting the board's LED">
+            <div class="fm-photo-slot" role="img" aria-label="Illustration placeholder">
+              {{ partial "mascot" 56 }}
+              <span>illustration goes here</span>
+            </div>
           </div>
-          <p class="fm-cap">you type a line · the board lights up</p>
         </div>
       </div>
     </div>

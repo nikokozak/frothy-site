@@ -41,14 +41,11 @@
         <a href="{{ "install/" | relURL }}"{{ if eq $sec "install" }} class="active"{{ end }}>Install</a>
         <a href="{{ "guide/" | relURL }}"{{ if eq $sec "guide" }} class="active"{{ end }}>Guide</a>
         <a href="{{ "tutorials/" | relURL }}"{{ if eq $sec "tutorials" }} class="active"{{ end }}>Tutorials</a>
-        <a href="{{ "machine/" | relURL }}"{{ if eq $sec "machine" }} class="active"{{ end }}>Machine</a>
-        <a href="{{ "workshop/" | relURL }}"{{ if eq $sec "workshop" }} class="active"{{ end }}>Workshop</a>
         <a href="{{ "reference/" | relURL }}"{{ if eq $sec "reference" }} class="active"{{ end }}>Reference</a>
       </nav>
       <div class="fm-nav-right">
-        <span class="fm-status"><i></i> Device live</span>
         <button class="fm-search" type="button" data-search-open aria-haspopup="dialog" aria-controls="site-search-dialog">
-          {{ partial "icon" "search" }} <span class="sb-label">Search</span> <kbd>⌘K</kbd>
+          {{ partial "icon" "search" }} <span class="sb-label">Search the docs</span> <kbd>⌘K</kbd>
         </button>
         <button class="fm-iconbtn" type="button" onclick="toggleTheme()" aria-label="Toggle theme" data-theme-toggle></button>
       </div>
