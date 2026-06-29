@@ -33,10 +33,14 @@ for route in \
   public/reference/hardware/index.html \
   public/reference/hardware/gpio/index.html \
   public/reference/ffi/index.html \
-  public/what-makes-frothy-different/index.html
+  public/what-makes-frothy-different/index.html \
+  public/contact/index.html
 do
   test -f "$route" || fail "missing route: $route"
 done
+
+# Contact email must not appear as a harvestable plain-text address in the source.
+grep -q 'nkozak@nyu.edu' public/contact/index.html && fail "contact email is plain-text in source" || true
 
 # Machine/Workshop/OldFroth were removed in the content pass — make sure they stay gone.
 for gone in public/machine public/workshop public/oldfroth; do

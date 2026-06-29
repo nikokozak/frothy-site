@@ -1,0 +1,18 @@
+{{ define "main" }}
+<main class="page contact-page">
+  <span class="doc-kicker">{{ partial "icon" "mail" }} Contact</span>
+  <h1 class="doc-h1">{{ .Title }}</h1>
+  <div class="content contact-content">
+    {{ .Content }}
+  </div>
+</main>
+<script>
+  // Assemble the address from parts at runtime so it isn't sitting in the
+  // page source as plain text for scrapers to harvest.
+  document.querySelectorAll(".contact-email").forEach(function (a) {
+    var addr = (a.getAttribute("data-user") || "") + "@" + (a.getAttribute("data-domain") || "");
+    a.href = "mailto:" + addr;
+    a.textContent = addr;
+  });
+</script>
+{{ end }}

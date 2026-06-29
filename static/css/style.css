@@ -541,6 +541,11 @@ html[data-theme="dark"] .content pre{background:#15120d;color:#e9e0cb}
 .content tbody td{padding:10px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
 .content tbody tr:nth-child(even) td{background:var(--bg-2)}
 
+/* ============================ CONTACT (bare standalone page) ============================ */
+.contact-page{flex:1;width:100%;max-width:640px;margin:0 auto;padding:72px var(--pad) 120px}
+.contact-content{font-size:17px;margin-top:18px}
+.contact-content p{max-width:60ch}
+
 /* ============================ RESPONSIVE ============================ */
 @media (max-width:640px){
   .sec{padding-top:48px;padding-bottom:48px}
