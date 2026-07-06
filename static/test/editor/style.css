@@ -1,0 +1,269 @@
+/* Palette + fonts aliased to frothy.dev (static/css/style.css). The tool's own
+   var names stay; only the values map to the site. In dark, borders/shadows
+   flip to light ink — matching how the site handles data-theme.
+   ponytail: alias, don't rewrite. Identity treatment appended at end of file. */
+:root {
+  --cream: #f1ead9;
+  --paper: #fbf8ef;
+  --paper-deep: #e8dfca;
+  --espresso: #1b1812;
+  --crema: #e0795c;
+  --shadow: #5c5544;
+  --rule: #d3c8a9;
+  --ok: #3b7e20;
+  --err: #b22d0f;
+  --host: #15788e;
+  --dev: #c25c3e;
+  --status: #5c5544;
+  --serif: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+:root[data-theme="dark"] {
+  --cream: #1b1812;
+  --paper: #1e1a13;
+  --paper-deep: #110e09;
+  --espresso: #e9e0cb;
+  --crema: #e89a82;
+  --shadow: #a79e8b;
+  --rule: #322b20;
+  --ok: #7fd15c;
+  --err: #ec6a4a;
+  --host: #5cc3dc;
+  --dev: #e89a82;
+  --status: #a79e8b;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--cream);
+  color: var(--espresso);
+  font-family: var(--serif);
+  min-height: 100vh;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+}
+
+.page-title {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+}
+
+.page-nav a {
+  margin-left: 20px;
+  color: var(--shadow);
+  text-decoration: none;
+  font-family: var(--sans);
+  font-size: 14px;
+}
+
+.page-nav a:hover { color: var(--espresso); text-decoration: underline; }
+
+.page-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 28px;
+  padding: 28px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 800px) {
+  .page-main { grid-template-columns: 1fr; }
+}
+
+.editor-host {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  min-height: 600px;
+}
+
+.page-aside {
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--shadow);
+}
+
+.page-aside h2 {
+  font-family: var(--sans);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--espresso);
+  margin: 0 0 12px 0;
+}
+
+.page-aside ol { padding-left: 22px; }
+.page-aside li { margin: 8px 0; color: var(--espresso); }
+.page-aside kbd {
+  font-family: var(--mono);
+  background: var(--paper-deep);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 12px;
+}
+.aside-note { font-size: 13px; margin-top: 14px; }
+
+.page-footer {
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--shadow);
+  padding: 24px;
+  border-top: 1px solid var(--rule);
+}
+.page-footer a { color: var(--shadow); }
+
+/* Library-provided surface --------------------------------------- */
+
+.frothy-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.frothy-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper-deep);
+}
+
+.frothy-editor-title {
+  font-family: var(--sans);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--shadow);
+}
+
+.frothy-editor-pane {
+  flex: 1;
+  min-height: 280px;
+  overflow: auto;
+}
+
+.frothy-editor-pane .cm-editor {
+  font-family: var(--mono);
+  font-size: 14px;
+}
+
+.frothy-editor-pane .cm-editor.cm-focused { outline: none; }
+
+.frothy-editor-pane .cm-gutters {
+  background: var(--paper-deep);
+  border-right: 1px solid var(--rule);
+  color: var(--shadow);
+}
+
+.frothy-editor-cmdbar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+}
+
+.frothy-btn {
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 6px 12px;
+  border: 1px solid var(--rule);
+  background: var(--paper-deep);
+  color: var(--espresso);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.frothy-btn:hover { background: var(--crema); color: var(--paper); }
+.frothy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.frothy-btn-primary {
+  background: var(--espresso);
+  color: var(--paper);
+  border-color: var(--espresso);
+}
+
+.frothy-btn-primary:hover { background: var(--shadow); }
+
+.frothy-btn-connected {
+  background: var(--ok);
+  color: var(--paper);
+  border-color: var(--ok);
+}
+
+.frothy-transcript-host {
+  border-top: 1px solid var(--rule);
+  max-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.frothy-transcript {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.5;
+  padding: 10px 14px;
+  background: var(--paper-deep);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.frothy-transcript > div {
+  padding: 1px 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.transcript-host { color: var(--host); }
+.transcript-line { color: var(--espresso); }
+.transcript-ok { color: var(--ok); }
+.transcript-error { color: var(--err); }
+.transcript-status { color: var(--status); font-style: italic; }
+
+/* frothy.dev identity: block shadows, ink header bar, mono uppercase run
+   button, heavier heading. Appended so these win over the base rules above. */
+.page-title { font-family: var(--sans); font-weight: 800; letter-spacing: -0.01em; }
+
+.editor-host {
+  border: 2px solid var(--espresso);
+  border-radius: 7px;
+  box-shadow: 5px 5px 0 0 var(--espresso);
+  overflow: hidden;
+}
+
+.frothy-editor-header {
+  background: var(--espresso);
+  border-bottom: none;
+}
+.frothy-editor-title { color: var(--paper); }
+
+.frothy-btn-primary {
+  background: var(--ok);
+  color: #1b1812;
+  border: 1.5px solid var(--paper);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.frothy-btn-primary:hover { background: var(--ok); filter: brightness(1.06); }

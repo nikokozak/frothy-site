@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // Match frothy.dev: honor the shared `theme` key (explicit dark only).
+  (function () {
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Frothy — flash a board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<main id="app" hidden>
+  <h1>Frothy</h1>
+  <p class="meta">Flash a board, then talk to it. Or connect to one
+  already running Frothy.</p>
+
+  <section id="picker">
+    <label>Board <select id="board"></select></label>
+    <label>Profile <select id="profile"></select></label>
+    <button id="flash" type="button">Flash</button>
+    <button id="connect-existing" type="button">Connect to board</button>
+  </section>
+
+  <p id="status" class="status" hidden></p>
+
+  <section id="repl" hidden>
+    <button id="connect" type="button">Connect REPL</button>
+    <pre id="log" hidden></pre>
+    <input id="line" type="text" autocomplete="off" spellcheck="false"
+           placeholder="type a Frothy line and press Enter" hidden>
+    <button id="disconnect" type="button" hidden>Disconnect</button>
+  </section>
+</main>
+
+<section id="fallback" hidden>
+  <h1>Frothy</h1>
+  <p>Use Chrome 89+, Edge 89+, Opera 76+, or Firefox 151+ on desktop.
+  Safari, iOS, and phones cannot flash USB ESP32 boards here.
+  Use the Frothy CLI instead.</p>
+</section>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>
