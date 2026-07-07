@@ -267,3 +267,17 @@ html, body {
   text-transform: uppercase;
 }
 .frothy-btn-primary:hover { background: var(--ok); filter: brightness(1.06); }
+
+/* Echo toggle in the command bar (client-side suppression of device echo). */
+.frothy-echo-toggle {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--shadow);
+  cursor: pointer;
+  user-select: none;
+}
+.frothy-echo-toggle input { cursor: pointer; }
