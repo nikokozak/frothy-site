@@ -95,8 +95,8 @@ separated by commas. A zero-argument call still uses the colon when you are
 asking for the code to run:
 
 ```frothy
-matrix.init:
-grid.show:
+led.on:
+millis:
 ```
 
 Without the call, a name is a value lookup. That distinction is why `Code` can

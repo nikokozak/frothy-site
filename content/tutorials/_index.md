@@ -9,7 +9,6 @@ Tutorials are for doing one thing end to end. The guide explains the mental mode
 ## First Sketches
 
 - [Blink an LED](/tutorials/blink-an-led/) proves that the board, serial port, and live prompt are working.
-- [Interactive Workflow](/tutorials/interactive-workflow/) shows the loop: change a small word, run it, inspect it, change it again.
 
 ## Input
 
@@ -18,8 +17,7 @@ Tutorials are for doing one thing end to end. The guide explains the mental mode
 
 ## Motion
 
-- [Fade an LED](/tutorials/fade-an-led/) uses PWM/LEDC for brightness.
-- [Drive a Servo](/tutorials/drive-a-servo/) wraps servo pulse timing in readable Frothy words.
+- [Fade an LED](/tutorials/fade-an-led/) uses PWM for brightness.
 
 ## Language Practice
 

@@ -9,18 +9,16 @@ boot.
 
 ## Pins and Constants
 
-**`$led_builtin`, `A0`, `BOOT_BUTTON`, and board-specific pins`** *(base image)*
+**`$led_builtin`, `$a0`, `$boot_button`, and board-specific pins`** *(base image)*
 
 Layer: `base image`  
 Behavior: Board metadata seeds named pins and board constants into the base
-image so code can refer to hardware by stable names instead of raw integers.
-On the TM1629 protoboard that also includes display, joystick, button, and
-potentiometer pin names.  
+image so code can refer to hardware by stable names instead of raw integers.  
 Example:
 
 ```frothy
 gpio.mode: $led_builtin, 1
-adc.read: A0
+adc.read: $a0
 ```
 
 ## Timing and GPIO Primitives
@@ -54,21 +52,19 @@ gpio.mode: $led_builtin, 1
 gpio.toggle: $led_builtin
 ```
 
-**`blink`, `animate`** *(board library)*
+**`blink`** *(board library)*
 
 Layer: `board library`  
-Behavior: Tiny timing helpers baked into the base image for board-library work. `blink` drives a pin for a count and wait interval.
-`animate` repeatedly runs a step function.  
+Behavior: Tiny timing helper baked into the base image for board-library work. `blink` drives a pin for a count and wait interval.  
 Example:
 
 ```frothy
 blink: $led_builtin, 3, 75
-animate: 8, 40, fn with i [ led.toggle: ]
 ```
 
 ## LED and ADC Helpers
 
-**`led.pin`, `led.on`, `led.off`, `led.toggle`, `led.blink`** *(board library)*
+**`led.on`, `led.off`, `led.toggle`, `led.blink`** *(board library)*
 
 Layer: `board library`  
 Behavior: Convenience words for the board's default LED wiring.  
@@ -79,7 +75,7 @@ led.on:
 led.blink: 3, 75
 ```
 
-**`adc.read`, `adc.max`, `adc.percent`** *(base image / board library)*
+**`adc.read`, `adc.percent`** *(base image / board library)*
 
 Layer: `base image`  
 Behavior: Raw ADC input plus the Frothy-native percentage helper layered on top
@@ -87,6 +83,6 @@ of it.
 Example:
 
 ```frothy
-adc.read: A0
-adc.percent: A0
+adc.read: $a0
+adc.percent: $a0
 ```

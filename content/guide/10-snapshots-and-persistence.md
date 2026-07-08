@@ -78,10 +78,8 @@ it before entering the prompt.
 
 ```frothy
 to boot [
-  matrix.init:;
-  matrix.brightness!: 1;
-  grid.clear:;
-  grid.show:
+  gpio.mode: $led_builtin, 1;
+  led.on:
 ]
 
 save

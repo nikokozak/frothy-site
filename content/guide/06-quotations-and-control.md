@@ -41,7 +41,7 @@ to led.byKnob with percent [
 Use `when` for a one-sided action:
 
 ```frothy
-when joy.click?: [
+when (gpio.read: $boot_button) == 0 [
   led.toggle:
 ]
 ```
@@ -49,8 +49,8 @@ when joy.click?: [
 Use `unless` when the negative condition reads better:
 
 ```frothy
-unless joy.click?: [
-  grid.clear:
+unless (gpio.read: $boot_button) == 0 [
+  led.off:
 ]
 ```
 
@@ -61,8 +61,8 @@ If an `if` has no `else` and the condition is false, it yields `nil`.
 `while` evaluates the condition before each iteration:
 
 ```frothy
-to waitForClick [
-  while not joy.click?: [
+to waitForPress [
+  while (gpio.read: $boot_button) == 1 [
     ms: 20
   ]
 ]
@@ -89,12 +89,10 @@ to blink.times with count, wait [
 Use `repeat ... as name` when the loop index matters:
 
 ```frothy
-to diagonal [
-  grid.clear:;
-  repeat grid.height as y [
-    grid.set: y, y, true
-  ];
-  grid.show:
+to countUp [
+  repeat 4 as i [
+    led.blink: i + 1, 30
+  ]
 ]
 ```
 

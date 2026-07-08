@@ -1,7 +1,7 @@
 ---
 title: "I2C"
 weight: 9
-description: "Source-board I2C bus, device, probe, byte, and register words."
+description: "Source-board I2C bus, byte, and register words."
 advanced: true
 ---
 
@@ -14,83 +14,88 @@ The `esp32_devkit_v1` board source exposes I2C bindings. Treat this as an advanc
 Handles are small integers returned by setup words and passed back into later
 calls. Native ESP-IDF pointers do not become Frothy values.
 
-## Bus And Device
+## Bus
 
-**`i2c.init:`** *(i2c)* `(sda, scl, freq) -> Int`
+**`i2c.open:`** *(i2c)* `(port, sda, scl, freq) -> Int`
 
-Creates a bus handle.
-
-```frothy
-i2c.bus is i2c.init: SDA, SCL, 400000
-```
-
-**`i2c.add-device:`** *(i2c)* `(bus, addr, speed) -> Int`
-
-Adds one 7-bit-addressed device and returns a device handle.
+Opens a bus on a port with the `$sda` and `$scl` pins at a frequency and
+returns a bus handle.
 
 ```frothy
-i2c.dev is i2c.add-device: i2c.bus, 104, 400000
+bus is i2c.open: 0, $sda, $scl, 400000
 ```
 
-**`i2c.rm-device:`** *(i2c)* `(device) -> nil`
-
-Releases a device handle.
-
-**`i2c.del-bus:`** *(i2c)* `(bus) -> nil`
+**`i2c.close:`** *(i2c)* `(bus) -> nil`
 
 Releases a bus handle.
 
-## Probe And Byte I/O
-
-**`i2c.probe:`** *(i2c)* `(bus, addr) -> Bool`
-
-Checks whether one address responds.
-
 ```frothy
-i2c.probe: i2c.bus, 104
+i2c.close: bus
 ```
 
-**`i2c.write-byte:`** *(i2c)* `(device, byte) -> nil`
+## Byte I/O
 
-Writes one byte.
+Bytes are addressed to a 7-bit device address on the bus.
 
-**`i2c.read-byte:`** *(i2c)* `(device) -> Int`
+**`i2c.write:`** *(i2c)* `(bus, addr, bytes) -> nil`
 
-Reads one byte.
+Writes a byte payload to a device.
+
+```frothy
+i2c.write: bus, 104, "AT"
+```
+
+**`i2c.read:`** *(i2c)* `(bus, addr, count) -> Text`
+
+Reads `count` bytes from a device.
+
+```frothy
+i2c.read: bus, 104, 2
+```
 
 ## Register I/O
 
-**`i2c.write-reg:`** *(i2c)* `(byte, device, reg) -> nil`
+**`i2c.write-reg:`** *(i2c)* `(bus, addr, reg, value) -> nil`
 
 Writes one byte to a register.
 
 ```frothy
-i2c.write-reg: 0, i2c.dev, 107
+i2c.write-reg: bus, 104, 107, 0
 ```
 
-**`i2c.read-reg:`** *(i2c)* `(device, reg) -> Int`
+**`i2c.read-reg:`** *(i2c)* `(bus, addr, reg) -> Int`
 
 Reads one byte from a register.
 
 ```frothy
-i2c.read-reg: i2c.dev, 117
+i2c.read-reg: bus, 104, 117
 ```
 
-**`i2c.read-reg16:`** *(i2c)* `(device, reg) -> Int`
+**`i2c.write-reg16:`** *(i2c)* `(bus, addr, reg, value) -> nil`
+
+Writes a 16-bit register value.
+
+```frothy
+i2c.write-reg16: bus, 104, 107, 0
+```
+
+**`i2c.read-reg16:`** *(i2c)* `(bus, addr, reg) -> Int`
 
 Reads a 16-bit register value.
+
+```frothy
+i2c.read-reg16: bus, 104, 117
+```
 
 ## Notes
 
 Keep setup in one named place:
 
 ```frothy
-i2c.bus is nil
-i2c.dev is nil
+bus is nil
 
 to sensor.setup [
-  set i2c.bus to i2c.init: SDA, SCL, 400000;
-  set i2c.dev to i2c.add-device: i2c.bus, 104, 400000
+  set bus to i2c.open: 0, $sda, $scl, 400000
 ]
 ```
 

@@ -18,6 +18,6 @@ Then use the more specific peripheral pages only when your circuit needs them:
 
 - [I2C](/reference/hardware/i2c/) for sensors and register-style devices
 - [UART](/reference/hardware/uart/) for auxiliary serial devices
-- [PWM and LEDC](/reference/hardware/pwm-and-ledc/) for brightness and servo-style pulse work
+- [PWM](/reference/hardware/pwm/) for brightness and servo-style pulse work
 
 Examples use `esp32_devkit_v1` because that is the board identifier used during development. It names the development-board shape, not a promise that only that exact retail board can work. Most classic Tensilica ESP32 dev boards should be plausible. Newer RISC-V ESP32 variants have not been tried yet.

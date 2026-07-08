@@ -76,7 +76,7 @@ Example:
 ```frothy
 words
 see boot
-see matrix.init
+see blink
 ```
 
 ## Structured Tooling Sessions

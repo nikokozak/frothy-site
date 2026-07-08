@@ -80,15 +80,15 @@ Frothy separates language values from board I/O. GPIO, ADC, display, I2C, UART,
 and timing are base-image or board-provided bindings:
 
 ```frothy
-gpio.read: BOOT_BUTTON
-adc.read: A0
-grid.show:
-uart.write: 65, console
+gpio.read: $boot_button
+adc.read: $a0
+aux is uart.open: 1, $baud_115200
+uart.write-byte: aux, 65
 ```
 
-Not every board exposes every I/O family. The Frothy board exposes GPIO, ADC,
-the TM1629 display layer, joystick helpers, and knob helpers. The source-level
-ESP32 DevKit V1 board also carries I2C, UART, and LEDC bindings.
+Not every board exposes every I/O family. The Frothy board exposes GPIO and
+ADC. The source-level ESP32 DevKit V1 board also carries I2C, UART, and PWM
+bindings.
 
 That split keeps examples honest. A tutorial can be device-first without
 implying that every board has every peripheral.

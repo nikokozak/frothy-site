@@ -15,7 +15,7 @@ or `Code`. When the value is `Code`, calling it runs that code.
 The shortest reusable definition looks like this:
 
 ```frothy
-to led.flash [
+to flash [
   led.on:;
   ms: 100;
   led.off:
@@ -25,10 +25,10 @@ to led.flash [
 Call it:
 
 ```frothy
-led.flash:
+flash:
 ```
 
-That definition creates or rebinds the top-level slot `led.flash` to a
+That definition creates or rebinds the top-level slot `flash` to a
 zero-argument `Code` value.
 
 ## Definitions With Arguments

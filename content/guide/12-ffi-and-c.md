@@ -17,7 +17,7 @@ Foreign bindings appear as ordinary top-level `Code` values in the base image:
 ```frothy
 gpio.write: $led_builtin, 1
 ms: 250
-adc.read: A0
+adc.read: $a0
 ```
 
 From the Frothy side, a foreign binding is just callable code with a name,
@@ -38,7 +38,7 @@ control objects do not become ordinary persistable Frothy values. When a C
 binding needs a handle, it should normally expose a small integer handle or
 hide the native object behind board-owned state.
 
-That is why `i2c.init` can return a bus handle, but the raw ESP-IDF pointer is
+That is why `i2c.open` can return a bus handle, but the raw ESP-IDF pointer is
 not a Frothy value.
 
 ## Project FFI
@@ -76,7 +76,7 @@ Frothy surface:
 
 ```frothy
 to gpio.high with pin [ gpio.write: pin, 1 ]
-to knob.left [ adc.percent: knob.left.pin ]
+to dial [ adc.percent: $a0 ]
 ```
 
 That split is intentional. C should expose the necessary primitive. Frothy

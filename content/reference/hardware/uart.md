@@ -1,13 +1,12 @@
 ---
 title: "UART"
 weight: 10
-description: "Auxiliary UART handles and console-routing words for boards that expose them."
+description: "Auxiliary UART handles for boards that expose them."
 advanced: true
 ---
 
-UART is a ESP32 peripheral surface. It is for serial devices and, on
-some boards, explicit console routing. It is not part of the beginner Frothy
-beginner path.
+UART is a ESP32 peripheral surface. It is for serial devices. It is not part of
+the beginner Frothy path.
 
 ## Availability
 
@@ -15,58 +14,57 @@ The `esp32_devkit_v1` board source exposes auxiliary UART bindings. The active
 console itself is still special: it carries REPL input, output, and host
 attachment.
 
+Baud rates are named special vars: `$baud_9600`, `$baud_19200`, `$baud_38400`,
+`$baud_57600`, and `$baud_115200`.
+
 ## Auxiliary UART
 
-**`uart.init:`** *(uart)* `(tx, rx, baud) -> Int`
+**`uart.open:`** *(uart)* `(port, baud) -> Int`
 
-Creates an auxiliary UART handle.
+Opens an auxiliary UART on a port at a baud rate and returns a handle.
 
 ```frothy
-aux is uart.init: UART_TX, UART_RX, 115200
+aux is uart.open: 1, $baud_115200
 ```
 
-**`uart.write:`** *(uart)* `(byte, uart) -> nil`
+**`uart.open-on:`** *(uart)* `(port, tx, rx, baud) -> Int`
+
+Opens an auxiliary UART on a port with explicit TX and RX pins.
+
+```frothy
+aux is uart.open-on: 1, 17, 16, $baud_115200
+```
+
+**`uart.write-byte:`** *(uart)* `(handle, byte) -> nil`
 
 Writes one byte.
 
 ```frothy
-uart.write: 65, aux
+uart.write-byte: aux, 65
 ```
 
-**`uart.read:`** *(uart)* `(uart) -> Int`
+**`uart.read-byte:`** *(uart)* `(handle) -> Int`
 
 Reads one byte.
 
 ```frothy
-uart.read: aux
+uart.read-byte: aux
 ```
 
-**`uart.key?:`** *(uart)* `(uart) -> Bool`
+**`uart.available:`** *(uart)* `(handle) -> Int`
 
-Returns true when at least one byte is waiting.
+Returns the count of bytes waiting to be read.
 
 ```frothy
-when uart.key?: aux [
-  uart.read: aux
+when (uart.available: aux) > 0 [
+  uart.read-byte: aux
 ]
 ```
 
-## Console Routing
+**`uart.close:`** *(uart)* `(handle) -> nil`
 
-Boards that support console routing expose words for the active REPL transport:
+Closes the UART and releases the handle.
 
-**`console.info:`** *(uart)* `() -> nil`
-
-Reports the current console route.
-
-**`console.default:`** *(uart)* `() -> nil`
-
-Returns the console to its default route.
-
-**`console.uart!:`** *(uart)* `(port, tx, rx, baud) -> nil`
-
-Moves the console to a selected UART route.
-
-Use console-routing words carefully. If you move the REPL away from the host
-connection you are using, you can make the board appear unresponsive until you
-attach through the new route or reset to a safe state.
+```frothy
+uart.close: aux
+```

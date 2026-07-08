@@ -73,7 +73,7 @@ the only grouping mechanism. Conditions require explicit `Bool` values.
 Example:
 
 ```frothy
-(adc.percent: A0) > 50 and enabled
+(adc.percent: $a0) > 50 and enabled
 ```
 
 ## Locals and Mutation
@@ -136,7 +136,7 @@ Behavior: Conditional expressions that require `Bool` conditions. `if` without
 Example:
 
 ```frothy
-when adc.percent: A0 > 50 [ led.on: ]
+when adc.percent: $a0 > 50 [ led.on: ]
 ```
 
 **`while`, `repeat`, `repeat ... as name`** *(core)*
@@ -210,14 +210,6 @@ player->visible
 
 Use a record when the value represents one coherent thing with named parts.
 That is why `player->x` reads better than `player[0]`.
-
-Records may also be stored inside `Cells`:
-
-```frothy
-pixels is cells(2)
-set pixels[0] to Sprite: 1, 2, true
-pixels[0]->y
-```
 
 **`fn [ ... ]`, `fn with ... [ ... ]` non-capturing rule** *(core)*
 

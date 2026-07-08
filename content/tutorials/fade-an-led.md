@@ -1,51 +1,32 @@
 ---
 title: "Fade an LED"
 weight: 7
-description: "Use the ESP32 LEDC surface to fade an LED with a named, current-Frothy wrapper."
+description: "Use the ESP32 PWM surface to fade an LED with a named, current-Frothy wrapper."
 advanced: true
 ---
 
-This tutorial is board-specific. It uses the ESP32 LEDC bindings exposed by
+This tutorial is board-specific. It uses the ESP32 PWM bindings exposed by
 the ESP32 path, not the first LED/button tutorial path. If you are using
 a first board, treat this as an advanced ESP32 exercise.
 
 PWM works by switching a pin quickly enough that your eye sees average
 brightness. Higher duty means more on-time and a brighter LED.
 
-## Configure LEDC
+## Open a PWM Handle
 
-Use one speed mode, timer, and channel for the tutorial:
+Open one PWM channel on the built-in LED pin at 1 kHz. `pwm.open` returns a
+handle you pass back into later calls:
 
 ```frothy
-ledc.speed is 0
-ledc.timer is 0
-ledc.channel is 0
-ledc.resolution is 10
-ledc.maxDuty is 1023
+led is pwm.open: $led_builtin, 1000
 ```
 
-Configure a 1 kHz PWM timer and attach the LED pin:
+Set the duty with `pwm.write`:
 
 ```frothy
-ledc.timer-config: ledc.speed, ledc.timer, 1000, ledc.resolution
-ledc.channel-config: $led_builtin, ledc.speed, ledc.channel, ledc.timer, 0
-```
-
-Now wrap the two-step duty update:
-
-```frothy
-to ledc.duty! with duty [
-  ledc.set-duty: ledc.speed, ledc.channel, duty;
-  ledc.update-duty: ledc.speed, ledc.channel
-]
-```
-
-Test three values:
-
-```frothy
-ledc.duty!: 0
-ledc.duty!: 256
-ledc.duty!: ledc.maxDuty
+pwm.write: led, 0
+pwm.write: led, 256
+pwm.write: led, 512
 ```
 
 ## Fade In Software
@@ -53,10 +34,10 @@ ledc.duty!: ledc.maxDuty
 Start with a simple upward fade:
 
 ```frothy
-to fade.up with step, wait [
+to fade.up with handle, step, wait [
   here duty is 0;
-  while duty <= ledc.maxDuty [
-    ledc.duty!: duty;
+  while duty <= 1023 [
+    pwm.write: handle, duty;
     ms: wait;
     set duty to duty + step
   ]
@@ -66,10 +47,10 @@ to fade.up with step, wait [
 Then the downward half:
 
 ```frothy
-to fade.down with step, wait [
-  here duty is ledc.maxDuty;
+to fade.down with handle, step, wait [
+  here duty is 1023;
   while duty >= 0 [
-    ledc.duty!: duty;
+    pwm.write: handle, duty;
     ms: wait;
     set duty to duty - step
   ]
@@ -79,8 +60,8 @@ to fade.down with step, wait [
 Run both:
 
 ```frothy
-fade.up: 16, 8
-fade.down: 16, 8
+fade.up: led, 16, 8
+fade.down: led, 16, 8
 ```
 
 ## Breathe
@@ -88,11 +69,11 @@ fade.down: 16, 8
 Compose the two halves:
 
 ```frothy
-to breathe with count [
+to breathe with handle, count [
   repeat count [
-    fade.up: 16, 6;
+    fade.up: handle, 16, 6;
     ms: 120;
-    fade.down: 16, 6;
+    fade.down: handle, 16, 6;
     ms: 240
   ]
 ]
@@ -101,24 +82,11 @@ to breathe with count [
 Try it:
 
 ```frothy
-breathe: 5
+breathe: led, 5
 ```
 
-## Hardware Fade
-
-The LEDC binding also exposes the ESP32 fade helper:
+When you are done, close the handle:
 
 ```frothy
-ledc.fade-install:
-ledc.fade-with-time: ledc.speed, ledc.channel, 0, 500
-ledc.fade-start: ledc.speed, ledc.channel, 0
-```
-
-Use the software loop when you are learning or need Frothy-level control. Use
-the hardware fade when the board should handle the ramp.
-
-When you are done:
-
-```frothy
-ledc.stop: ledc.speed, ledc.channel, 0
+pwm.close: led
 ```

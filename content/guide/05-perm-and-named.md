@@ -58,10 +58,12 @@ Top-level state is useful when the value is part of the live image:
 ```frothy
 player.x is 0
 player.y is 0
+width is 4
+height is 4
 
 to player.move with dx, dy [
-  set player.x to wrap: player.x + dx, grid.width;
-  set player.y to wrap: player.y + dy, grid.height
+  set player.x to wrap: player.x + dx, width;
+  set player.y to wrap: player.y + dy, height
 ]
 ```
 
