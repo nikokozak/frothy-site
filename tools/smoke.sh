@@ -15,7 +15,7 @@ fail() { echo "smoke: FAIL — $1" >&2; exit 1; }
 # 1. search index contains core Frothy terms
 INDEX="public/index.json"
 test -f "$INDEX" || fail "missing $INDEX"
-for needle in 'save' 'dangerous.wipe' 'gpio' 'matrix' 'blink' 'words' 'frothy'; do
+for needle in 'save' 'dangerous.wipe' 'gpio' 'adc' 'blink' 'words' 'frothy'; do
   grep -qi "$needle" "$INDEX" || fail "search index missing term: $needle"
 done
 
