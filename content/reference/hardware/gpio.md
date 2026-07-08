@@ -46,8 +46,8 @@ gpio.read: $boot_button
 The base library defines readable wrappers:
 
 ```frothy
-gpio.input: $boot_button
-gpio.output: $led_builtin
+gpio.mode: $boot_button, 0
+gpio.mode: $led_builtin, 1
 gpio.high: $led_builtin
 gpio.low: $led_builtin
 gpio.toggle: $led_builtin

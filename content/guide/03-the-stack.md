@@ -69,7 +69,7 @@ to pulse with pin [
   gpio.low: pin
 ]
 
-pulse: LED_BUILTIN
+pulse: $led_builtin
 
 to pulse with pin [
   gpio.high: pin;
@@ -85,9 +85,9 @@ The name is stable. The value changed. The image remains inspectable.
 Foreign bindings and Frothy definitions use the same call surface:
 
 ```frothy
-gpio.write: LED_BUILTIN, 1
+gpio.write: $led_builtin, 1
 ms: 100
-blink: LED_BUILTIN, 3, 75
+blink: $led_builtin, 3, 75
 ```
 
 The callee appears before the colon. Arguments follow after the colon,

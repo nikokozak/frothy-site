@@ -33,15 +33,15 @@ frothy --port /dev/tty.usbserial-XXXX connect
 Use the board-provided pin name instead of the raw GPIO number:
 
 ```frothy
-gpio.output: LED_BUILTIN
+gpio.mode: $led_builtin, 1
 ```
 
 Then drive it by hand:
 
 ```frothy
-gpio.high: LED_BUILTIN
+gpio.high: $led_builtin
 ms: 200
-gpio.low: LED_BUILTIN
+gpio.low: $led_builtin
 ```
 
 If the LED does not change, stop here. Check the board, the port, and whether
@@ -64,7 +64,7 @@ to pulse with pin, wait [
 Call it once:
 
 ```frothy
-pulse: LED_BUILTIN, 120
+pulse: $led_builtin, 120
 ```
 
 You should see the LED turn on briefly, then turn off.
@@ -87,7 +87,7 @@ to blink with pin [
 Run it:
 
 ```frothy
-blink: LED_BUILTIN
+blink: $led_builtin
 ```
 
 The important part is not the blink. The important part is that `blink` lives
@@ -109,7 +109,7 @@ to blink with pin [
 Call the same name again:
 
 ```frothy
-blink: LED_BUILTIN
+blink: $led_builtin
 ```
 
 The top-level slot named `blink` stayed stable. Its current value changed. Any
@@ -118,13 +118,12 @@ later call resolves through that same slot and sees the new behavior.
 Inspect it:
 
 ```frothy
-show @blink
-see @blink
-info @blink
+see blink
+words
 ```
 
-Those tools show what the running image currently knows, not what you remember
-typing ten minutes ago.
+`see` shows the source the running image currently holds for a word, and
+`words` lists everything defined — not what you remember typing ten minutes ago.
 
 ## Put It On Boot
 
@@ -133,8 +132,8 @@ word:
 
 ```frothy
 to boot [
-  gpio.output: LED_BUILTIN;
-  blink: LED_BUILTIN
+  gpio.mode: $led_builtin, 1;
+  blink: $led_builtin
 ]
 ```
 

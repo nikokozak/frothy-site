@@ -23,7 +23,7 @@ ledc.timer-config: 0, 0, 1000, 10
 Attaches one pin to one LEDC channel.
 
 ```frothy
-ledc.channel-config: LED_BUILTIN, 0, 0, 0, 0
+ledc.channel-config: $led_builtin, 0, 0, 0, 0
 ```
 
 ## Duty And Frequency

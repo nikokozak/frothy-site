@@ -46,7 +46,7 @@ static froth_error_t board_gpio_write(froth_runtime_t *runtime,
 The exposed Frothy word stays small:
 
 ```frothy
-gpio.write: LED_BUILTIN, 1
+gpio.write: $led_builtin, 1
 ```
 
 ## Wrapper Layer
@@ -55,11 +55,11 @@ Board library code can then create a cleaner board-owned surface:
 
 ```frothy
 to led.on
-  gpio.write: LED_BUILTIN, 1
+  gpio.write: $led_builtin, 1
 end
 
 to led.off
-  gpio.write: LED_BUILTIN, 0
+  gpio.write: $led_builtin, 0
 end
 ```
 

@@ -50,14 +50,14 @@ dangerous.wipe
 Worked example:
 
 ```frothy
-show @blink
+see blink
 blink is fn [ "temporary overlay version" ]
-show @blink
+see blink
 dangerous.wipe
-show @blink
+see blink
 ```
 
-The first and third `show @blink` come from the base image. The middle one is
+The first and third `see blink` come from the base image. The middle one is
 your overlay shadowing that same stable slot name.
 
 ## Persistence Operations
@@ -178,7 +178,7 @@ Typical recovery flow:
 ```text
 1. Connect to the device.
 2. Press Ctrl-C during the safe-boot window.
-3. Run `show @boot` or `info @boot`.
+3. Run `see boot`.
 4. Fix the bad slot, or run `dangerous.wipe`.
 ```
 

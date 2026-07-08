@@ -53,12 +53,10 @@ hello:
 For inspection, prefer the inspection words over improvised print debugging:
 
 ```frothy
-show @hello
-see @hello
-info @hello
+see hello
 ```
 
-Those tell you what is bound, not just what a single expression happened to
+That tells you what is bound, not just what a single expression happened to
 return.
 
 ## Text In Small Parsers

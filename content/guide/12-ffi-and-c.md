@@ -15,7 +15,7 @@ narrow. That narrowness is what lets a live, persistent image stay legible.
 Foreign bindings appear as ordinary top-level `Code` values in the base image:
 
 ```frothy
-gpio.write: LED_BUILTIN, 1
+gpio.write: $led_builtin, 1
 ms: 250
 adc.read: A0
 ```

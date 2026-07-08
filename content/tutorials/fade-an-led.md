@@ -28,7 +28,7 @@ Configure a 1 kHz PWM timer and attach the LED pin:
 
 ```frothy
 ledc.timer-config: ledc.speed, ledc.timer, 1000, ledc.resolution
-ledc.channel-config: LED_BUILTIN, ledc.speed, ledc.channel, ledc.timer, 0
+ledc.channel-config: $led_builtin, ledc.speed, ledc.channel, ledc.timer, 0
 ```
 
 Now wrap the two-step duty update:

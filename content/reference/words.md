@@ -50,8 +50,8 @@ non-`Code` value is a runtime error.
 Example:
 
 ```frothy
-blink: LED_BUILTIN, 75
-gpio.write: LED_BUILTIN, 1
+blink: $led_builtin, 75
+gpio.write: $led_builtin, 1
 ```
 
 **`call expr with ...`** *(core call syntax)*
@@ -280,17 +280,17 @@ time instead of trying to smuggle it in through closure capture.
 
 ## Inspection and Persistence Built-Ins
 
-**`words`, `show @name`, `see @name`, `core @name`, `info @name`** *(interactive base image)*
+**`words`, `see name`, `status`** *(interactive base image)*
 
 Layer: `core`  
-Behavior: Inspect the live image: visible names, normalized binding view, core
-debug view, and binding metadata.  
+Behavior: Inspect the live image: `words` lists visible names, `see` renders a
+binding's source form, and `status` reports the session and runtime.  
 Example:
 
 ```frothy
 words
-info @blink
-see @blink
+see blink
+status
 ```
 
 **`save`, `restore`, `dangerous.wipe`** *(interactive base image)*

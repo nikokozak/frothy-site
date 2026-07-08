@@ -65,18 +65,18 @@ Press Ctrl-C during the safe-boot window, then inspect `boot` and run `dangerous
 
 ## Inspection Commands
 
-**`words`, `show`, `see`, `core`, `info`** *(interactive profile)*
+**`words`, `see`, `status`** *(interactive profile)*
 
 Layer: `core`  
-Behavior: Inspect the live image through prompt-facing built-ins. `show` and
-`see` route to the normalized binding view; `core` is debug-oriented; `info`
-reports metadata such as owner, kind, and persistability.  
+Behavior: Inspect the live image through prompt-facing built-ins. `words` lists
+the names that exist, `see` renders a binding's source form, and `status`
+reports the session and runtime.  
 Example:
 
 ```frothy
 words
-show @boot
-info @matrix.init
+see boot
+see matrix.init
 ```
 
 ## Structured Tooling Sessions

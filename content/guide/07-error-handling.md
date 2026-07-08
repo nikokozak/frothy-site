@@ -16,6 +16,38 @@ Frothy treats reader errors, parser errors, type errors, arity errors, bounds
 errors, division by zero, and persistence rejection as recoverable whenever
 possible. The target should report the error and return to a usable prompt.
 
+## What an Error Looks Like
+
+An error does more than say "no". It names the problem, gives it a code, and
+points a caret at the exact token in your line. Mistype a word and the prompt
+shows you where:
+
+```text
+> gpio.hihg: 5
+error: not found (7)
+name: gpio.hihg
+gpio.hihg: 5
+^^^^^^^^^
+>
+```
+
+Malformed source is reported the same way, with the caret on the token that
+broke the parse:
+
+```text
+> to [ ]
+error: bad source (8)
+unexpected token
+to [ ]
+   ^
+>
+```
+
+The caret is under the offending span, the `name:` line names the value the
+reader could not resolve, and the parenthesized number is the error code. After
+any of these, the prompt is still yours — nothing about the reported line
+changed your saved image or your live overlay.
+
 ## Typical Errors
 
 Calling a non-`Code` value is an error:
@@ -36,7 +68,7 @@ to pulse with pin, wait [
   gpio.low: pin
 ]
 
-pulse: LED_BUILTIN
+pulse: $led_builtin
 ```
 
 `pulse` expects two arguments. The prompt should stay alive after reporting
@@ -72,14 +104,13 @@ When something feels wrong, inspect first:
 
 ```frothy
 words
-show @boot
-see @boot
-info @boot
+see boot
+status
 ```
 
-`show` and `see` give you the normalized binding view. `info` tells you
-whether a name is user-defined, foreign, base-image, persistable, or otherwise
-special. Use those tools before reaching for destructive recovery.
+`words` lists the names that exist, `see` renders one binding's source form,
+and `status` reports the session and runtime. Use those to understand the live
+image before reaching for destructive recovery.
 
 ## Recovery Ladder
 

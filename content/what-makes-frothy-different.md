@@ -51,6 +51,12 @@ Frothy makes persistence part of the public interactive contract:
 
 The image is the state that matters, not a daemon cache or a host-side shadow runtime.
 
+A saved program lives in the board's flash, not its scratch RAM. That means the
+size of what you can build is bounded by flash — measured in megabytes on a
+typical board — rather than by the small pool of working memory. RAM only has to
+hold what you are actively editing, so you can keep real programs and libraries
+on the device and get them back exactly as you left them after a reboot.
+
 ## Inspection Is Part Of Ordinary Work
 
 Frothy treats `words`, `see`, `status`, and memory/status commands as part of the normal prompt surface. That matters when the device image is authoritative: you need to be able to ask what is present and what a name resolves to.

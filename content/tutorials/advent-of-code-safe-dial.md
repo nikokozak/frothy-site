@@ -99,9 +99,9 @@ For the sample above, the answer is `2`: `-50` lands on `0`, `+1` moves to
 The state is visible. You can inspect or adjust it while developing:
 
 ```frothy
-show @dial.position
-show @dial.hits
-show @dial.turns
+see dial.position
+see dial.hits
+see dial.turns
 ```
 
 For puzzle-sized code, current Frothy works best when each helper has one job:

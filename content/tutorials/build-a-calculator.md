@@ -24,8 +24,8 @@ calc.memory is 0
 These are part of the live overlay. You can inspect them:
 
 ```frothy
-show @calc.current
-show @calc.memory
+see calc.current
+see calc.memory
 ```
 
 ## Basic Operations

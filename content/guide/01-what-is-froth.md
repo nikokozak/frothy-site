@@ -36,7 +36,7 @@ to blink with pin [
   ]
 ]
 
-blink: LED_BUILTIN
+blink: $led_builtin
 ```
 
 Read that as ordinary named code:

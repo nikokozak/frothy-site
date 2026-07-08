@@ -71,16 +71,16 @@ Use the same names the editor calls:
 
 ```frothy
 words
-show @demo.run
-see @dot
-info @matrix.init
+see demo.run
+see dot
+see matrix.init
 ```
 
 Inspection is part of normal work. It tells you what the image currently holds.
 
-Use `words` when you forgot a name. Use `show` or `see` when the name exists
-but the behavior is not what you expected. Use `info` when you need to know
-whether a binding is foreign, base-image, user-created, or persistable.
+Use `words` when you forgot a name. Use `see` when the name exists but the
+behavior is not what you expected — it renders the source the image currently
+holds. Use `status` when you need to know about the session and runtime.
 
 ## Interrupt A Bad Loop
 

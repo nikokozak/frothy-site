@@ -9,7 +9,7 @@ boot.
 
 ## Pins and Constants
 
-**`LED_BUILTIN`, `A0`, `BOOT_BUTTON`, and board-specific pins`** *(base image)*
+**`$led_builtin`, `A0`, `BOOT_BUTTON`, and board-specific pins`** *(base image)*
 
 Layer: `base image`  
 Behavior: Board metadata seeds named pins and board constants into the base
@@ -19,7 +19,7 @@ potentiometer pin names.
 Example:
 
 ```frothy
-gpio.output: LED_BUILTIN
+gpio.mode: $led_builtin, 1
 adc.read: A0
 ```
 
@@ -34,15 +34,15 @@ Example:
 
 ```frothy
 millis:
-gpio.mode: LED_BUILTIN, 1
-gpio.write: LED_BUILTIN, 1
-gpio.read: LED_BUILTIN
+gpio.mode: $led_builtin, 1
+gpio.write: $led_builtin, 1
+gpio.read: $led_builtin
 ms: 75
 ```
 
 ## Base-Library Helpers
 
-**`gpio.input`, `gpio.output`, `gpio.high`, `gpio.low`, `gpio.toggle`** *(board library)*
+**`gpio.high`, `gpio.low`, `gpio.toggle`** *(board library)*
 
 Layer: `board library`  
 Behavior: Frothy-native helper words layered on top of the raw GPIO primitives
@@ -50,8 +50,8 @@ to make everyday board interaction readable.
 Example:
 
 ```frothy
-gpio.output: LED_BUILTIN
-gpio.toggle: LED_BUILTIN
+gpio.mode: $led_builtin, 1
+gpio.toggle: $led_builtin
 ```
 
 **`blink`, `animate`** *(board library)*
@@ -62,7 +62,7 @@ Behavior: Tiny timing helpers baked into the base image for board-library work. 
 Example:
 
 ```frothy
-blink: LED_BUILTIN, 3, 75
+blink: $led_builtin, 3, 75
 animate: 8, 40, fn with i [ led.toggle: ]
 ```
 

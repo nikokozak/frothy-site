@@ -37,13 +37,13 @@ Use `with` when the code expects arguments:
 
 ```frothy
 to pulse with pin, wait [
-  gpio.output: pin;
+  gpio.mode: pin, 1;
   gpio.high: pin;
   ms: wait;
   gpio.low: pin
 ]
 
-pulse: LED_BUILTIN, 75
+pulse: $led_builtin, 75
 ```
 
 The parameter names are locals inside the body. They are not stack aliases;
