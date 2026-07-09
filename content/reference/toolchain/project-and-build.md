@@ -1,8 +1,9 @@
 ---
 title: "Project and Build"
-weight: 6
+weight: 2
 description: "Current project files, `frothy init`, library manifests, build output, and flashing policy."
 aliases:
+  - /reference/project-and-build/
   - /reference/build-options/
 icon: boxes
 tags: [frothy.toml, build, flash]

@@ -1,7 +1,9 @@
 ---
 title: "CLI"
-weight: 4
+weight: 1
 description: "The current `frothy` command surface: bootstrap, doctor, flash, connect, session, send, build, and recovery."
+aliases:
+  - /reference/cli/
 icon: terminal
 tags: [frothy, flash, connect]
 ---

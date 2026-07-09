@@ -15,7 +15,7 @@ fail() { echo "smoke: FAIL — $1" >&2; exit 1; }
 # 1. search index contains core Frothy terms
 INDEX="public/index.json"
 test -f "$INDEX" || fail "missing $INDEX"
-for needle in 'save' 'dangerous.wipe' 'gpio' 'adc' 'blink' 'words' 'frothy' 'ten minutes'; do
+for needle in 'save' 'dangerous.wipe' 'gpio' 'adc' 'blink' 'words' 'frothy' 'ten minutes' 'attempt' 'rescue'; do
   grep -qi "$needle" "$INDEX" || fail "search index missing term: $needle"
 done
 
@@ -30,9 +30,17 @@ for route in \
   public/tutorials/blink-an-led/index.html \
   public/reference/index.html \
   public/reference/ten-minutes/index.html \
+  public/reference/language/index.html \
   public/reference/words/index.html \
   public/reference/hardware/index.html \
   public/reference/hardware/gpio/index.html \
+  public/reference/device/index.html \
+  public/reference/device/interactive-profile/index.html \
+  public/reference/device/image-and-persistence/index.html \
+  public/reference/toolchain/index.html \
+  public/reference/toolchain/cli/index.html \
+  public/reference/toolchain/project-and-build/index.html \
+  public/reference/toolchain/editor/index.html \
   public/reference/ffi/index.html \
   public/what-makes-frothy-different/index.html \
   public/contact/index.html
@@ -54,7 +62,11 @@ grep -q 'data-repl-editor' public/index.html || fail "homepage missing REPL hero
 grep -q 'docs-side' public/guide/index.html || fail "guide missing sidebar"
 grep -q 'prefers-color-scheme' public/index.html && fail "homepage defaults to system dark mode" || true
 
-# 4. old-URL alias for the renamed 'how it's different' page resolves
+# 4. old-URL aliases resolve for renamed or moved pages
 test -f public/what-makes-froth-different/index.html || fail "missing alias for old how-its-different URL"
+test -f public/reference/interactive-profile/index.html || fail "missing alias for old interactive-profile URL"
+test -f public/reference/image-and-persistence/index.html || fail "missing alias for old image-and-persistence URL"
+test -f public/reference/cli/index.html || fail "missing alias for old CLI URL"
+test -f public/reference/editor/index.html || fail "missing alias for old editor URL"
 
 echo "smoke: OK"

@@ -95,5 +95,5 @@ restored image resolves `gpio.write` against the rebuilt base slot.
 Use the [FFI reference](/reference/ffi/) for the exact project manifest shape,
 generated binding names, public C aliases, and examples.
 
-Use [Project and Build](/reference/project-and-build/) when the question is
+Use [Project and Build](/reference/toolchain/project-and-build/) when the question is
 how the CLI selects targets, boards, source files, and build directories.

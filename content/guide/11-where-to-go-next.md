@@ -24,11 +24,11 @@ Use [Tutorials](/tutorials/) when you want one result at a time:
 
 Use [Reference](/reference/) when the wording has to be exact:
 
-- [Word reference](/reference/words/) for core syntax and values
-- [Interactive profile](/reference/interactive-profile/) for prompt behavior, interrupts, and inspection
-- [Image and persistence](/reference/image-and-persistence/) for `save`, `restore`, and recovery
+- [Language](/reference/language/) for core syntax and values
+- [Interactive profile](/reference/device/interactive-profile/) for prompt behavior, interrupts, and inspection
+- [Image and persistence](/reference/device/image-and-persistence/) for `save`, `restore`, and recovery
 - [Hardware](/reference/hardware/) for ESP32-facing words
-- [CLI](/reference/cli/) and [Editor](/reference/editor/) for tooling
+- [CLI](/reference/toolchain/cli/) and [Editor](/reference/toolchain/editor/) for tooling
 
 ## If You Are Extending Frothy
 

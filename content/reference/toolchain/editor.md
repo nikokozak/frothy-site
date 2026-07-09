@@ -1,8 +1,9 @@
 ---
 title: "Editor"
-weight: 5
+weight: 3
 description: "VS Code and browser editor support for connecting, sending source, inspecting words, and interrupting the board."
 aliases:
+  - /reference/editor/
   - /reference/vscode/
 icon: pen-line
 tags: [vs code, send, inspect]
@@ -67,4 +68,4 @@ The browser editor uses WebSerial and stores sketches in localStorage. Use Chrom
 
 ## Recovery
 
-If a program runs away, use the editor interrupt command or press Ctrl-C in a terminal session. If saved state is bad after reboot, use the CLI recovery commands from the [CLI reference](/reference/cli/).
+If a program runs away, use the editor interrupt command or press Ctrl-C in a terminal session. If saved state is bad after reboot, use the CLI recovery commands from the [CLI reference](/reference/toolchain/cli/).

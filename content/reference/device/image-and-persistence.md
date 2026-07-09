@@ -1,8 +1,9 @@
 ---
 title: "Image and Persistence"
-weight: 3
+weight: 2
 description: "Base versus overlay, rebinding, `save`, `restore`, `dangerous.wipe`, and `boot`."
 aliases:
+  - /reference/image-and-persistence/
   - /reference/snapshot-format/
 icon: save
 tags: [save, restore, boot]

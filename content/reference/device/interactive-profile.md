@@ -1,7 +1,9 @@
 ---
 title: "Interactive Profile"
-weight: 2
+weight: 1
 description: "REPL behavior, multiline input, interrupts, inspection, and the control-session path."
+aliases:
+  - /reference/interactive-profile/
 icon: terminal
 tags: [repl, multiline, interrupts]
 ---

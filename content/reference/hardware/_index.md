@@ -1,6 +1,6 @@
 ---
 title: "Hardware"
-weight: 6
+weight: 3
 description: "ESP32 board words for GPIO, ADC, timing, UART, I2C, and PWM."
 icon: circuit-board
 tags: [gpio, adc, esp32]
