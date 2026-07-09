@@ -1,7 +1,7 @@
 ---
 title: "CLI"
 weight: 1
-description: "The current `frothy` command surface: bootstrap, doctor, flash, connect, session, send, build, and recovery."
+description: "The current `frothy` command surface: bootstrap, doctor, flash, connect, session, fetch, build, and recovery."
 aliases:
   - /reference/cli/
 icon: terminal
@@ -45,7 +45,7 @@ frothy connect
 frothy session
 ```
 
-**`frothy send`** compiles a source file and sends definitions or expressions line by line.
+**`frothy send`** compiles a source file and applies or runs each line.
 
 ```sh
 frothy send main.fr
@@ -66,6 +66,12 @@ frothy init
 
 ```sh
 frothy build
+```
+
+**`frothy fetch`** pre-fetches git dependencies without building.
+
+```sh
+frothy fetch
 ```
 
 **`frothy install`** sends project library source to the board's library tier.
@@ -93,7 +99,3 @@ frothy wipe-user
 ```sh
 frothy stop
 ```
-
-## Not Ready Yet
-
-`frothy fetch` appears in the command surface as a placeholder for future dependency fetching. Do not build a workflow around it yet.

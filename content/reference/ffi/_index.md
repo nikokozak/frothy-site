@@ -1,24 +1,19 @@
 ---
-title: "FFI"
+title: "Extending Frothy"
 weight: 5
-description: "The Frothy/C boundary, from runtime registration to project-local bindings."
+description: "Use libraries, write pure Frothy libraries, and add native words when C is required."
 icon: plug-zap
-tags: [c, frothy.toml, bindings]
+tags: [libraries, native, c]
 ---
 
-Frothy's FFI is intentionally narrow. It exists to expose hardware and native
-services without turning the language into raw C.
+Frothy has libraries. A library is a directory with `lib.fr` and, optionally,
+`lib.toml`. Libraries can be pure Frothy or native.
 
 Use these pages in order:
 
-- [How FFI Works](/reference/ffi/how-it-works/) for the runtime model and the
-  C authoring surface
-- [Project FFI](/reference/ffi/project-ffi/) for the manifest-driven build path
-- [Board FFI Example](/reference/ffi/board-ffi-example/) for an end-to-end
-  maintained-board example
-- [Project FFI Example](/reference/ffi/project-ffi-example/) for a complete
-  project-local binding example
-
-The public project FFI C surface uses `froth_*` and `FROTH_*` names. Internal
-runtime files may still use implementation names that are not part of the user
-contract.
+- [Using libraries](/reference/ffi/using-libraries/) for `[deps]`, git
+  dependencies, local path dependencies, `frothy fetch`, and `frothy build`
+- [Writing a pure-Frothy library](/reference/ffi/writing-a-pure-frothy-library/)
+  for `lib.fr`, optional `lib.toml`, targets, and publishing a library
+- [Native words](/reference/ffi/native-words/) for the C boundary inside a
+  library

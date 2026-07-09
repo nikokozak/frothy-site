@@ -39,13 +39,6 @@ target = "esp32_devkit_v1"
 
 `esp32_devkit_v1` is the board identifier Frothy currently uses for the development ESP32 shape.
 
-## Send A File
-
-```sh
-frothy send main.fr
-frothy send main.fr --dry-run
-```
-
 ## Build And Flash
 
 ```sh
@@ -53,7 +46,8 @@ frothy build
 frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001
 ```
 
-Do not flash after every small change. The ordinary loop is connect, send, inspect, revise.
+Do not flash after every small change. The ordinary loop is connect, edit,
+inspect, revise.
 
 ## Libraries
 
@@ -62,10 +56,14 @@ name = "stage-lights"
 target = "esp32_devkit_v1"
 
 [deps]
-servo = { path = "libs/servo" }
+servo = { git = "https://github.com/nikokozak/frothy-servo", rev = "2f40b97c8ab32ca604ee4e685acc23cc129da9ea" }
+blink = { path = "libs/blink" }
 ```
 
-Remote dependency fetching is not ready yet.
+A dependency is either `git`, with `rev` set to a commit SHA or `branch` set to
+a branch name, or `path`, pointing at a local directory relative to the project.
+`frothy build` resolves dependencies, fetches git dependencies, and compiles
+them in. `frothy fetch` pre-fetches git dependencies without building.
 
 ## Native Extensions
 

@@ -1,6 +1,6 @@
 ---
 title: "11. Where to Go Next"
-description: "Move from the guide into tutorials, reference, hardware, or FFI."
+description: "Move from the guide into tutorials, reference, hardware, or extending Frothy."
 weight: 11
 aliases:
   - /guide/10-where-to-go-next/
@@ -32,7 +32,9 @@ Use [Reference](/reference/) when the wording has to be exact:
 
 ## If You Are Extending Frothy
 
-Read [FFI and C](/guide/12-ffi-and-c/) next, then the [FFI reference](/reference/ffi/). Native extensions are a build-time C path for the cases where Frothy code really needs a hardware or performance helper.
+Read [Libraries and Native Words](/guide/12-ffi-and-c/) next, then the
+[Extending reference](/reference/ffi/). Start with pure Frothy libraries. Use
+native words only when a library really needs C.
 
 ## Design Differences
 

@@ -1,99 +1,70 @@
 ---
-title: "12. FFI and C"
-description: "How C bindings enter the base image, when to use project FFI, and what the value boundary allows."
+title: "12. Libraries and Native Words"
+description: "How libraries enter a Frothy project, and when a library should add C."
 weight: 12
 aliases:
   - /guide/09-extending-with-ffi/
 advanced: true
 icon: plug-zap
-readTime: "9 min"
+readTime: "4 min"
 ---
 
-The FFI is the boundary between Frothy values and C code. It is deliberately
-narrow. That narrowness is what lets a live, persistent image stay legible.
+Frothy has no separate foreign-call system. It has libraries.
 
-Foreign bindings appear as ordinary top-level `Code` values in the base image:
-
-```frothy
-gpio.write: $led_builtin, 1
-ms: 250
-adc.read: $a0
-```
-
-From the Frothy side, a foreign binding is just callable code with a name,
-arity, result type, help text, and ownership metadata. The fact that C runs on
-the other side is an implementation detail until you are writing the binding.
-
-## What Crosses The Boundary
-
-The first public boundary is value-oriented:
-
-- `Int`
-- `Bool`
-- `Nil`
-- `Text`, where supported by the binding
-
-Native runtime pointers, driver handles, interrupt tokens, and internal
-control objects do not become ordinary persistable Frothy values. When a C
-binding needs a handle, it should normally expose a small integer handle or
-hide the native object behind board-owned state.
-
-That is why `i2c.open` can return a bus handle, but the raw ESP-IDF pointer is
-not a Frothy value.
-
-## Project FFI
-
-Use project FFI when one project needs a small C surface:
+A library is a directory with `lib.fr` and, optionally, `lib.toml`. A project
+consumes libraries through `[deps]` in `frothy.toml`:
 
 ```toml
-[ffi]
-sources = ["src/ffi/bindings.c"]
-includes = ["src/ffi"]
-defines = { SENSOR_SCALE = "42" }
+name   = "stage-lights"
+target = "esp32_devkit_v1"
+
+[deps]
+servo = { git = "https://github.com/nikokozak/frothy-servo", rev = "2f40b97c8ab32ca604ee4e685acc23cc129da9ea" }
+blink = { path = "libs/blink" }
 ```
 
-Project FFI should be boring:
+Git dependencies are pinned by `rev` or follow a `branch`. Path dependencies
+are local directories relative to the project. `frothy fetch` pre-fetches git
+dependencies; `frothy build` resolves dependencies and compiles them in.
 
-- source files stay under the project root
-- generated bindings are registered explicitly
-- names should read like normal Frothy names
-- ownership stays with the firmware build, not with the saved overlay
+## Pure Libraries
 
-Project FFI is for "this project needs one native helper." It is not a second
-runtime plugin system.
-
-## Board FFI
-
-Use board FFI when the binding is part of a board profile:
-
-```text
-boards/esp32_devkit_v1/board_defs.c
-base/core.frothy
-```
-
-The C side registers the raw bindings. The board library gives them a humane
-Frothy surface:
+A pure-Frothy library has ordinary Frothy word definitions in `lib.fr`:
 
 ```frothy
-to gpio.high with pin [ gpio.write: pin, 1 ]
-to dial [ adc.percent: $a0 ]
+-- Attach a servo on a pin. Returns a handle to pass to the other words.
+to servo.attach with pin [ pwm.open: pin, 50 ]
+
+-- Move to an angle from 0 to 180 degrees.
+to servo.write with servo, angle [ pwm.write: servo, map: angle, 0, 180, 250, 1250 ]
 ```
 
-That split is intentional. C should expose the necessary primitive. Frothy
-should name the workflow people actually use.
+`lib.toml` can name the library, set a version, and gate supported targets. If
+`lib.toml` is present, its `name` must match the directory name. Without
+`lib.toml`, the library is a pure-modules library that supports every target.
 
-## Persistence Rule
+The public example is
+[frothy-servo](https://github.com/nikokozak/frothy-servo).
 
-Foreign bindings live in the base image. Saved overlays may reference them by
-name, but the native implementation itself is rebuilt from firmware at boot.
+## Native Words
 
-That keeps saved images pointer-safe. If a saved word calls `gpio.write`, the
-restored image resolves `gpio.write` against the rebuilt base slot.
+A native library adds C sources through `[extension]` and maps each native word
+with `[[natives]]`. Native word names look like normal Frothy words, such as
+`neopixel.show`, but their implementation is compiled into the firmware.
+
+Values that cross the C boundary are Int, Bool, Nil, and, where a word supports
+it, Text or Bytes. Raw pointers and driver handles are not persistable Frothy
+values. Expose a small integer handle instead.
+
+Native words live in the firmware base image. A saved overlay references them by
+name. At boot, the native implementation is rebuilt from firmware, so saved
+images stay pointer-safe.
 
 ## Where To Read Next
 
-Use the [FFI reference](/reference/ffi/) for the exact project manifest shape,
-generated binding names, public C aliases, and examples.
+Use the [Extending reference](/reference/ffi/) for the exact library manifest
+shape, native C signature, and generated build files.
 
-Use [Project and Build](/reference/toolchain/project-and-build/) when the question is
-how the CLI selects targets, boards, source files, and build directories.
+Use [Project and Build](/reference/toolchain/project-and-build/) when the
+question is how the CLI selects targets, libraries, native sources, and build
+directories.

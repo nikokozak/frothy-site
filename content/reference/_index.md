@@ -13,5 +13,6 @@ The main sections are:
 - [Word catalog](/reference/words/) for one entry per word, form, constant, and prompt-facing built-in
 - [Hardware](/reference/hardware/) for ESP32 board words and peripheral surfaces
 - [Device & sessions](/reference/device/) for REPL behavior, diagnostics, persistence, boot, and recovery
-- [Toolchain](/reference/toolchain/) for CLI, project/build files, flashing, sending source, and editor support
-- [FFI](/reference/ffi/) remains in place for the existing C boundary pages
+- [Toolchain](/reference/toolchain/) for CLI, project/build files, flashing, source files, and editor support
+- [Extending](/reference/ffi/) for libraries, dependency manifests, and native words
+- [Porting](/reference/porting/) for bringing Frothy to a new MCU by implementing one platform header
