@@ -32,6 +32,7 @@ The extension handles `.fr` and `.frothy` files.
 - `Frothy: Send Selection`
 - `Frothy: Run Last Form`
 - `Frothy: Send File`
+- `Frothy: Open Example`
 - `Frothy: See Word`
 - `Frothy: List Words`
 - `Frothy: Show Status`
@@ -64,7 +65,14 @@ Cmd/Ctrl+Alt+.          interrupt device
 
 ## Browser Editor
 
-The browser editor uses WebSerial and stores sketches in localStorage. Use Chrome or Edge on desktop.
+The browser editor uses WebSerial and runs a Frothy sketch straight from the page. Use Chrome or Edge on desktop.
+
+- **Examples** — the picker in the header loads any of the bundled examples into the buffer. The same set is available in VS Code via `Frothy: Open Example`.
+- **Connect / Send** — Connect picks your board from the WebSerial dialog. Send line runs the current line; Send buffer runs the whole sketch (comment and blank lines are stripped, the way `frothy send` delivers a file).
+- **Interrupt** — sends a Ctrl-C to stop a running program (a `forever` loop), without disconnecting.
+- **Split** — toggles the MCU output between sitting below the editor and beside it; the choice is remembered.
+- **Autosave** — edits are saved to your browser automatically; the header shows the save state. Download `.fr` exports the sketch as a file you can later `frothy send`.
+- **Errors** — a buffer run stops at the first error, and an error's diagnostic detail (name, source, caret, help) is grouped together so it reads as one message.
 
 ## Recovery
 

@@ -176,6 +176,7 @@ html, body {
 
 .frothy-editor-cmdbar {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 10px 14px;
   border-top: 1px solid var(--rule);
@@ -191,6 +192,7 @@ html, body {
   color: var(--espresso);
   border-radius: 4px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .frothy-btn:hover { background: var(--crema); color: var(--paper); }
@@ -281,3 +283,76 @@ html, body {
   user-select: none;
 }
 .frothy-echo-toggle input { cursor: pointer; }
+
+/* ---- Split layout + ED-4 controls ------------------------------------- */
+
+/* Editor column + output pane share the body, which flips orientation. */
+.frothy-editor-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.frothy-editor-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+/* Horizontal: output sits beside the editor, full height, its own scroll. */
+.frothy-editor--horizontal .frothy-editor-body { flex-direction: row; }
+.frothy-editor--horizontal .frothy-editor-main { min-width: 0; }
+.frothy-editor--horizontal .frothy-transcript-host {
+  max-height: none;
+  width: 42%;
+  min-width: 220px;
+  border-top: none;
+  border-left: 1px solid var(--rule);
+}
+
+/* Example picker + split toggle live in the ink header (light on dark). */
+.frothy-example-picker {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--paper);
+}
+.frothy-example-picker select {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--paper);
+  color: var(--espresso);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+.frothy-split-toggle {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Save status: quiet, in the command bar. */
+.frothy-save-status {
+  margin-left: 8px;
+  align-self: center;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--shadow);
+}
+
+/* An error's grouped detail (name / source / caret / help): muted, ruled. */
+.transcript-detail {
+  color: var(--shadow);
+  padding-left: 14px;
+  border-left: 2px solid var(--err);
+}
+/* Client-side system notes (stopped, disconnected, empty buffer). */
+.transcript-note {
+  color: var(--shadow);
+  font-style: italic;
+}
