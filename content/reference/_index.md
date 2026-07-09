@@ -8,6 +8,7 @@ Use the reference when you need the exact surface rather than the teaching arc. 
 
 The main sections are:
 
+- Start with [Frothy in ten minutes](/reference/ten-minutes/) for the shortest complete pass through the language
 - [Word reference](/reference/words/) for syntax, operators, values, state, and core inspection words
 - [Interactive profile](/reference/interactive-profile/) for REPL behavior, multiline input, interrupts, and inspection
 - [Image and persistence](/reference/image-and-persistence/) for `save`, `restore`, boot, and recovery
