@@ -127,18 +127,25 @@ frothy send main.fr
 
 ## VS Code
 
-The VS Code extension is built from the same repo:
+Frothy is not listed in the VS Code Marketplace yet. Build and install the
+current 0.4.0 VSIX from the same repo:
 
 ```sh
 make vsix
-code --install-extension editors/vscode/frothy-0.2.1.vsix
+code --install-extension editors/vscode/frothy-0.4.0.vsix
 ```
+
+Marketplace extensions install and update inside VS Code. A `.vsix` from a
+GitHub release is a manual install: download it, then pass its path to
+`code --install-extension`.
 
 If VS Code cannot find the command, set `frothy.binaryPath` to the absolute path of the `frothy` binary you built.
 
 ## Browser Tools
 
-There are also browser-based tools for WebSerial. They are useful when you want to try the flasher or editor without setting up VS Code. Use a desktop browser with WebSerial support, such as Chrome or Edge.
+Use the [browser flasher](/flash/) to install Frothy, then continue to the
+[browser editor](/editor/). Both use WebSerial and need a supported desktop
+browser such as Chrome or Edge.
 
 ## What To Read Next
 

@@ -39,18 +39,24 @@ frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001
 frothy connect
 ```
 
-**`frothy session`** opens the richer session path used by editor tooling.
+**`frothy session`** opens the structured record/session path used by editor tooling.
 
 ```sh
 frothy session
 ```
 
-**`frothy send`** compiles a source file and applies or runs each line.
+**`frothy send`** reads a source file and sends each complete form in order.
 
 ```sh
 frothy send main.fr
 frothy send main.fr --dry-run
 ```
+
+## Interrupt And Save To Device
+
+Inside `frothy connect`, press Ctrl-C to interrupt running code without closing
+the serial session. Run `save` at the Frothy prompt to save the current overlay
+to the device; run `restore` to load it again.
 
 ## Project Commands
 

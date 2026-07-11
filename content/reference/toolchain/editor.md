@@ -1,7 +1,7 @@
 ---
 title: "Editor"
 weight: 3
-description: "VS Code and browser editor support for connecting, sending source, inspecting words, and interrupting the board."
+description: "VS Code and browser editor support for running forms and files, inspecting live words, and interrupting the board."
 aliases:
   - /reference/editor/
   - /reference/vscode/
@@ -15,26 +15,27 @@ The VS Code extension is a convenience layer over `frothy session`. It sends sou
 
 ## Install VS Code Support
 
-From the Frothy repo:
+Frothy is not listed in the Marketplace yet. From the Frothy repo, build and
+install the current VSIX directly:
 
 ```sh
 make vsix
-code --install-extension editors/vscode/frothy-0.2.1.vsix
+code --install-extension editors/vscode/frothy-0.4.0.vsix
 ```
 
-The extension handles `.fr` and `.frothy` files.
+A Marketplace install updates through VS Code. A release-asset `.vsix` is a
+manual download and install. The extension handles `.fr` and `.frothy` files.
 
 ## Useful Commands
 
 - `Frothy: Connect`
 - `Frothy: Disconnect`
-- `Frothy: Run Line`
-- `Frothy: Send Selection`
-- `Frothy: Run Last Form`
-- `Frothy: Send File`
+- `Frothy: Run Form`
+- `Frothy: Run File`
+- `Frothy: Rerun`
 - `Frothy: Open Example`
-- `Frothy: See Word`
-- `Frothy: List Words`
+- `Frothy: Browse Words`
+- `Frothy: Inspect Word`
 - `Frothy: Show Status`
 - `Frothy: Memory`
 - `Frothy: Save Overlay`
@@ -45,13 +46,14 @@ The extension handles `.fr` and `.frothy` files.
 ## Shortcuts
 
 ```text
-Shift+Enter             run current line
-Cmd/Ctrl+Enter          run selection, or current line
-Cmd/Ctrl+Alt+R          run last form
-Cmd/Ctrl+Shift+Enter    send current file
-Cmd/Ctrl+Alt+B          see word under cursor
-Cmd/Ctrl+Alt+.          interrupt device
+Cmd/Ctrl+Enter          Run Form
+Cmd/Ctrl+Shift+Enter    Run File
+Cmd/Ctrl+Alt+R          Rerun
+Cmd/Ctrl+Alt+.          Interrupt while running
 ```
+
+**Save to Device** uses `Frothy: Save Overlay` to persist the device's current
+definitions. `Frothy: Restore Overlay` reloads that saved state.
 
 ## Settings
 
@@ -65,14 +67,17 @@ Cmd/Ctrl+Alt+.          interrupt device
 
 ## Browser Editor
 
-The browser editor uses WebSerial and runs a Frothy sketch straight from the page. Use Chrome or Edge on desktop.
+The [browser editor](/editor/) uses WebSerial and runs Frothy straight from the
+page. Use Chrome or Edge on desktop.
 
 - **Examples** — the picker in the header loads any of the bundled examples into the buffer. The same set is available in VS Code via `Frothy: Open Example`.
-- **Connect / Send** — Connect picks your board from the WebSerial dialog. Send line runs the current line; Send buffer runs the whole sketch (comment and blank lines are stripped, the way `frothy send` delivers a file).
+- **Connect / Run** — Connect opens the WebSerial picker. Run Form sends one selected complete form or the form around the cursor. Run File sends every complete form in order and stops at the first device error.
+- **Browse Words** — asks the connected device for its current vocabulary, then runs `see` for the word you choose.
 - **Interrupt** — sends a Ctrl-C to stop a running program (a `forever` loop), without disconnecting.
 - **Split** — toggles the MCU output between sitting below the editor and beside it; the choice is remembered.
-- **Autosave** — edits are saved to your browser automatically; the header shows the save state. Download `.fr` exports the sketch as a file you can later `frothy send`.
-- **Errors** — a buffer run stops at the first error, and an error's diagnostic detail (name, source, caret, help) is grouped together so it reads as one message.
+- **Autosaved locally** — edits are saved in this browser automatically. If storage fails, the editor says so and keeps Download `.fr` available.
+- **Open / Download** — Open `.fr` replaces the scratchpad and preserves its filename for the next download.
+- **Errors** — Run File stops at the first device error, and diagnostic detail stays grouped with the error.
 
 ## Recovery
 
