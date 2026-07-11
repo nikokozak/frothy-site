@@ -1,0 +1,46 @@
+{{ define "head-extra" }}
+  <link rel="stylesheet" href="{{ "test/flash/style.css" | relURL }}">
+{{ end }}
+
+{{ define "main" }}
+<main id="app" class="flash-tool page" hidden>
+  <header class="flash-tool-intro">
+    <span class="doc-kicker">Browser tool</span>
+    <h1 class="doc-h1">{{ .Title }}</h1>
+    <p class="doc-lede">{{ .Description }}</p>
+    <div class="flash-tool-copy content">{{ .Content }}</div>
+  </header>
+
+  <section class="flash-tool-card" aria-label="Frothy firmware installer">
+    <div id="picker">
+      <p id="firmware-info" class="firmware-info" hidden>
+        <span>Firmware</span>
+        <strong id="firmware-label"></strong>
+        <code id="firmware-version"></code>
+      </p>
+      <label id="firmware-picker" hidden>Firmware <select id="firmware"></select></label>
+      <button id="flash" type="button">Flash Frothy</button>
+    </div>
+
+    <p id="status" class="status" role="status" aria-live="polite" hidden></p>
+    <div id="progress-wrap" class="progress-wrap" hidden>
+      <label for="progress">Flash progress</label>
+      <progress id="progress" value="0" max="1"></progress>
+    </div>
+    <a id="continue" class="continue" href="{{ "editor/" | relURL }}" hidden>Continue to Editor</a>
+  </section>
+</main>
+
+<section id="fallback" class="flash-tool flash-tool-fallback page" hidden>
+  <h1 class="doc-h1">Web Serial required</h1>
+  <p>Use a desktop Chrome, Edge, or Opera browser, or install Frothy with the CLI.</p>
+</section>
+
+<noscript>
+  <section class="flash-tool flash-tool-fallback page">
+    <h1 class="doc-h1">JavaScript required</h1>
+    <p>Use the Frothy CLI to install firmware without JavaScript.</p>
+  </section>
+</noscript>
+<script type="module" src="{{ "test/flash/app.js" | relURL }}"></script>
+{{ end }}
