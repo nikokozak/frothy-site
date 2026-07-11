@@ -95,6 +95,8 @@ async function flash(row, lockables) {
 
     await loader.writeFlash({
       fileArray,
+      // ESP-IDF encoded these settings in the generated images; do not copy
+      // flash_settings into a second browser-owned contract.
       flashMode: "keep",
       flashFreq: "keep",
       flashSize: "keep",
