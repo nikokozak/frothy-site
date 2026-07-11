@@ -90,6 +90,7 @@ test -f public/test/flash/style.css || fail "missing flasher stylesheet asset"
 test -f public/test/flash/app.js || fail "missing flasher script asset"
 grep -q 'id=firmware-label' public/flash/index.html || fail "flasher does not render firmware label"
 grep -q 'id=firmware-version' public/flash/index.html || fail "flasher does not render firmware version"
+grep -q 'id=firmware-picker[^>]*>Board' public/flash/index.html || fail "flasher selector is not labeled Board"
 grep -q 'Continue to Editor' public/flash/index.html || fail "flasher has no editor handoff"
 
 node <<'NODE'
@@ -100,9 +101,16 @@ const manifestFile = "public/test/flash/firmware/manifest.json";
 const firmwareDir = path.dirname(manifestFile);
 const rows = JSON.parse(fs.readFileSync(manifestFile, "utf8"));
 if (!Array.isArray(rows) || rows.length === 0) throw new Error("firmware manifest is empty");
+const boards = new Set();
+const files = new Set();
 for (const [rowIndex, row] of rows.entries()) {
-  if (typeof row.label !== "string" || !row.label) throw new Error(`firmware ${rowIndex} has no label`);
-  if (typeof row.version !== "string" || !row.version) throw new Error(`firmware ${rowIndex} has no version`);
+  for (const field of ["board", "profile", "label", "version"]) {
+    if (typeof row[field] !== "string" || !row[field]) {
+      throw new Error(`firmware ${rowIndex} has no ${field}`);
+    }
+  }
+  if (boards.has(row.board)) throw new Error(`manifest repeats board ${row.board}`);
+  boards.add(row.board);
   if (!Array.isArray(row.segments) || row.segments.length === 0) {
     throw new Error(`firmware ${rowIndex} has no segments`);
   }
@@ -118,10 +126,22 @@ for (const [rowIndex, row] of rows.entries()) {
     if (typeof segment.file !== "string" || path.basename(segment.file) !== segment.file) {
       throw new Error(`firmware ${rowIndex} has an invalid segment file`);
     }
-    if (!fs.statSync(path.join(firmwareDir, segment.file)).isFile()) {
+    if (files.has(segment.file)) {
+      throw new Error(`manifest repeats segment file ${segment.file}`);
+    }
+    files.add(segment.file);
+    const segmentPath = path.join(firmwareDir, segment.file);
+    if (!fs.existsSync(segmentPath) || !fs.statSync(segmentPath).isFile()) {
       throw new Error(`firmware segment is not a file: ${segment.file}`);
     }
   }
+}
+const bundledFiles = fs.readdirSync(firmwareDir)
+  .filter((file) => file.endsWith(".bin"))
+  .sort();
+const referencedFiles = [...files].sort();
+if (JSON.stringify(bundledFiles) !== JSON.stringify(referencedFiles)) {
+  throw new Error("firmware directory and manifest segment files differ");
 }
 NODE
 

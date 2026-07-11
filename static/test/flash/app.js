@@ -154,12 +154,18 @@ function validateManifest(value) {
   if (!Array.isArray(value) || value.length === 0) {
     throw new Error("manifest must contain firmware");
   }
+  const boards = new Set();
+  const files = new Set();
   for (const [rowIndex, row] of value.entries()) {
     for (const field of ["board", "profile", "label", "version"]) {
       if (typeof row?.[field] !== "string" || !row[field]) {
         throw new Error(`firmware ${rowIndex} has no ${field}`);
       }
     }
+    if (boards.has(row.board)) {
+      throw new Error(`manifest repeats board ${row.board}`);
+    }
+    boards.add(row.board);
     if (!Array.isArray(row.segments) || row.segments.length === 0) {
       throw new Error(`firmware ${rowIndex} has no segments`);
     }
@@ -175,6 +181,10 @@ function validateManifest(value) {
       if (typeof segment.file !== "string" || !/^[A-Za-z0-9._-]+\.bin$/.test(segment.file)) {
         throw new Error(`firmware ${rowIndex} has an invalid segment file`);
       }
+      if (files.has(segment.file)) {
+        throw new Error(`manifest repeats segment file ${segment.file}`);
+      }
+      files.add(segment.file);
     }
   }
   return value;
