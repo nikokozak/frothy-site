@@ -16,7 +16,7 @@ consumes libraries through `[deps]` in `frothy.toml`:
 
 ```toml
 name   = "stage-lights"
-target = "esp32_devkit_v1"
+board  = "esp32_devkit_v1"
 
 [deps]
 servo = { git = "https://github.com/nikokozak/frothy-servo", rev = "2f40b97c8ab32ca604ee4e685acc23cc129da9ea" }
@@ -39,9 +39,9 @@ to servo.attach with pin [ pwm.open: pin, 50 ]
 to servo.write with servo, angle [ pwm.write: servo, map: angle, 0, 180, 250, 1250 ]
 ```
 
-`lib.toml` can name the library, set a version, and gate supported targets. If
+`lib.toml` can name the library, set a version, and gate supported boards. If
 `lib.toml` is present, its `name` must match the directory name. Without
-`lib.toml`, the library is a pure-modules library that supports every target.
+`lib.toml`, the library is a pure-modules library that supports every board.
 
 The public example is
 [frothy-servo](https://github.com/nikokozak/frothy-servo).
@@ -66,5 +66,5 @@ Use the [Extending reference](/reference/ffi/) for the exact library manifest
 shape, native C signature, and generated build files.
 
 Use [Project and Build](/reference/toolchain/project-and-build/) when the
-question is how the CLI selects targets, libraries, native sources, and build
+question is how the CLI selects boards, libraries, native sources, and build
 directories.

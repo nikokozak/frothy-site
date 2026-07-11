@@ -20,7 +20,7 @@ word:
 ```toml
 name    = "neopixel"
 version = "0.1.0"
-targets = ["esp32_devkit_v1"]
+boards  = ["esp32_devkit_v1"]
 
 [extension]
 sources = ["native/neopixel.c"]
@@ -69,7 +69,7 @@ Values cross the boundary as tagged values. Decode integer arguments with
 ## Generated Build Files
 
 The C compiles into the firmware. `frothy build` runs a generator that writes
-derived files under `.frothy/build/<target>/`:
+derived files under `.frothy/build/<board>/`:
 
 - `lib_natives.c`, a table binding each native word name to its C function
 - `libs.cmake`, the extension sources and includes for the firmware build

@@ -13,7 +13,7 @@ Projects consume libraries through `[deps]` in `frothy.toml`:
 
 ```toml
 name   = "stage-lights"
-target = "esp32_devkit_v1"
+board  = "esp32_devkit_v1"
 
 [deps]
 servo = { git = "https://github.com/nikokozak/frothy-servo", rev = "2f40b97c8ab32ca604ee4e685acc23cc129da9ea" }

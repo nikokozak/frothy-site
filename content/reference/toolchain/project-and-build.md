@@ -34,7 +34,7 @@ A minimal manifest looks like:
 
 ```toml
 name = "blink"
-target = "esp32_devkit_v1"
+board = "esp32_devkit_v1"
 ```
 
 `esp32_devkit_v1` is the board identifier Frothy currently uses for the development ESP32 shape.
@@ -53,7 +53,7 @@ inspect, revise.
 
 ```toml
 name = "stage-lights"
-target = "esp32_devkit_v1"
+board = "esp32_devkit_v1"
 
 [deps]
 servo = { git = "https://github.com/nikokozak/frothy-servo", rev = "2f40b97c8ab32ca604ee4e685acc23cc129da9ea" }
@@ -70,7 +70,7 @@ them in. `frothy fetch` pre-fetches git dependencies without building.
 ```toml
 name = "neopixel"
 version = "0.1.0"
-targets = ["esp32_devkit_v1"]
+boards = ["esp32_devkit_v1"]
 
 [extension]
 sources = ["native/neopixel.c"]

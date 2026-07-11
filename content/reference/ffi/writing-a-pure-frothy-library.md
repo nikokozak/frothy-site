@@ -13,7 +13,7 @@ A pure-Frothy library is just Frothy words. The required file is `lib.fr`.
 ```toml
 name    = "servo"
 version = "0.1.0"
-targets = ["host", "esp32_devkit_v1"]
+boards  = ["host", "esp32_devkit_v1"]
 ```
 
 `lib.fr`:
@@ -26,8 +26,8 @@ to servo.attach with pin [ pwm.open: pin, 50 ]
 to servo.write with servo, angle [ pwm.write: servo, map: angle, 0, 180, 250, 1250 ]
 ```
 
-`targets` gates which build targets may use the library. A library with no
-`lib.toml` is a pure-modules library that implicitly supports every target. Its
+`boards` gates which boards may use the library. A library with no `lib.toml`
+is a pure-modules library that implicitly supports every board. Its
 name is its directory name.
 
 If `lib.toml` is present, its `name` must equal the directory name.
