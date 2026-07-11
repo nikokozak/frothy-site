@@ -23,6 +23,8 @@ done
 for route in \
   public/index.html \
   public/install/index.html \
+  public/editor/index.html \
+  public/flash/index.html \
   public/guide/index.html \
   public/guide/01-what-is-froth/index.html \
   public/guide/12-ffi-and-c/index.html \
@@ -68,5 +70,59 @@ test -f public/reference/interactive-profile/index.html || fail "missing alias f
 test -f public/reference/image-and-persistence/index.html || fail "missing alias for old image-and-persistence URL"
 test -f public/reference/cli/index.html || fail "missing alias for old CLI URL"
 test -f public/reference/editor/index.html || fail "missing alias for old editor URL"
+
+# 5. canonical tools own the public shells; /test holds internal assets only
+test ! -f public/test/editor/index.html || fail "old editor shell is still public"
+test ! -f public/test/flash/index.html || fail "old flasher shell is still public"
+
+grep -q 'test/editor/style.css' public/editor/index.html || fail "editor page missing stylesheet"
+grep -q 'test/editor/app.js' public/editor/index.html || fail "editor page missing script"
+test -f public/test/editor/style.css || fail "missing editor stylesheet asset"
+test -f public/test/editor/app.js || fail "missing editor script asset"
+
+EDITOR_BUNDLE="$(sed -n 's#.*"\./\(vendor/frothy-editor/[^\"]*/index\.js\)".*#\1#p' static/test/editor/app.js)"
+test -n "$EDITOR_BUNDLE" || fail "editor app has no pinned bundle import"
+test -f "public/test/editor/$EDITOR_BUNDLE" || fail "missing pinned editor bundle: $EDITOR_BUNDLE"
+
+grep -q 'test/flash/style.css' public/flash/index.html || fail "flasher page missing stylesheet"
+grep -q 'test/flash/app.js' public/flash/index.html || fail "flasher page missing script"
+test -f public/test/flash/style.css || fail "missing flasher stylesheet asset"
+test -f public/test/flash/app.js || fail "missing flasher script asset"
+grep -q 'id=firmware-label' public/flash/index.html || fail "flasher does not render firmware label"
+grep -q 'id=firmware-version' public/flash/index.html || fail "flasher does not render firmware version"
+grep -q 'Continue to Editor' public/flash/index.html || fail "flasher has no editor handoff"
+
+node <<'NODE'
+const fs = require("fs");
+const path = require("path");
+
+const manifestFile = "public/test/flash/firmware/manifest.json";
+const firmwareDir = path.dirname(manifestFile);
+const rows = JSON.parse(fs.readFileSync(manifestFile, "utf8"));
+if (!Array.isArray(rows) || rows.length === 0) throw new Error("firmware manifest is empty");
+for (const [rowIndex, row] of rows.entries()) {
+  if (typeof row.label !== "string" || !row.label) throw new Error(`firmware ${rowIndex} has no label`);
+  if (typeof row.version !== "string" || !row.version) throw new Error(`firmware ${rowIndex} has no version`);
+  if (!Array.isArray(row.segments) || row.segments.length === 0) {
+    throw new Error(`firmware ${rowIndex} has no segments`);
+  }
+  const addresses = new Set();
+  for (const segment of row.segments) {
+    if (!Number.isSafeInteger(segment.address) || segment.address < 0) {
+      throw new Error(`firmware ${rowIndex} has an invalid address`);
+    }
+    if (addresses.has(segment.address)) {
+      throw new Error(`firmware ${rowIndex} repeats address ${segment.address}`);
+    }
+    addresses.add(segment.address);
+    if (typeof segment.file !== "string" || path.basename(segment.file) !== segment.file) {
+      throw new Error(`firmware ${rowIndex} has an invalid segment file`);
+    }
+    if (!fs.statSync(path.join(firmwareDir, segment.file)).isFile()) {
+      throw new Error(`firmware segment is not a file: ${segment.file}`);
+    }
+  }
+}
+NODE
 
 echo "smoke: OK"
