@@ -1,22 +1,22 @@
-# Frothy web flasher
+# Frothy flasher assets
 
-A static page that flashes Frothy firmware to an ESP32 board over
-WebSerial, then drops you into a minimal in-browser REPL.
+These files support FrothySite's `/flash/` page, which flashes Frothy firmware
+to an ESP32 board over WebSerial and then links to the browser editor.
 
 ## Serve locally
 
 ```sh
-python3 -m http.server 8000
+./tools/smoke.sh
+python3 -m http.server --directory public 8000
 ```
 
-Open `http://127.0.0.1:8000/web/flash/` in Chrome, Edge, Opera, or
-Firefox 151+ on desktop. `file://` does not work — ES modules and
-WebSerial both need a real HTTP origin.
+Open `http://127.0.0.1:8000/flash/` in a desktop browser with WebSerial
+support. `file://` does not work because ES modules and WebSerial need an HTTP
+origin.
 
 ## Hosted
 
-GitHub Pages serves the same files at
-`https://nikokozak.github.io/FrothyRewrite/web/flash/`.
+The public flasher is at `https://frothy.dev/flash/`.
 
 ## esptool-js
 
