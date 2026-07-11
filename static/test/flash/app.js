@@ -7,6 +7,7 @@ import { ESPLoader, Transport } from "./vendor/esptool-js/0.6.0/bundle.js";
 
 const app = document.getElementById("app");
 const fallback = document.getElementById("fallback");
+const manifestURL = new URL("./firmware/manifest.json", import.meta.url);
 
 const supported =
   "serial" in navigator && navigator.userAgentData?.mobile !== true;
@@ -39,11 +40,29 @@ const encoder = new TextEncoder();
 const LOG_MAX_NODES = 800;
 
 async function initPicker() {
-  const manifest = await fetch("./firmware/manifest.json").then((r) => r.json());
+  const status = document.getElementById("status");
   const boardSel = document.getElementById("board");
   const profileSel = document.getElementById("profile");
   const flashBtn = document.getElementById("flash");
   const connectExistingBtn = document.getElementById("connect-existing");
+  boardSel.disabled = true;
+  profileSel.disabled = true;
+  flashBtn.disabled = true;
+
+  let manifest;
+  try {
+    setStatus(status, "Loading firmware…");
+    const response = await fetch(manifestURL);
+    if (!response.ok) throw new Error(`manifest fetch ${response.status}`);
+    manifest = validateManifest(await response.json());
+    status.hidden = true;
+    boardSel.disabled = false;
+    profileSel.disabled = false;
+    flashBtn.disabled = false;
+  } catch (err) {
+    setStatus(status, `Firmware unavailable: ${err.message ?? err}`, true);
+    return;
+  }
 
   const boards = [...new Set(manifest.map((row) => row.board))];
   for (const b of boards) boardSel.append(option(b));
@@ -94,7 +113,11 @@ async function initPicker() {
 async function flash(row, lockables) {
   const status = document.getElementById("status");
   const repl = document.getElementById("repl");
+  const progressWrap = document.getElementById("progress-wrap");
+  const progress = document.getElementById("progress");
   status.hidden = false;
+  progressWrap.hidden = true;
+  progress.value = 0;
   for (const el of lockables) el.disabled = true;
 
   let transport = null;
@@ -104,12 +127,10 @@ async function flash(row, lockables) {
     currentPort = await navigator.serial.requestPort();
 
     setStatus(status, "Fetching firmware…");
-    const res = await fetch(`./${row.file}`);
-    if (!res.ok) throw new Error(`firmware fetch ${res.status} for ${row.file}`);
-    const data = new Uint8Array(await res.arrayBuffer());
+    const fileArray = await fetchSegments(row);
     transport = new Transport(currentPort, false);
 
-    setStatus(status, "Connecting…");
+    setStatus(status, "Connecting to board…");
     const loader = new ESPLoader({
       transport,
       baudrate: 921600,
@@ -117,33 +138,89 @@ async function flash(row, lockables) {
     });
     const chip = await loader.main();
     setStatus(status, `Connected to ${chip}. Flashing…`);
+    progress.max = fileArray.length;
+    progressWrap.hidden = false;
 
     await loader.writeFlash({
-      fileArray: [{ address: 0x0, data }],
+      fileArray,
       flashMode: "keep",
       flashFreq: "keep",
       flashSize: "keep",
       eraseAll: false,
       compress: true,
-      reportProgress: (_i, written, total) => {
-        const pct = total ? Math.round((written / total) * 100) : 0;
-        setStatus(status, `Flashing… ${pct}%`);
+      reportProgress: (index, written, total) => {
+        const fraction = total ? written / total : 0;
+        progress.value = index + fraction;
+        const percent = Math.round((progress.value / progress.max) * 100);
+        setStatus(status, `Flashing… ${percent}%`);
       },
     });
 
+    setStatus(status, "Verifying and resetting…");
     await loader.after("hard_reset");
     await transport.disconnect();
     transport = null;
-    setStatus(status, "Flashed. Click Connect REPL to talk to the device.");
+    progress.value = progress.max;
+    setStatus(status, "Done. Frothy is installed. Click Connect REPL to continue.");
     repl.hidden = false;
   } catch (err) {
-    setStatus(status, `Flash failed: ${err.message ?? err}${portLockHint(err)}`, true);
+    const cancelled = err?.name === "NotFoundError";
+    setStatus(
+      status,
+      cancelled ? "Cancelled." : `Flash failed: ${err.message ?? err}${portLockHint(err)}`,
+      !cancelled,
+    );
     if (transport) {
       try { await transport.disconnect(); } catch {}
     }
     await releaseCurrentPort();
+    progressWrap.hidden = true;
     for (const el of lockables) el.disabled = false;
   }
+}
+
+async function fetchSegments(row) {
+  return Promise.all(row.segments.map(async (segment) => {
+    const url = new URL(segment.file, manifestURL);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`firmware fetch ${response.status} for ${segment.file}`);
+    }
+    return {
+      address: segment.address,
+      data: new Uint8Array(await response.arrayBuffer()),
+    };
+  }));
+}
+
+function validateManifest(value) {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw new Error("manifest must contain firmware");
+  }
+  for (const [rowIndex, row] of value.entries()) {
+    for (const field of ["board", "profile", "label", "version"]) {
+      if (typeof row?.[field] !== "string" || !row[field]) {
+        throw new Error(`firmware ${rowIndex} has no ${field}`);
+      }
+    }
+    if (!Array.isArray(row.segments) || row.segments.length === 0) {
+      throw new Error(`firmware ${rowIndex} has no segments`);
+    }
+    const addresses = new Set();
+    for (const segment of row.segments) {
+      if (!Number.isSafeInteger(segment?.address) || segment.address < 0) {
+        throw new Error(`firmware ${rowIndex} has an invalid address`);
+      }
+      if (addresses.has(segment.address)) {
+        throw new Error(`firmware ${rowIndex} repeats address ${segment.address}`);
+      }
+      addresses.add(segment.address);
+      if (typeof segment.file !== "string" || !/^[A-Za-z0-9._-]+\.bin$/.test(segment.file)) {
+        throw new Error(`firmware ${rowIndex} has an invalid segment file`);
+      }
+    }
+  }
+  return value;
 }
 
 // Cleanly cancel reader, release writer, await readDone, close port.
@@ -322,6 +399,7 @@ function portLockHint(err) {
 }
 
 function setStatus(el, text, isError = false) {
+  el.hidden = false;
   el.textContent = text;
   el.classList.toggle("err", isError);
 }

@@ -2,8 +2,21 @@
   {
     "board": "esp32_devkit_v1",
     "profile": "esp32_plain",
-    "file": "firmware/esp32_devkit_v1-esp32_plain.bin",
-    "label": "ESP32 DevKit V1 — plain",
-    "version": "v0.1.2"
+    "label": "ESP32 DevKit V1",
+    "version": "v0.1.2-38-g21d7b70",
+    "segments": [
+      {
+        "address": 4096,
+        "file": "esp32_devkit_v1-esp32_plain-0x00001000.bin"
+      },
+      {
+        "address": 32768,
+        "file": "esp32_devkit_v1-esp32_plain-0x00008000.bin"
+      },
+      {
+        "address": 65536,
+        "file": "esp32_devkit_v1-esp32_plain-0x00010000.bin"
+      }
+    ]
   }
 ]

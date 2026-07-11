@@ -61,6 +61,13 @@ button:disabled { opacity: 0.6; cursor: default; }
 }
 .status.err { color: var(--err); }
 
+.progress-wrap {
+  display: grid; gap: 6px; margin: 16px 0;
+  color: var(--shadow); font-family: var(--sans); font-size: 13px;
+}
+.progress-wrap[hidden] { display: none; }
+.progress-wrap progress { width: 100%; accent-color: var(--ok); }
+
 #repl { margin: 24px 0; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
 #log {
   font-family: var(--mono); font-size: 13px; color: var(--espresso);
