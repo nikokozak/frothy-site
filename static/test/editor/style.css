@@ -1,180 +1,101 @@
-/* Palette + fonts aliased to frothy.dev (static/css/style.css). The tool's own
-   var names stay; only the values map to the site. In dark, borders/shadows
-   flip to light ink — matching how the site handles data-theme.
-   ponytail: alias, don't rewrite. Identity treatment appended at end of file. */
-:root {
-  --cream: #f1ead9;
-  --paper: #fbf8ef;
-  --paper-deep: #e8dfca;
-  --espresso: #1b1812;
-  --crema: #e0795c;
-  --shadow: #5c5544;
-  --rule: #d3c8a9;
-  --ok: #3b7e20;
-  --err: #b22d0f;
-  --host: #15788e;
-  --dev: #c25c3e;
-  --status: #5c5544;
-  --serif: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+/* The library keeps short local token names. Map them to the site tokens only
+   inside the canonical editor page. ponytail: aliases beat a second theme. */
+.editor-tool {
+  --cream: var(--bg);
+  --paper: var(--surface);
+  --paper-deep: var(--surface-sunk);
+  --espresso: var(--text);
+  --crema: var(--clay);
+  --shadow: var(--text-muted);
+  --rule: var(--border-soft);
+  --ok: var(--green);
+  --err: var(--ember-deep);
+  --host: var(--cyan-deep);
+  --dev: var(--clay-deep);
+  --status: var(--text-muted);
+  --sans: var(--font-body);
+  --mono: var(--font-mono);
+  flex: 1;
+  width: 100%;
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: 48px var(--pad) 96px;
 }
 
-:root[data-theme="dark"] {
-  --cream: #1b1812;
-  --paper: #1e1a13;
-  --paper-deep: #110e09;
-  --espresso: #e9e0cb;
-  --crema: #e89a82;
-  --shadow: #a79e8b;
-  --rule: #322b20;
-  --ok: #7fd15c;
-  --err: #ec6a4a;
-  --host: #5cc3dc;
-  --dev: #e89a82;
-  --status: #a79e8b;
-}
+.editor-tool-intro { margin-bottom: 28px; }
+.editor-tool-intro .doc-lede { margin-top: 12px; max-width: 64ch; }
 
-* { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--cream);
-  color: var(--espresso);
-  font-family: var(--serif);
-  min-height: 100vh;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 28px;
-  border-bottom: 1px solid var(--rule);
-  background: var(--paper);
-}
-
-.page-title {
-  font-family: var(--sans);
-  font-weight: 600;
-  font-size: 18px;
-  letter-spacing: -0.01em;
-}
-
-.page-nav a {
-  margin-left: 20px;
-  color: var(--shadow);
-  text-decoration: none;
-  font-family: var(--sans);
-  font-size: 14px;
-}
-
-.page-nav a:hover { color: var(--espresso); text-decoration: underline; }
-
-.page-main {
+.editor-tool-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
   gap: 28px;
-  padding: 28px;
-  max-width: 1200px;
-  margin: 0 auto;
+  align-items: start;
 }
 
-@media (max-width: 800px) {
-  .page-main { grid-template-columns: 1fr; }
-}
-
-.editor-host {
+.editor-tool .editor-host {
+  min-width: 0;
+  min-height: 600px;
   background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
+  border: 2px solid var(--espresso);
+  border-radius: 7px;
+  box-shadow: 5px 5px 0 0 var(--espresso);
+  overflow: hidden;
+}
+
+.editor-tool-aside { color: var(--shadow); }
+.editor-tool-aside h2 {
+  margin: 0 0 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.editor-tool-aside ol { margin-left: 22px; }
+.editor-tool-aside li { margin-bottom: 9px; color: var(--espresso); }
+.editor-tool-aside p { font-size: 13px; }
+
+/* Library surface */
+.editor-tool .frothy-editor {
+  display: flex;
+  flex-direction: column;
   min-height: 600px;
 }
 
-.page-aside {
-  font-family: var(--serif);
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--shadow);
-}
-
-.page-aside h2 {
-  font-family: var(--sans);
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--espresso);
-  margin: 0 0 12px 0;
-}
-
-.page-aside ol { padding-left: 22px; }
-.page-aside li { margin: 8px 0; color: var(--espresso); }
-.page-aside kbd {
-  font-family: var(--mono);
-  background: var(--paper-deep);
-  border: 1px solid var(--rule);
-  border-radius: 3px;
-  padding: 1px 6px;
-  font-size: 12px;
-}
-.aside-note { font-size: 13px; margin-top: 14px; }
-
-.page-footer {
-  text-align: center;
-  font-family: var(--sans);
-  font-size: 13px;
-  color: var(--shadow);
-  padding: 24px;
-  border-top: 1px solid var(--rule);
-}
-.page-footer a { color: var(--shadow); }
-
-/* Library-provided surface --------------------------------------- */
-
-.frothy-editor {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.frothy-editor-header {
+.editor-tool .frothy-editor-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
   padding: 10px 14px;
-  border-bottom: 1px solid var(--rule);
-  background: var(--paper-deep);
+  background: var(--espresso);
 }
 
-.frothy-editor-title {
+.editor-tool .frothy-editor-title {
   font-family: var(--sans);
   font-size: 13px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--shadow);
+  letter-spacing: .06em;
+  color: var(--paper);
 }
 
-.frothy-editor-pane {
+.editor-tool .frothy-editor-pane {
   flex: 1;
   min-height: 280px;
   overflow: auto;
 }
-
-.frothy-editor-pane .cm-editor {
+.editor-tool .frothy-editor-pane .cm-editor {
   font-family: var(--mono);
   font-size: 14px;
 }
-
-.frothy-editor-pane .cm-editor.cm-focused { outline: none; }
-
-.frothy-editor-pane .cm-gutters {
+.editor-tool .frothy-editor-pane .cm-editor.cm-focused { outline: none; }
+.editor-tool .frothy-editor-pane .cm-gutters {
   background: var(--paper-deep);
   border-right: 1px solid var(--rule);
   color: var(--shadow);
 }
 
-.frothy-editor-cmdbar {
+.editor-tool .frothy-editor-cmdbar {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -183,7 +104,7 @@ html, body {
   background: var(--paper);
 }
 
-.frothy-btn {
+.editor-tool .frothy-btn {
   font-family: var(--sans);
   font-size: 13px;
   padding: 6px 12px;
@@ -194,32 +115,32 @@ html, body {
   cursor: pointer;
   white-space: nowrap;
 }
-
-.frothy-btn:hover { background: var(--crema); color: var(--paper); }
-.frothy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-.frothy-btn-primary {
-  background: var(--espresso);
-  color: var(--paper);
-  border-color: var(--espresso);
-}
-
-.frothy-btn-primary:hover { background: var(--shadow); }
-
-.frothy-btn-connected {
+.editor-tool .frothy-btn:hover { background: var(--crema); color: var(--paper); }
+.editor-tool .frothy-btn:disabled { opacity: .4; cursor: not-allowed; }
+.editor-tool .frothy-btn-primary {
   background: var(--ok);
-  color: var(--paper);
+  color: #1b1812;
+  border: 1.5px solid var(--paper);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.editor-tool .frothy-btn-primary:hover { background: var(--ok); filter: brightness(1.06); }
+.editor-tool .frothy-btn-connected {
+  background: var(--ok);
+  color: #1b1812;
   border-color: var(--ok);
 }
 
-.frothy-transcript-host {
+.editor-tool .frothy-transcript-host {
   border-top: 1px solid var(--rule);
   max-height: 280px;
   display: flex;
   flex-direction: column;
 }
-
-.frothy-transcript {
+.editor-tool .frothy-transcript {
   font-family: var(--mono);
   font-size: 12.5px;
   line-height: 1.5;
@@ -228,50 +149,70 @@ html, body {
   overflow-y: auto;
   flex: 1;
 }
-
-.frothy-transcript > div {
+.editor-tool .frothy-transcript > div {
   padding: 1px 0;
   white-space: pre-wrap;
   word-break: break-word;
 }
+.editor-tool .transcript-host { color: var(--host); }
+.editor-tool .transcript-line { color: var(--espresso); }
+.editor-tool .transcript-ok { color: var(--ok); }
+.editor-tool .transcript-error { color: var(--err); }
+.editor-tool .transcript-status { color: var(--status); font-style: italic; }
+.editor-tool .transcript-detail {
+  color: var(--shadow);
+  padding-left: 14px;
+  border-left: 2px solid var(--err);
+}
+.editor-tool .transcript-note { color: var(--shadow); font-style: italic; }
 
-.transcript-host { color: var(--host); }
-.transcript-line { color: var(--espresso); }
-.transcript-ok { color: var(--ok); }
-.transcript-error { color: var(--err); }
-.transcript-status { color: var(--status); font-style: italic; }
-
-/* frothy.dev identity: block shadows, ink header bar, mono uppercase run
-   button, heavier heading. Appended so these win over the base rules above. */
-.page-title { font-family: var(--sans); font-weight: 800; letter-spacing: -0.01em; }
-
-.editor-host {
-  border: 2px solid var(--espresso);
-  border-radius: 7px;
-  box-shadow: 5px 5px 0 0 var(--espresso);
-  overflow: hidden;
+.editor-tool .frothy-editor-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.editor-tool .frothy-editor-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.editor-tool .frothy-editor--horizontal .frothy-editor-body { flex-direction: row; }
+.editor-tool .frothy-editor--horizontal .frothy-editor-main { min-width: 0; }
+.editor-tool .frothy-editor--horizontal .frothy-transcript-host {
+  max-height: none;
+  width: 42%;
+  min-width: 220px;
+  border-top: 0;
+  border-left: 1px solid var(--rule);
 }
 
-.frothy-editor-header {
-  background: var(--espresso);
-  border-bottom: none;
+.editor-tool .frothy-example-picker {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--paper);
 }
-.frothy-editor-title { color: var(--paper); }
-
-.frothy-btn-primary {
-  background: var(--ok);
-  color: #1b1812;
-  border: 1.5px solid var(--paper);
+.editor-tool .frothy-example-picker select {
   font-family: var(--mono);
-  font-weight: 700;
+  font-size: 12px;
+  background: var(--paper);
+  color: var(--espresso);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+.editor-tool .frothy-split-toggle {
+  font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.07em;
+  letter-spacing: .05em;
   text-transform: uppercase;
 }
-.frothy-btn-primary:hover { background: var(--ok); filter: brightness(1.06); }
-
-/* Echo toggle in the command bar (client-side suppression of device echo). */
-.frothy-echo-toggle {
+.editor-tool .frothy-echo-toggle {
   margin-left: auto;
   display: inline-flex;
   align-items: center;
@@ -282,62 +223,8 @@ html, body {
   cursor: pointer;
   user-select: none;
 }
-.frothy-echo-toggle input { cursor: pointer; }
-
-/* ---- Split layout + ED-4 controls ------------------------------------- */
-
-/* Editor column + output pane share the body, which flips orientation. */
-.frothy-editor-body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
-.frothy-editor-main {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
-/* Horizontal: output sits beside the editor, full height, its own scroll. */
-.frothy-editor--horizontal .frothy-editor-body { flex-direction: row; }
-.frothy-editor--horizontal .frothy-editor-main { min-width: 0; }
-.frothy-editor--horizontal .frothy-transcript-host {
-  max-height: none;
-  width: 42%;
-  min-width: 220px;
-  border-top: none;
-  border-left: 1px solid var(--rule);
-}
-
-/* Example picker + split toggle live in the ink header (light on dark). */
-.frothy-example-picker {
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--sans);
-  font-size: 12px;
-  color: var(--paper);
-}
-.frothy-example-picker select {
-  font-family: var(--mono);
-  font-size: 12px;
-  background: var(--paper);
-  color: var(--espresso);
-  border: 1px solid var(--rule);
-  border-radius: 3px;
-  padding: 2px 4px;
-}
-.frothy-split-toggle {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-/* Save status: quiet, in the command bar. */
-.frothy-save-status {
+.editor-tool .frothy-echo-toggle input { cursor: pointer; }
+.editor-tool .frothy-save-status {
   margin-left: 8px;
   align-self: center;
   font-family: var(--sans);
@@ -345,14 +232,48 @@ html, body {
   color: var(--shadow);
 }
 
-/* An error's grouped detail (name / source / caret / help): muted, ruled. */
-.transcript-detail {
-  color: var(--shadow);
-  padding-left: 14px;
-  border-left: 2px solid var(--err);
+.editor-tool .frothy-word-dialog {
+  width: min(620px, calc(100vw - 32px));
+  max-height: min(680px, calc(100vh - 32px));
+  padding: 20px;
+  color: var(--espresso);
+  background: var(--paper);
+  border: 2px solid var(--espresso);
+  border-radius: 7px;
+  box-shadow: 5px 5px 0 var(--espresso);
 }
-/* Client-side system notes (stopped, disconnected, empty buffer). */
-.transcript-note {
-  color: var(--shadow);
-  font-style: italic;
+.editor-tool .frothy-word-dialog::backdrop { background: rgb(27 24 18 / .55); }
+.editor-tool .frothy-word-dialog h2 { margin: 0 0 12px; font-size: 20px; }
+.editor-tool .frothy-word-dialog label { display: block; margin-bottom: 12px; }
+.editor-tool .frothy-word-dialog input {
+  width: 100%;
+  margin-top: 5px;
+  padding: 7px 9px;
+  font: 13px var(--mono);
+  color: var(--espresso);
+  background: var(--paper-deep);
+  border: 1px solid var(--rule);
+}
+.editor-tool .frothy-word-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  max-height: 420px;
+  margin-bottom: 16px;
+  overflow: auto;
+}
+
+@media (max-width: 800px) {
+  .editor-tool { padding-top: 28px; }
+  .editor-tool-layout { grid-template-columns: 1fr; }
+  .editor-tool .frothy-editor-header { flex-wrap: wrap; }
+  .editor-tool .frothy-example-picker { margin-left: 0; }
+  .editor-tool .frothy-editor--horizontal .frothy-editor-body { flex-direction: column; }
+  .editor-tool .frothy-editor--horizontal .frothy-transcript-host {
+    width: auto;
+    min-width: 0;
+    max-height: 280px;
+    border-top: 1px solid var(--rule);
+    border-left: 0;
+  }
 }

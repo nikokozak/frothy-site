@@ -1,0 +1,21 @@
+{{ define "head-extra" }}
+  <link rel="stylesheet" href="{{ "test/editor/style.css" | relURL }}">
+{{ end }}
+
+{{ define "main" }}
+<main class="editor-tool page">
+  <header class="editor-tool-intro">
+    <span class="doc-kicker">Browser tool</span>
+    <h1 class="doc-h1">{{ .Title }}</h1>
+    <p class="doc-lede">{{ .Description }}</p>
+  </header>
+
+  <div class="editor-tool-layout">
+    <section id="editor" class="editor-host" aria-label="Frothy source editor"></section>
+    <aside class="editor-tool-aside content">
+      {{ .Content }}
+    </aside>
+  </div>
+</main>
+<script type="module" src="{{ "test/editor/app.js" | relURL }}"></script>
+{{ end }}
