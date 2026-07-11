@@ -1,13 +1,12 @@
-// Two REPL entry points (flash → connect-after, or connect-existing) share
-// enterRepl(). Designed deliberately thin: no wake newlines, no write echo,
-// no Frothy-shaped reformatting. The device echoes input and prints its own
-// prompt; the page is a window onto that traffic.
+// Install one generated Frothy firmware bundle, release the serial port, and
+// hand the user to the editor. The device manifest owns every flashed address.
 
 import { ESPLoader, Transport } from "./vendor/esptool-js/0.6.0/bundle.js";
 
 const app = document.getElementById("app");
 const fallback = document.getElementById("fallback");
 const manifestURL = new URL("./firmware/manifest.json", import.meta.url);
+let currentPort = null;
 
 const supported =
   "serial" in navigator && navigator.userAgentData?.mobile !== true;
@@ -16,11 +15,7 @@ if (!supported) {
   fallback.hidden = false;
 } else {
   app.hidden = false;
-  initPicker();
-  initRepl();
-  // Page close / reload: release the port so a re-flash from a new tab works.
-  // Without this Chrome/Arc holds the FD open at the OS level and the next
-  // esptool open fails with "Failed to connect."
+  void initFlasher();
   window.addEventListener("beforeunload", () => {
     if (currentPort) {
       try { currentPort.close(); } catch {}
@@ -28,25 +23,14 @@ if (!supported) {
   });
 }
 
-let currentPort = null;
-let reader = null;
-let writer = null;
-let readDone = null;
-const encoder = new TextEncoder();
-
-// Bounded log. Each line is a text node; we trim from the head when the count
-// exceeds the cap. Avoids the O(n²) textContent += pattern that locks the
-// page when the device blasts hundreds of `ok\n> ` lines on boot replay.
-const LOG_MAX_NODES = 800;
-
-async function initPicker() {
+async function initFlasher() {
   const status = document.getElementById("status");
-  const boardSel = document.getElementById("board");
-  const profileSel = document.getElementById("profile");
+  const firmwareInfo = document.getElementById("firmware-info");
+  const firmwareLabel = document.getElementById("firmware-label");
+  const firmwareVersion = document.getElementById("firmware-version");
+  const firmwarePicker = document.getElementById("firmware-picker");
+  const firmwareSelect = document.getElementById("firmware");
   const flashBtn = document.getElementById("flash");
-  const connectExistingBtn = document.getElementById("connect-existing");
-  boardSel.disabled = true;
-  profileSel.disabled = true;
   flashBtn.disabled = true;
 
   let manifest;
@@ -55,74 +39,42 @@ async function initPicker() {
     const response = await fetch(manifestURL);
     if (!response.ok) throw new Error(`manifest fetch ${response.status}`);
     manifest = validateManifest(await response.json());
-    status.hidden = true;
-    boardSel.disabled = false;
-    profileSel.disabled = false;
-    flashBtn.disabled = false;
   } catch (err) {
     setStatus(status, `Firmware unavailable: ${err.message ?? err}`, true);
     return;
   }
 
-  const boards = [...new Set(manifest.map((row) => row.board))];
-  for (const b of boards) boardSel.append(option(b));
-  const savedBoard = localStorage.getItem("frothy.flash.board");
-  if (boards.includes(savedBoard)) boardSel.value = savedBoard;
-
-  function renderProfiles() {
-    profileSel.replaceChildren();
-    const profiles = manifest
-      .filter((row) => row.board === boardSel.value)
-      .map((row) => row.profile);
-    for (const p of profiles) profileSel.append(option(p));
-    const savedProfile = localStorage.getItem("frothy.flash.profile");
-    if (profiles.includes(savedProfile)) profileSel.value = savedProfile;
+  for (const [index, row] of manifest.entries()) {
+    firmwareSelect.append(option(`${row.label} · ${row.version}`, String(index)));
   }
-  renderProfiles();
-
-  boardSel.addEventListener("change", () => {
-    localStorage.setItem("frothy.flash.board", boardSel.value);
-    renderProfiles();
-  });
-  profileSel.addEventListener("change", () => {
-    localStorage.setItem("frothy.flash.profile", profileSel.value);
-  });
-
+  if (manifest.length === 1) {
+    firmwareLabel.textContent = manifest[0].label;
+    firmwareVersion.textContent = manifest[0].version;
+    firmwareInfo.hidden = false;
+  } else {
+    firmwarePicker.hidden = false;
+  }
+  status.hidden = true;
+  flashBtn.disabled = false;
   flashBtn.addEventListener("click", () => {
-    const row = manifest.find(
-      (r) => r.board === boardSel.value && r.profile === profileSel.value,
-    );
-    if (row) flash(row, [boardSel, profileSel, flashBtn, connectExistingBtn]);
-  });
-
-  connectExistingBtn.addEventListener("click", async () => {
-    const status = document.getElementById("status");
-    status.hidden = false;
-    try {
-      setStatus(status, "Pick a serial port…");
-      await releaseCurrentPort();
-      currentPort = await navigator.serial.requestPort();
-      await enterRepl(/* fromFlash */ false);
-    } catch (err) {
-      setStatus(status, openErrorMessage(err), true);
-      currentPort = null;
-    }
+    const row = manifest[Number(firmwareSelect.value)];
+    if (row) void flash(row, [firmwareSelect, flashBtn]);
   });
 }
 
 async function flash(row, lockables) {
   const status = document.getElementById("status");
-  const repl = document.getElementById("repl");
   const progressWrap = document.getElementById("progress-wrap");
   const progress = document.getElementById("progress");
-  status.hidden = false;
+  const continueLink = document.getElementById("continue");
   progressWrap.hidden = true;
   progress.value = 0;
-  for (const el of lockables) el.disabled = true;
+  continueLink.hidden = true;
+  for (const element of lockables) element.disabled = true;
 
   let transport = null;
   try {
-    setStatus(status, "Pick a serial port…");
+    setStatus(status, "Choose a serial port…");
     await releaseCurrentPort();
     currentPort = await navigator.serial.requestPort();
 
@@ -160,9 +112,12 @@ async function flash(row, lockables) {
     await loader.after("hard_reset");
     await transport.disconnect();
     transport = null;
+    currentPort = null;
     progress.value = progress.max;
-    setStatus(status, "Done. Frothy is installed. Click Connect REPL to continue.");
-    repl.hidden = false;
+    setStatus(status, "Done. Frothy is installed.");
+    document.getElementById("flash").hidden = true;
+    document.getElementById("firmware-picker").hidden = true;
+    continueLink.hidden = false;
   } catch (err) {
     const cancelled = err?.name === "NotFoundError";
     setStatus(
@@ -172,17 +127,17 @@ async function flash(row, lockables) {
     );
     if (transport) {
       try { await transport.disconnect(); } catch {}
+      currentPort = null;
     }
     await releaseCurrentPort();
     progressWrap.hidden = true;
-    for (const el of lockables) el.disabled = false;
+    for (const element of lockables) element.disabled = false;
   }
 }
 
 async function fetchSegments(row) {
   return Promise.all(row.segments.map(async (segment) => {
-    const url = new URL(segment.file, manifestURL);
-    const response = await fetch(url);
+    const response = await fetch(new URL(segment.file, manifestURL));
     if (!response.ok) {
       throw new Error(`firmware fetch ${response.status} for ${segment.file}`);
     }
@@ -223,190 +178,29 @@ function validateManifest(value) {
   return value;
 }
 
-// Cleanly cancel reader, release writer, await readDone, close port.
-// Safe to call when nothing is open. Without this, repeat Flash attempts
-// or page reloads leave Arc/Chrome holding the OS-level FD.
 async function releaseCurrentPort() {
-  if (reader) {
-    try { await reader.cancel(); } catch {}
-    try { reader.releaseLock(); } catch {}
-    reader = null;
-  }
-  if (writer) {
-    try { writer.releaseLock(); } catch {}
-    writer = null;
-  }
-  if (readDone) {
-    try { await readDone; } catch {}
-    readDone = null;
-  }
-  if (currentPort) {
-    try { await currentPort.close(); } catch {}
-    currentPort = null;
-  }
-}
-
-function initRepl() {
-  document.getElementById("connect").addEventListener("click", () => {
-    enterRepl(/* fromFlash */ true);
-  });
-  document.getElementById("disconnect").addEventListener("click", leaveRepl);
-}
-
-async function enterRepl(fromFlash) {
-  const status = document.getElementById("status");
-  const repl = document.getElementById("repl");
-  const connectBtn = document.getElementById("connect");
-  const disconnectBtn = document.getElementById("disconnect");
-  const log = document.getElementById("log");
-  const line = document.getElementById("line");
-  const picker = document.getElementById("picker");
-
-  if (!currentPort) {
-    setStatus(status, "No serial port held; pick one via Flash or Connect to board.", true);
-    return;
-  }
-
-  try {
-    await currentPort.open({ baudRate: 115200 });
-  } catch (err) {
-    setStatus(status, `${openErrorMessage(err)}`, true);
-    currentPort = null;
-    return;
-  }
-
-  writer = currentPort.writable.getWriter();
-  log.replaceChildren();
-  readDone = readLoop(log);
-
-  // Pulse the chip into a clean fresh-boot state on every REPL connect.
-  // Without this:
-  //   - After Connect-to-board, WebSerial's default signal state on a
-  //     CP2102 board can leave EN low (chip held in reset) — no UART
-  //     output, no response to typed input.
-  //   - After Flash, esptool's hard_reset + transport.disconnect leaves
-  //     the chip in a state where the next port.open() finds it
-  //     unresponsive; an active reset pulse is required to recover.
-  // Two timing quirks (observed empirically on Chrome 121 + CP2102):
-  //   (1) setSignals issued immediately after port.open() is silently
-  //       no-op — a settle delay is required.
-  //   (2) The pulse must run *after* readLoop has called reader.read(),
-  //       otherwise the chip's boot output is dropped.
-  // Sequence: settle, assert RTS (EN low = reset), hold, deassert RTS
-  // (run). DTR stays low throughout so IO0 is high — chip boots into
-  // the app, not the bootloader. setSignals is best-effort; on boards
-  // without an auto-reset circuit it's a harmless no-op.
-  try {
-    await new Promise((r) => setTimeout(r, 500));
-    await currentPort.setSignals({ requestToSend: true, dataTerminalReady: false });
-    await new Promise((r) => setTimeout(r, 200));
-    await currentPort.setSignals({ requestToSend: false, dataTerminalReady: false });
-  } catch {}
-
-  picker.hidden = true;
-  repl.hidden = false;
-  connectBtn.hidden = true;
-  log.hidden = false;
-  line.hidden = false;
-  disconnectBtn.hidden = false;
-  setStatus(status, fromFlash
-    ? "REPL connected at 115200 (post-flash). Boot output appears below."
-    : "REPL connected at 115200.");
-  line.focus();
-
-  line.addEventListener("keydown", lineKeydown);
-}
-
-async function lineKeydown(e) {
-  if (e.key !== "Enter" || !writer) return;
-  e.preventDefault();
-  const value = e.target.value;
-  e.target.value = "";
-  try {
-    await writer.write(encoder.encode(value + "\n"));
-  } catch (err) {
-    appendLog(document.getElementById("log"), `(write failed: ${err.message ?? err})\n`);
-  }
-}
-
-async function leaveRepl() {
-  const log = document.getElementById("log");
-  const line = document.getElementById("line");
-  const repl = document.getElementById("repl");
-  const picker = document.getElementById("picker");
-  const status = document.getElementById("status");
-  const connectBtn = document.getElementById("connect");
-  const disconnectBtn = document.getElementById("disconnect");
-
-  line.removeEventListener("keydown", lineKeydown);
-  await releaseCurrentPort();
-  log.replaceChildren();
-  line.value = "";
-  log.hidden = true;
-  line.hidden = true;
-  disconnectBtn.hidden = true;
-  connectBtn.hidden = false;
-  repl.hidden = true;
-  picker.hidden = false;
-  for (const id of ["flash", "board", "profile", "connect-existing"]) {
-    document.getElementById(id).disabled = false;
-  }
-  setStatus(status, "Disconnected.");
-}
-
-async function readLoop(log) {
-  reader = currentPort.readable.getReader();
-  const decoder = new TextDecoder("utf-8");
-  try {
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      const text = decoder.decode(value, { stream: true });
-      if (text) appendLog(log, text);
-    }
-  } catch (err) {
-    appendLog(log, `(read loop ended: ${err.message ?? err})\n`);
-  } finally {
-    try { reader.releaseLock(); } catch {}
-  }
-}
-
-// Append text as a single text node and trim oldest nodes when the cap is
-// hit. textContent += would re-serialize the whole log on every chunk,
-// which is O(n²) and locks the page after a few hundred lines.
-function appendLog(log, text) {
-  log.appendChild(document.createTextNode(text));
-  while (log.childNodes.length > LOG_MAX_NODES) {
-    log.removeChild(log.firstChild);
-  }
-  log.scrollTop = log.scrollHeight;
-}
-
-function openErrorMessage(err) {
-  const msg = err?.message ?? String(err);
-  if (/already open|InvalidStateError|access|locked/i.test(msg)) {
-    return `Open failed (${msg}). The serial port is likely held by another tab or browser process. Close all Frothy flasher tabs and try again; if that doesn't free it, restart the browser.`;
-  }
-  return `Open failed: ${msg}`;
+  if (!currentPort) return;
+  try { await currentPort.close(); } catch {}
+  currentPort = null;
 }
 
 function portLockHint(err) {
-  const msg = err?.message ?? String(err);
-  if (/Failed to connect|access|locked/i.test(msg)) {
-    return ` — if this is a re-flash attempt, the serial port may be locked by another tab; close all Frothy flasher tabs or restart the browser to release it.`;
+  const message = err?.message ?? String(err);
+  if (/Failed to connect|access|locked/i.test(message)) {
+    return " — close other flasher tabs or restart the browser to release the serial port.";
   }
   return "";
 }
 
-function setStatus(el, text, isError = false) {
-  el.hidden = false;
-  el.textContent = text;
-  el.classList.toggle("err", isError);
+function setStatus(element, text, isError = false) {
+  element.hidden = false;
+  element.textContent = text;
+  element.classList.toggle("err", isError);
 }
 
-function option(value) {
-  const opt = document.createElement("option");
-  opt.value = value;
-  opt.textContent = value;
-  return opt;
+function option(label, value) {
+  const element = document.createElement("option");
+  element.value = value;
+  element.textContent = label;
+  return element;
 }

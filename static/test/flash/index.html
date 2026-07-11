@@ -21,14 +21,16 @@
 
 <main id="app" hidden>
   <h1>Frothy</h1>
-  <p class="meta">Flash a board, then talk to it. Or connect to one
-  already running Frothy.</p>
+  <p class="meta">Install Frothy on a compatible ESP32 board.</p>
 
   <section id="picker">
-    <label>Board <select id="board"></select></label>
-    <label>Profile <select id="profile"></select></label>
-    <button id="flash" type="button">Flash</button>
-    <button id="connect-existing" type="button">Connect to board</button>
+    <p id="firmware-info" class="firmware-info" hidden>
+      <span>Firmware</span>
+      <strong id="firmware-label"></strong>
+      <code id="firmware-version"></code>
+    </p>
+    <label id="firmware-picker" hidden>Firmware <select id="firmware"></select></label>
+    <button id="flash" type="button">Flash Frothy</button>
   </section>
 
   <p id="status" class="status" role="status" aria-live="polite" hidden></p>
@@ -37,13 +39,7 @@
     <progress id="progress" value="0" max="1"></progress>
   </div>
 
-  <section id="repl" hidden>
-    <button id="connect" type="button">Connect REPL</button>
-    <pre id="log" hidden></pre>
-    <input id="line" type="text" autocomplete="off" spellcheck="false"
-           placeholder="type a Frothy line and press Enter" hidden>
-    <button id="disconnect" type="button" hidden>Disconnect</button>
-  </section>
+  <a id="continue" class="continue" href="../editor/" hidden>Continue to Editor</a>
 </main>
 
 <section id="fallback" hidden>

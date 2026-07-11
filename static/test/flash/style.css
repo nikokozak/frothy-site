@@ -39,6 +39,7 @@ h1 {
   font-family: var(--sans); font-size: 13px; color: var(--shadow);
   display: flex; align-items: center; gap: 8px;
 }
+#firmware-picker[hidden] { display: none; }
 #picker select {
   font-family: var(--sans); font-size: 14px; color: var(--espresso);
   background: var(--paper); border: 1px solid var(--rule); border-radius: 4px;
@@ -47,12 +48,20 @@ h1 {
 #picker select:focus { outline: 2px solid var(--crema); outline-offset: 1px; }
 #picker select:disabled { opacity: 0.6; }
 
-button {
+.firmware-info {
+  margin: 0; display: grid; gap: 2px;
+  font-family: var(--sans); font-size: 13px; color: var(--shadow);
+}
+.firmware-info[hidden] { display: none; }
+.firmware-info strong { color: var(--espresso); font-size: 16px; }
+.firmware-info code { font-family: var(--mono); }
+
+button, .continue {
   font-family: var(--sans); font-size: 14px; color: var(--espresso);
   background: var(--paper); border: 1px solid var(--rule); border-radius: 4px;
   padding: 6px 14px; cursor: pointer;
 }
-button:focus { outline: 2px solid var(--crema); outline-offset: 1px; }
+button:focus, .continue:focus { outline: 2px solid var(--crema); outline-offset: 1px; }
 button:disabled { opacity: 0.6; cursor: default; }
 
 .status {
@@ -68,30 +77,16 @@ button:disabled { opacity: 0.6; cursor: default; }
 .progress-wrap[hidden] { display: none; }
 .progress-wrap progress { width: 100%; accent-color: var(--ok); }
 
-#repl { margin: 24px 0; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
-#log {
-  font-family: var(--mono); font-size: 13px; color: var(--espresso);
-  background: var(--paper); border: 1px solid var(--rule); border-radius: 4px;
-  padding: 12px; margin: 0; align-self: stretch;
-  height: 320px; overflow: auto; white-space: pre-wrap; word-break: break-word;
-}
-#line {
-  font-family: var(--mono); font-size: 14px; color: var(--espresso);
-  background: var(--paper); border: 1px solid var(--rule); border-radius: 4px;
-  padding: 6px 10px; align-self: stretch;
-}
-#line:focus { outline: 2px solid var(--crema); outline-offset: 1px; }
-
-/* frothy.dev identity: heavier heading, ink-bordered controls, a block-shadow
-   green Flash button, framed log. Appended so these win over the base rules. */
+/* frothy.dev identity: heavier heading, ink-bordered controls, and block-shadow
+   primary actions. Appended so these win over the base rules. */
 h1 { font-family: var(--sans); font-weight: 800; }
 
-#picker select, button {
+#picker select, button, .continue {
   border: 2px solid var(--espresso);
   border-radius: 5px;
 }
 
-#flash {
+#flash, .continue {
   background: var(--ok);
   color: #1b1812;
   border: 2px solid var(--espresso);
@@ -103,10 +98,7 @@ h1 { font-family: var(--sans); font-weight: 800; }
   text-transform: uppercase;
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
-#flash:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--espresso); }
-#flash:active { transform: translate(0, 0); box-shadow: 2px 2px 0 0 var(--espresso); }
-
-#log {
-  border: 2px solid var(--espresso);
-  box-shadow: 3px 3px 0 0 var(--espresso);
-}
+#flash:hover, .continue:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--espresso); }
+#flash:active, .continue:active { transform: translate(0, 0); box-shadow: 2px 2px 0 0 var(--espresso); }
+.continue { display: inline-block; margin-top: 18px; text-decoration: none; }
+.continue[hidden] { display: none; }
