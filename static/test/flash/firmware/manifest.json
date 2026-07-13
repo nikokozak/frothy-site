@@ -1,9 +1,10 @@
 [
   {
     "board": "esp32_devkit_v1",
+    "chip": "esp32",
     "profile": "esp32_plain",
     "label": "ESP32 DevKit V1",
-    "version": "v0.1.2-66-g8ace3b2",
+    "version": "v0.1.2-68-g4494b17",
     "segments": [
       {
         "address": 4096,
@@ -21,9 +22,10 @@
   },
   {
     "board": "seeed_xiao_esp32s3",
+    "chip": "esp32s3",
     "profile": "esp32_plain",
     "label": "Seeed Studio XIAO ESP32S3",
-    "version": "v0.1.2-66-g8ace3b2",
+    "version": "v0.1.2-68-g4494b17",
     "segments": [
       {
         "address": 0,
