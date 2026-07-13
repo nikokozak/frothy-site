@@ -4,7 +4,7 @@
     "chip": "esp32",
     "profile": "esp32_plain",
     "label": "ESP32 DevKit V1",
-    "version": "v0.1.2-68-g4494b17",
+    "version": "v0.1.2-70-gd50c81d",
     "segments": [
       {
         "address": 4096,
@@ -25,7 +25,7 @@
     "chip": "esp32s3",
     "profile": "esp32_plain",
     "label": "Seeed Studio XIAO ESP32S3",
-    "version": "v0.1.2-68-g4494b17",
+    "version": "v0.1.2-70-gd50c81d",
     "segments": [
       {
         "address": 0,
