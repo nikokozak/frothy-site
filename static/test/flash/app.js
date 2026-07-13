@@ -169,9 +169,7 @@ async function checkFrothy(lockables) {
   try {
     setStatus(status, "Choose the Frothy board…");
     await releaseCurrentPort();
-    const permitted = await navigator.serial.getPorts();
-    currentPort = lastPort ?? (permitted.length === 1 ? permitted[0] : null);
-    if (!currentPort) currentPort = await navigator.serial.requestPort();
+    currentPort = lastPort ?? await navigator.serial.requestPort();
     lastPort = currentPort;
     await currentPort.open({ baudRate: 115200 });
     connector = await createConnector(new WebSerialTransport(currentPort));
