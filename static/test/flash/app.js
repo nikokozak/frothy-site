@@ -2,11 +2,16 @@
 // hand the user to the editor. The device manifest owns every flashed address.
 
 import { ESPLoader, Transport } from "./vendor/esptool-js/0.6.0/bundle.js";
+import {
+  createConnector,
+  WebSerialTransport,
+} from "./vendor/frothy-repl/0.0.0/index.js";
 
 const app = document.getElementById("app");
 const fallback = document.getElementById("fallback");
 const manifestURL = new URL("./firmware/manifest.json", import.meta.url);
 let currentPort = null;
+let lastPort = null;
 
 const supported =
   "serial" in navigator && navigator.userAgentData?.mobile !== true;
@@ -27,11 +32,14 @@ async function initFlasher() {
   const status = document.getElementById("status");
   const firmwareInfo = document.getElementById("firmware-info");
   const firmwareLabel = document.getElementById("firmware-label");
+  const firmwareProfile = document.getElementById("firmware-profile");
   const firmwareVersion = document.getElementById("firmware-version");
   const firmwarePicker = document.getElementById("firmware-picker");
   const firmwareSelect = document.getElementById("firmware");
   const flashBtn = document.getElementById("flash");
+  const checkBtn = document.getElementById("check");
   flashBtn.disabled = true;
+  checkBtn.disabled = true;
 
   let manifest;
   try {
@@ -45,30 +53,43 @@ async function initFlasher() {
   }
 
   for (const [index, row] of manifest.entries()) {
-    firmwareSelect.append(option(`${row.label} · ${row.version}`, String(index)));
+    firmwareSelect.append(option(row.label, String(index)));
   }
-  if (manifest.length === 1) {
-    firmwareLabel.textContent = manifest[0].label;
-    firmwareVersion.textContent = manifest[0].version;
+  const showFirmware = (row) => {
+    firmwareLabel.textContent = row.label;
+    firmwareProfile.textContent = displayProfile(row.profile);
+    firmwareVersion.textContent = row.version;
     firmwareInfo.hidden = false;
-  } else {
+  };
+  showFirmware(manifest[0]);
+  if (manifest.length > 1) {
     firmwarePicker.hidden = false;
+    firmwareSelect.addEventListener("change", () => {
+      const row = manifest[Number(firmwareSelect.value)];
+      if (row) showFirmware(row);
+    });
   }
   status.hidden = true;
   flashBtn.disabled = false;
+  checkBtn.disabled = false;
   flashBtn.addEventListener("click", () => {
     const row = manifest[Number(firmwareSelect.value)];
-    if (row) void flash(row, [firmwareSelect, flashBtn]);
+    if (row) void flash(row, [firmwareSelect, flashBtn, checkBtn]);
+  });
+  checkBtn.addEventListener("click", () => {
+    void checkFrothy([firmwareSelect, flashBtn, checkBtn]);
   });
 }
 
 async function flash(row, lockables) {
   const status = document.getElementById("status");
   const progressWrap = document.getElementById("progress-wrap");
+  const progressLabel = document.getElementById("progress-label");
   const progress = document.getElementById("progress");
   const continueLink = document.getElementById("continue");
-  progressWrap.hidden = true;
-  progress.value = 0;
+  progressWrap.hidden = false;
+  progressLabel.textContent = "Preparing firmware";
+  progress.removeAttribute("value");
   continueLink.hidden = true;
   for (const element of lockables) element.disabled = true;
 
@@ -77,6 +98,7 @@ async function flash(row, lockables) {
     setStatus(status, "Choose a serial port…");
     await releaseCurrentPort();
     currentPort = await navigator.serial.requestPort();
+    lastPort = currentPort;
 
     setStatus(status, "Fetching firmware…");
     const fileArray = await fetchSegments(row);
@@ -90,7 +112,9 @@ async function flash(row, lockables) {
     });
     const chip = await loader.main();
     setStatus(status, `Connected to ${chip}. Flashing…`);
+    progressLabel.textContent = "Flash progress";
     progress.max = fileArray.length;
+    progress.value = 0;
     progressWrap.hidden = false;
 
     await loader.writeFlash({
@@ -120,6 +144,7 @@ async function flash(row, lockables) {
     document.getElementById("flash").hidden = true;
     document.getElementById("firmware-picker").hidden = true;
     continueLink.hidden = false;
+    for (const element of lockables) element.disabled = false;
   } catch (err) {
     const cancelled = err?.name === "NotFoundError";
     setStatus(
@@ -133,6 +158,47 @@ async function flash(row, lockables) {
     }
     await releaseCurrentPort();
     progressWrap.hidden = true;
+    for (const element of lockables) element.disabled = false;
+  }
+}
+
+async function checkFrothy(lockables) {
+  const status = document.getElementById("status");
+  for (const element of lockables) element.disabled = true;
+  let connector = null;
+  try {
+    setStatus(status, "Choose the Frothy board…");
+    await releaseCurrentPort();
+    const permitted = await navigator.serial.getPorts();
+    currentPort = lastPort ?? (permitted.length === 1 ? permitted[0] : null);
+    if (!currentPort) currentPort = await navigator.serial.requestPort();
+    lastPort = currentPort;
+    await currentPort.open({ baudRate: 115200 });
+    connector = await createConnector(new WebSerialTransport(currentPort));
+    setStatus(status, "Checking Frothy…");
+    const deviceStatus = await withTimeout(
+      connector.status(),
+      8000,
+      "Frothy did not answer the status check",
+    );
+    setStatus(status, `Frothy is ready · ${displayProfile(deviceStatus.profile)}`);
+  } catch (err) {
+    const cancelled = err?.name === "NotFoundError";
+    setStatus(
+      status,
+      cancelled
+        ? "Cancelled."
+        : `Check failed: ${err.message ?? err}. Close other apps using the board, ` +
+          "press EN (or unplug and reconnect it), then try again.",
+      !cancelled,
+    );
+  } finally {
+    if (connector) {
+      try { await connector.close(); } catch {}
+    } else {
+      await releaseCurrentPort();
+    }
+    currentPort = null;
     for (const element of lockables) element.disabled = false;
   }
 }
@@ -202,6 +268,20 @@ function portLockHint(err) {
     return " — close other flasher tabs or restart the browser to release the serial port.";
   }
   return "";
+}
+
+function displayProfile(profile) {
+  return profile === "esp32_plain" ? "ESP32 Default" : profile;
+}
+
+function withTimeout(promise, ms, message) {
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(message)), ms);
+    }),
+  ]).finally(() => clearTimeout(timer));
 }
 
 function setStatus(element, text, isError = false) {

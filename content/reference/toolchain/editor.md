@@ -15,16 +15,18 @@ The VS Code extension is a convenience layer over `frothy session`. It sends sou
 
 ## Install VS Code Support
 
-Frothy is not listed in the Marketplace yet. From the Frothy repo, build and
-install the current VSIX directly:
+In VS Code, open Extensions, search for **Frothy**, and install the extension
+published by **NikolaiKozak**. It updates through VS Code.
+
+For extension development, build and install the current VSIX directly:
 
 ```sh
 make vsix
 code --install-extension editors/vscode/frothy-0.4.0.vsix
 ```
 
-A Marketplace install updates through VS Code. A release-asset `.vsix` is a
-manual download and install. The extension handles `.fr` and `.frothy` files.
+The extension handles `.fr` and `.frothy` files and requires the `frothy` CLI
+on your `PATH` (or at `frothy.binaryPath`).
 
 ## Useful Commands
 
@@ -71,7 +73,8 @@ The [browser editor](/editor/) uses WebSerial and runs Frothy straight from the
 page. Use Chrome or Edge on desktop.
 
 - **Examples** — the picker in the header loads any of the bundled examples into the buffer. The same set is available in VS Code via `Frothy: Open Example`.
-- **Connect / Run** — Connect opens the WebSerial picker. Run Form sends one selected complete form or the form around the cursor. Run File sends every complete form in order and stops at the first device error.
+- **Connect / Run** — Connect opens the WebSerial picker and visibly confirms the live profile. Run Form sends one selected complete form or the form around the cursor. Run File sends every complete form in order and stops at the first device error.
+- **Indent** — Tab and Shift-Tab indent inside the source editor instead of moving focus away.
 - **Browse Words** — asks the connected device for its current vocabulary, then runs `see` for the word you choose.
 - **Interrupt** — sends a Ctrl-C to stop a running program (a `forever` loop), without disconnecting.
 - **Split** — toggles the MCU output between sitting below the editor and beside it; the choice is remembered.
@@ -81,4 +84,7 @@ page. Use Chrome or Edge on desktop.
 
 ## Recovery
 
-If a program runs away, use the editor interrupt command or press Ctrl-C in a terminal session. If saved state is bad after reboot, use the CLI recovery commands from the [CLI reference](/reference/toolchain/cli/).
+If Connect fails, close other applications using the serial port, press the
+board's **EN** button (or unplug and reconnect it), and try again. If a program
+runs away, use **Interrupt** or press Ctrl-C in a terminal session. If saved
+state is bad after reboot, use the CLI recovery commands from the [CLI reference](/reference/toolchain/cli/).

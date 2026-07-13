@@ -20,6 +20,7 @@
 .flash-tool-intro .doc-lede { margin-top: 12px; }
 .flash-tool-copy { margin-top: 16px; }
 .flash-tool-copy p { font-size: 14px; }
+.flash-tool-intro .doc-rule { margin-bottom: 0; }
 
 .flash-tool-card {
   padding: 24px;
@@ -64,6 +65,7 @@
 }
 .flash-tool .firmware-info[hidden] { display: none; }
 .flash-tool .firmware-info strong { color: var(--espresso); font-size: 16px; }
+.flash-tool .firmware-info #firmware-profile { color: var(--espresso); }
 .flash-tool .firmware-info code { font-family: var(--mono); }
 
 .flash-tool button,
@@ -93,6 +95,7 @@
   box-shadow: 2px 2px 0 var(--espresso);
 }
 .flash-tool button:disabled { opacity: .6; cursor: default; }
+.flash-tool button.secondary { background: var(--paper-deep); color: var(--espresso); }
 .flash-tool .continue { display: inline-block; margin-top: 18px; text-decoration: none; }
 .flash-tool .continue[hidden] { display: none; }
 
@@ -110,7 +113,7 @@
   font: 13px var(--sans);
 }
 .flash-tool .progress-wrap[hidden] { display: none; }
-.flash-tool .progress-wrap progress { width: 100%; accent-color: var(--ok); }
+.flash-tool .progress-wrap progress { width: 100%; height: 14px; accent-color: var(--ok); }
 
 .flash-tool-fallback { max-width: 700px; }
 .flash-tool-fallback p { margin-top: 14px; color: var(--shadow); }

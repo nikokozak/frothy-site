@@ -13,3 +13,4 @@ The toolchain surface has three parts:
 - [CLI](/reference/toolchain/cli/) covers the current `frothy` command surface.
 - [Project and Build](/reference/toolchain/project-and-build/) covers `frothy.toml`, `frothy init`, build output, flashing policy, and library shape.
 - [Editor](/reference/toolchain/editor/) covers VS Code and browser editor support.
+- [Developer Setup](/reference/toolchain/development/) covers cloning the source, ESP-IDF, firmware builds, and local editor packages.

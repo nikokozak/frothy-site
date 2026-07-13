@@ -52,9 +52,8 @@ If none of this made sense: **Frothy feels a bit like p5.js, but the canvas is a
 
 ## What You Can Do Now
 
-- build the `frothy` CLI from source
-- bootstrap the ESP32 toolchain
-- flash an ESP32 over USB serial
+- flash an ESP32 from the browser without a local toolchain
+- check that the board is running Frothy
 - connect to a live prompt
 - send `.fr` files from a terminal or VS Code
 - inspect definitions with `words` and `see`
@@ -65,7 +64,7 @@ The current happy path is an ESP32 development board. The command examples use `
 
 ## Start Here
 
-- [Install Frothy](/install/) to build the CLI, bootstrap ESP-IDF, flash, and connect.
+- [Install Frothy](/install/) to flash in the browser and start writing.
 - [Read the guide](/guide/) for the language and live workflow.
 - [Follow a tutorial](/tutorials/) when you want a task-shaped path.
 - [Use the reference](/reference/) when you need exact command or word behavior.

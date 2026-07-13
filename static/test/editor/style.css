@@ -24,6 +24,7 @@
 
 .editor-tool-intro { margin-bottom: 28px; }
 .editor-tool-intro .doc-lede { margin-top: 12px; max-width: 64ch; }
+.editor-tool-intro .doc-rule { margin-bottom: 0; }
 
 .editor-tool-layout {
   display: grid;
@@ -65,9 +66,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
+  gap: 16px;
+  padding: 12px 14px;
   background: var(--espresso);
+}
+
+.editor-tool .frothy-connection-status {
+  padding: 8px 14px;
+  font: 12px var(--sans);
+  color: var(--shadow);
+  background: var(--paper-deep);
+  border-bottom: 1px solid var(--rule);
+}
+.editor-tool .frothy-connection-status--error {
+  color: var(--err);
+  background: color-mix(in srgb, var(--err) 8%, var(--paper));
 }
 
 .editor-tool .frothy-editor-title {
