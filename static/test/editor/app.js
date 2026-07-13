@@ -1,4 +1,4 @@
-import { mountEditor } from "./vendor/frothy-editor/0.2.0/index.js";
+import { mountEditor } from "./vendor/frothy-editor/0.2.1/index.js";
 
 const mount = document.getElementById("editor");
 if (!mount) {

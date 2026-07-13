@@ -83,6 +83,7 @@ test -f public/test/editor/app.js || fail "missing editor script asset"
 EDITOR_BUNDLE="$(sed -n 's#.*"\./\(vendor/frothy-editor/[^\"]*/index\.js\)".*#\1#p' static/test/editor/app.js)"
 test -n "$EDITOR_BUNDLE" || fail "editor app has no pinned bundle import"
 test -f "public/test/editor/$EDITOR_BUNDLE" || fail "missing pinned editor bundle: $EDITOR_BUNDLE"
+grep -q 'source-form ' "public/test/editor/$EDITOR_BUNDLE" || fail "pinned editor bundle flattens multiline forms"
 
 grep -q 'test/flash/style.css' public/flash/index.html || fail "flasher page missing stylesheet"
 grep -q 'test/flash/app.js' public/flash/index.html || fail "flasher page missing script"
