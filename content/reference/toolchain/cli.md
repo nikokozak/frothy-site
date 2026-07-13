@@ -25,7 +25,8 @@ frothy bootstrap --force
 frothy doctor
 ```
 
-**`frothy flash`** builds and flashes firmware for a board identifier.
+**`frothy flash`** flashes the packaged release firmware for a board identifier.
+From a Frothy source checkout, it builds and flashes that checkout instead.
 
 ```sh
 frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001

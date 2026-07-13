@@ -49,8 +49,9 @@ Install the **Frothy** extension from the VS Code Marketplace (publisher:
 **NikolaiKozak**) when you want a local project workflow. The extension uses
 the installed `frothy` CLI for serial sessions; the browser tools do not.
 
-Homebrew is the intended packaged CLI path. The formula is prepared in the
-Frothy source tree, but the new tap is not published yet, so there is no honest
+Homebrew is the intended packaged CLI path. It installs the CLI, `esptool`, and
+the official release firmware, so `frothy flash BOARD` does not require a source
+checkout or ESP-IDF. The new tap is not published yet, so there is no honest
 Homebrew command to run today. Until the first packaged release, follow the
 [developer setup](/reference/toolchain/development/) to build the CLI from
 source.
