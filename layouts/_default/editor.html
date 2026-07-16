@@ -3,23 +3,19 @@
 {{ end }}
 
 {{ define "main" }}
-<main class="editor-tool page">
-  <header class="editor-tool-intro">
-    <div class="crumb">
-      <a href="{{ "/" | relURL }}">Home</a>
-      {{ partial "icon" "chevron-right" }} <b>{{ .Title }}</b>
-    </div>
-    <span class="doc-kicker">Browser tool</span>
-    <h1 class="doc-h1">{{ .Title }}</h1>
-    <p class="doc-lede">{{ .Description }}</p>
-    <hr class="doc-rule">
-  </header>
-
+<main class="editor-tool">
+  <h1 class="sr-only">{{ .Title }}</h1>
   <div class="editor-tool-layout">
     <section id="editor" class="editor-host" aria-label="Frothy source editor"></section>
-    <aside class="editor-tool-aside content">
-      {{ .Content }}
-    </aside>
+    <details class="editor-help" id="editor-help" open>
+      <summary>
+        <span class="editor-help-tab">{{ partial "icon" "circle-help" }}<span class="editor-help-label">Quick start</span></span>
+      </summary>
+      <div class="editor-help-body content">
+        <p class="editor-help-lede">{{ .Description }}</p>
+        {{ .Content }}
+      </div>
+    </details>
   </div>
 </main>
 <script type="module" src="{{ "test/editor/app.js" | relURL }}"></script>
