@@ -53,8 +53,28 @@ with `[[natives]]`. Native word names look like normal Frothy words, such as
 `neopixel.show`, but their implementation is compiled into the firmware.
 
 Values that cross the C boundary are Int, Bool, Nil, and, where a word supports
-it, Text or Bytes. Raw pointers and driver handles are not persistable Frothy
-values. Expose a small integer handle instead.
+it, Text, Bytes, or Handle. A Handle is not a pointer or a small integer. It is
+a handle-tagged word that names an entry in Frothy's runtime handle table; that
+entry points to the platform resource.
+
+The public lifecycle stays ordinary Frothy:
+
+```frothy
+channel is pwm.open: 2, 50
+pwm.write: channel, 5000
+pwm.close: channel
+channel is nil
+```
+
+Open words return a Handle. Later words check that it is live and has the
+expected resource kind. Close words release the platform resource, and stale
+handles fail instead of silently naming a newer resource.
+
+Handles are volatile. They cannot be saved or placed in cells or record fields.
+After closing a handle held by a top-level name, rebind that name before
+`save`. Runtime reset and project clear also close open resources. Persistent
+code can contain the setup recipe, but `boot` must open fresh handles after
+restore.
 
 Native words live in the firmware base image. A saved overlay references them by
 name. At boot, the native implementation is rebuilt from firmware, so saved

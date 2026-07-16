@@ -1,6 +1,6 @@
 ---
 title: "06. Blocks and Control Flow"
-description: "Use blocks as lexical scopes and Code values; choose, repeat, and loop with explicit booleans."
+description: "Use blocks to choose, repeat, loop forever, and react to events."
 weight: 6
 aliases:
   - /guide/04-control-flow-cells-and-records/
@@ -25,7 +25,7 @@ result.
 
 ## `if`, `when`, and `unless`
 
-Conditions must be `Bool`. Frothy does not treat arbitrary integers or text as
+Only `nil`, `false`, and `0` take the false branch. Every other value is
 truthy.
 
 ```frothy
@@ -37,6 +37,9 @@ to led.byKnob with percent [
   ]
 ]
 ```
+
+Truthiness is handy for compact checks, but predicates and comparisons usually
+make device behavior easier to scan.
 
 Use `when` for a one-sided action:
 
@@ -98,38 +101,74 @@ to countUp [
 
 The index is a local for that iteration's body.
 
-## `Code` As A Value
+## `forever`
 
-Use `fn` when behavior itself is the value:
+Use `forever` when the device should keep doing one small job until you
+interrupt it:
 
 ```frothy
-to twice with action [
-  action:;
-  action:
+to beacon [
+  forever [
+    led.toggle:;
+    ms: 250
+  ]
+]
+```
+
+Run `beacon:` and press Ctrl-C when you want it to stop. The loop also stops if
+its body raises an error.
+
+## Let The Device React
+
+Events let a device keep working after the prompt returns:
+
+```frothy
+to heartbeat.start [
+  every 1000 [ led.toggle: ]
 ]
 
+to heartbeat.stop [
+  cancel every 1000
+]
+```
+
+Call `heartbeat.start:` once. Frothy registers the timer and gives the prompt
+back; the event body runs once per second. `after` is the one-shot version.
+
+GPIO events use the same shape:
+
+```frothy
+to button.listen with pin [
+  on pin falling debounce 30 [ led.toggle: ]
+]
+
+to button.ignore with pin [
+  cancel pin
+]
+```
+
+Register events inside a definition body. Timer cancellation repeats the timer
+kind and delay; GPIO cancellation names the pin. Event bodies run
+cooperatively at statement-boundary safe points, not inside the hardware
+interrupt handler.
+
+## `Code` As A Value
+
+Use `fn` when a top-level name should hold executable behavior:
+
+```frothy
 flash is fn [
   led.blink: 1, 50
 ]
 
-twice: flash
-```
-
-Computed calls use `call` when the callee is the result of an expression:
-
-```frothy
-call flash with
-```
-
-Most code does not need that form. A named call is clearer when the callee is
-already a name:
-
-```frothy
 flash:
 ```
 
-The old quotation chapter was about choosing and executing delayed code. The
-current Frothy version is the same idea with less stack ceremony: blocks are
-lexical, `Code` is a value, and calls say their arguments out loud.
+A bare `flash` reads the `Code` value without running it. `flash:` runs the code
+held in that named top-level slot. Calls do not currently accept an arbitrary
+expression as the callee.
+
+Blocks now give you three useful scales of control: finish a calculation now,
+loop until a job is done, or register code for the device to run later.
 
 Next: [Errors and recovery](/guide/07-error-handling/).

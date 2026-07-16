@@ -79,8 +79,21 @@ Do not edit generated files by hand.
 ## Persistence
 
 Values that cross the boundary are Int, Bool, Nil, and, where a word supports
-it, Text or Bytes. Raw pointers and driver handles are not persistable Frothy
-values. Expose a small integer handle instead.
+it, Text, Bytes, or Handle.
+
+A Handle is a tagged Frothy value that names an entry in the runtime handle
+table. The entry records a resource kind, generation, and platform resource
+index. Do not expose a raw pointer or invent an integer resource ID.
+
+The handle kinds and platform close path are core contracts. A manifest-only
+library cannot invent a safe new Handle kind; adding a handle-bearing
+capability requires corresponding core and platform support.
+
+Bytes and Handles are volatile. Pack Bytes into Text for persistence. A Handle
+may live in a top-level slot during a session, but `save` rejects the overlay
+while it remains there. Neither belongs in cells or record fields. Close open
+resources and rebind top-level Handle names before `save`; reopen them from
+`boot` after restore.
 
 Native words live in the firmware base image. A saved overlay references them by
 name. At boot, the native implementation is rebuilt from firmware, so saved

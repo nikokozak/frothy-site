@@ -1,6 +1,6 @@
 ---
 title: "03. Values and Expressions"
-description: "Values, calls, grouping, and left-to-right evaluation."
+description: "Learn the values Frothy carries, how calls read, and how expressions group."
 weight: 3
 aliases:
   - /guide/02-values-names-and-rebinding/
@@ -8,42 +8,45 @@ icon: hash
 readTime: "5 min"
 ---
 
-Frothy does not put a data stack in the center of the public language. The
-runtime still has internal machinery, but the language you write is organized
-around values, expressions, names, and calls.
-
-That shift is not cosmetic. It changes how you read code.
+You can learn a surprising amount about Frothy from one line:
 
 ```frothy
-3 + 4
+2 * 3 + 4
 ```
 
-This is an expression. It evaluates to `7`. Operators are ordinary parts of
-the expression grammar, not postfix stack words. Binary operators have equal
-precedence and associate left to right, so use parentheses when grouping
-matters:
+This expression evaluates to `10`. Frothy uses conventional operator
+precedence: `*`, `/`, and `%` bind tighter than `+` and `-`; comparisons come
+next; then `and`; then `or`. Operators in the same group associate from left to
+right.
 
 ```frothy
-(3 + 4) * 2
-3 + (4 * 2)
+2 * 3 + 4
+(2 + 3) * 4
+1 < 2 and 3 < 4
 ```
 
-Frothy does not reward guessing precedence. Group the expression you mean.
+Those expressions yield `10`, `20`, and `true`. Parentheses are still welcome
+whenever they make the intended grouping easier to see.
 
 ## The Value Set
 
-The core value classes are deliberately small:
+A full Frothy profile can carry:
 
-- `Int`
-- `Bool`
-- `Nil`
-- `Text`
-- `Cells`
-- `Code`
+- `Int`, `Bool`, and `Nil` for small immediate values
+- `Text` for immutable, byte-oriented text
+- `Cells` for fixed-size indexed storage
+- record values for data with named fields
+- `Code` for executable behavior
+- `Bytes` for transient working bytes
+- `Handle` for a live platform resource such as PWM, UART, I2C, or TCP
 
-Everything user-facing is either a value or a place that holds one. There are
-no raw pointers, general foreign handles, or implementation-private control
-objects in the ordinary language.
+Smaller profiles can leave out value families they cannot afford. The ESP32
+plain profile exposes the full documented set.
+
+Text, cells, records, and code can be part of a saved overlay. `Bytes` and
+`Handle` are deliberately live values: pack bytes into `Text` when you need a
+persistent copy, and reopen hardware resources from `boot` after restore. A
+handle is a tagged Frothy value, not a raw pointer or a disguised integer.
 
 ## Names Hold The Conversation Together
 
@@ -99,8 +102,8 @@ led.on:
 millis:
 ```
 
-Without the call, a name is a value lookup. That distinction is why `Code` can
-be passed around like any other value.
+Without the call, a name is a value lookup. That distinction lets you inspect
+or pass a `Code` value without running it.
 
 ## Lookup Order
 
@@ -124,9 +127,8 @@ demo is fn [
 Inside `demo`, `speed` means the local. Outside it, `speed` still means the
 top-level slot.
 
-The old stack chapter taught how to keep track of invisible intermediate
-values. In current Frothy, the equivalent discipline is simpler: name the state
-you intend to keep, group expressions that need grouping, and inspect the live
-image when you are not sure what a name currently holds.
+The reading habit is simple: name state you intend to keep, group expressions
+when it helps the story, and remember that a colon turns a name lookup into a
+call.
 
 Next: [Words and definitions](/guide/04-words-and-definitions/).

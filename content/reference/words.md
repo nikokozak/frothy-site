@@ -55,19 +55,6 @@ adder: 20, 22
 
 ---
 
-<a id="call"></a>
-**`call`** *(language)* `call expr with args`
-
-Calls a computed `Code` value.
-
-**Example**
-
-```frothy
-call adder with 20, 22
-```
-
----
-
 <a id="here"></a>
 **`here`** *(language)* `here name is expr`
 

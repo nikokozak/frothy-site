@@ -12,9 +12,10 @@ for LED brightness and servo-style pulses, but it is not part of the first
 LED/button tutorial path. The canonical word entries are in the
 [Word Catalog](/reference/words/).
 
-Handles are small integers returned by `pwm.open` and passed back into later
-calls. Native ESP-IDF pointers do not become Frothy values, and handles should
-be reopened after restore rather than treated as persistent hardware state.
+`pwm.open` returns a Handle: a tagged Frothy value that names a runtime
+handle-table entry, which in turn names the live LEDC channel. It is neither an
+integer nor an ESP-IDF pointer. Handles are volatile, so close the channel and
+rebind its top-level name before `save`; reopen it from `boot` after restore.
 
 ## Word Table
 

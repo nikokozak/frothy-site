@@ -5,18 +5,21 @@ description: "Source-board I2C bus, byte, and register words."
 advanced: true
 ---
 
-I2C is a ESP32 peripheral surface. It is useful for sensors and small external devices, but it is not part of the first LED/button path.
+I2C is an ESP32 peripheral surface. It is useful for sensors and small external
+devices, but it is not part of the first LED/button path.
 
 ## Availability
 
-The `esp32_devkit_v1` board source exposes I2C bindings. Treat this as an advanced hardware page, not the first thing to try.
+The bundled `esp32_devkit_v1` and `seeed_xiao_esp32s3` board sources expose I2C
+bindings and board-selected `$sda` and `$scl` pins. Treat this as an advanced
+hardware page, not the first thing to try.
 
-Handles are small integers returned by setup words and passed back into later
-calls. Native ESP-IDF pointers do not become Frothy values.
+`i2c.open` returns a Handle: a tagged Frothy value that names a live runtime
+handle-table entry. It is neither an integer nor an ESP-IDF pointer.
 
 ## Bus
 
-**`i2c.open:`** *(i2c)* `(port, sda, scl, freq) -> Int`
+**`i2c.open:`** *(i2c)* `(port, sda, scl, freq) -> Handle`
 
 Opens a bus on a port with the `$sda` and `$scl` pins at a frequency and
 returns a bus handle.
@@ -45,12 +48,18 @@ Writes a byte payload to a device.
 i2c.write: bus, 104, "AT"
 ```
 
-**`i2c.read:`** *(i2c)* `(bus, addr, count) -> Text`
+**`i2c.read:`** *(i2c)* `(bus, addr, count) -> Bytes`
 
-Reads `count` bytes from a device.
+Reads `count` bytes from a device into a transient Bytes value.
 
 ```frothy
 i2c.read: bus, 104, 2
+```
+
+Pack the result into Text when you need a persistent copy:
+
+```frothy
+reply is text.pack: (i2c.read: bus, 104, 2)
 ```
 
 ## Register I/O
@@ -92,12 +101,15 @@ i2c.read-reg16: bus, 104, 117
 Keep setup in one named place:
 
 ```frothy
-bus is nil
+bus is false -- no bus is open yet
 
 to sensor.setup [
   set bus to i2c.open: 0, $sda, $scl, 400000
 ]
+
+boot is fn [ sensor.setup: ]
 ```
 
-Do not save native assumptions. The saved overlay may remember the small
-integer handles, but hardware should be initialized from `boot` after restore.
+Handles are volatile. `save` is rejected while an overlay slot holds one. Close
+the bus and set `bus` back to `false` before saving; `boot` can open a fresh bus
+after restore.
