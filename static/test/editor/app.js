@@ -9,3 +9,13 @@ mountEditor({
   mount,
   storageKey: "frothy-editor:sketch",
 });
+
+// Quick-start panel remembers whether the user closed it.
+const help = document.getElementById("editor-help");
+if (help) {
+  const KEY = "frothy-editor:help-open";
+  if (localStorage.getItem(KEY) === "0") help.open = false;
+  help.addEventListener("toggle", () => {
+    localStorage.setItem(KEY, help.open ? "1" : "0");
+  });
+}
