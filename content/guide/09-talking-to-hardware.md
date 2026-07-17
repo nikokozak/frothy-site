@@ -65,6 +65,10 @@ Treat raw ADC values as something you calibrate. Read a few values, move the sen
 
 ## Other Peripherals
 
-Frothy has early I2C, UART, PWM, networking, and power words. They are useful, but they are not the first lesson. Use the [hardware reference](/reference/hardware/) when you need exact names and examples.
+Frothy has early I2C, UART, PWM, networking, power, and
+[Bluetooth Low Energy](/reference/hardware/bluetooth/) words. They are useful,
+but they are not the first lesson. Use the
+[hardware reference](/reference/hardware/) when you need exact names and
+examples.
 
 Next: [Snapshots and persistence](/guide/10-snapshots-and-persistence/).
