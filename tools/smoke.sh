@@ -95,6 +95,7 @@ grep -q 'id=firmware-picker[^>]*>Board' public/flash/index.html || fail "flasher
 grep -q 'Continue to Editor' public/flash/index.html || fail "flasher has no editor handoff"
 
 node <<'NODE'
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -127,6 +128,9 @@ for (const [rowIndex, row] of rows.entries()) {
     if (typeof segment.file !== "string" || path.basename(segment.file) !== segment.file) {
       throw new Error(`firmware ${rowIndex} has an invalid segment file`);
     }
+    if (typeof segment.md5 !== "string" || !/^[0-9a-f]{32}$/.test(segment.md5)) {
+      throw new Error(`firmware ${rowIndex} has an invalid segment checksum`);
+    }
     if (files.has(segment.file)) {
       throw new Error(`manifest repeats segment file ${segment.file}`);
     }
@@ -134,6 +138,12 @@ for (const [rowIndex, row] of rows.entries()) {
     const segmentPath = path.join(firmwareDir, segment.file);
     if (!fs.existsSync(segmentPath) || !fs.statSync(segmentPath).isFile()) {
       throw new Error(`firmware segment is not a file: ${segment.file}`);
+    }
+    const actualMD5 = crypto.createHash("md5")
+      .update(fs.readFileSync(segmentPath))
+      .digest("hex");
+    if (actualMD5 !== segment.md5) {
+      throw new Error(`firmware checksum mismatch: ${segment.file}`);
     }
   }
 }

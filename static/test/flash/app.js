@@ -107,7 +107,7 @@ async function flash(row, lockables) {
     setStatus(status, "Connecting to board…");
     const loader = new ESPLoader({
       transport,
-      baudrate: 921600,
+      baudrate: 460800,
       romBaudrate: 115200,
     });
     const chip = await loader.main();
@@ -134,7 +134,15 @@ async function flash(row, lockables) {
       },
     });
 
-    setStatus(status, "Verifying and resetting…");
+    setStatus(status, "Verifying firmware…");
+    for (const segment of fileArray) {
+      const flashedMD5 = await loader.flashMd5sum(segment.address, segment.data.length);
+      if (flashedMD5.toLowerCase() !== segment.md5) {
+        throw new Error(`flash verification failed at 0x${segment.address.toString(16)}`);
+      }
+    }
+
+    setStatus(status, "Resetting…");
     await loader.after("hard_reset");
     await transport.disconnect();
     transport = null;
@@ -207,9 +215,11 @@ async function fetchSegments(row) {
     if (!response.ok) {
       throw new Error(`firmware fetch ${response.status} for ${segment.file}`);
     }
+    const data = new Uint8Array(await response.arrayBuffer());
     return {
       address: segment.address,
-      data: new Uint8Array(await response.arrayBuffer()),
+      data,
+      md5: segment.md5,
     };
   }));
 }
@@ -244,6 +254,9 @@ function validateManifest(value) {
       addresses.add(segment.address);
       if (typeof segment.file !== "string" || !/^[A-Za-z0-9._-]+\.bin$/.test(segment.file)) {
         throw new Error(`firmware ${rowIndex} has an invalid segment file`);
+      }
+      if (typeof segment.md5 !== "string" || !/^[0-9a-f]{32}$/.test(segment.md5)) {
+        throw new Error(`firmware ${rowIndex} has an invalid segment checksum`);
       }
       if (files.has(segment.file)) {
         throw new Error(`manifest repeats segment file ${segment.file}`);

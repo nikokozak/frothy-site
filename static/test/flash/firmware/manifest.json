@@ -8,15 +8,18 @@
     "segments": [
       {
         "address": 4096,
-        "file": "esp32_devkit_v1-esp32_plain-0x00001000.bin"
+        "file": "esp32_devkit_v1-esp32_plain-0x00001000.bin",
+        "md5": "5e922bb1be90594aaf0dc63ac9ec8a15"
       },
       {
         "address": 32768,
-        "file": "esp32_devkit_v1-esp32_plain-0x00008000.bin"
+        "file": "esp32_devkit_v1-esp32_plain-0x00008000.bin",
+        "md5": "e86ac2e34a88db53356dce630830f0f9"
       },
       {
         "address": 65536,
-        "file": "esp32_devkit_v1-esp32_plain-0x00010000.bin"
+        "file": "esp32_devkit_v1-esp32_plain-0x00010000.bin",
+        "md5": "6dcea8ab3234dfe898920080c0879c69"
       }
     ]
   },
@@ -29,15 +32,18 @@
     "segments": [
       {
         "address": 0,
-        "file": "seeed_xiao_esp32s3-esp32_plain-0x00000000.bin"
+        "file": "seeed_xiao_esp32s3-esp32_plain-0x00000000.bin",
+        "md5": "c7d09f9b63004928be903c87de254c62"
       },
       {
         "address": 32768,
-        "file": "seeed_xiao_esp32s3-esp32_plain-0x00008000.bin"
+        "file": "seeed_xiao_esp32s3-esp32_plain-0x00008000.bin",
+        "md5": "e86ac2e34a88db53356dce630830f0f9"
       },
       {
         "address": 65536,
-        "file": "seeed_xiao_esp32s3-esp32_plain-0x00010000.bin"
+        "file": "seeed_xiao_esp32s3-esp32_plain-0x00010000.bin",
+        "md5": "b2c930dad81625fbf3877336767d4422"
       }
     ]
   }
