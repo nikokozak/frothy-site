@@ -4,7 +4,7 @@
 <div class="docs page">
   {{ partial "docs-sidebar" . }}
 
-  <main class="docs-main{{ if $isRef }} reference-page{{ end }}">
+  <main class="docs-main{{ if $isRef }} reference-page{{ end }}"{{ if .Params.wordCatalog }} data-word-catalog{{ end }}>
     <div class="crumb">
       <a href="{{ "/" | relURL }}">Home</a>
       {{ if not $isTop }}{{ partial "icon" "chevron-right" }}

@@ -30,11 +30,11 @@ ms: 100
 led.off:
 ```
 
-The base library defines those helpers over the board pin:
+The base library defines those helpers over the board pin and its active level:
 
 ```frothy
-to led.on [ gpio.high: $led_builtin ]
-to led.off [ gpio.low: $led_builtin ]
+to led.on [ gpio.write: $led_builtin, $led_active_level ]
+to led.off [ gpio.write: $led_builtin, 1 - $led_active_level ]
 ```
 
 ## GPIO
@@ -65,10 +65,9 @@ Treat raw ADC values as something you calibrate. Read a few values, move the sen
 
 ## Other Peripherals
 
-Frothy has early I2C, UART, PWM, networking, power, and
-[Bluetooth Low Energy](/reference/hardware/bluetooth/) words. They are useful,
-but they are not the first lesson. Use the
-[hardware reference](/reference/hardware/) when you need exact names and
-examples.
+Frothy includes I2C, UART, PWM, networking, power, precise signal capture and
+output, console routing, and [Bluetooth Low
+Energy](/reference/modules/bluetooth/). Use the [module
+reference](/reference/modules/) for complete examples and exact word links.
 
 Next: [Snapshots and persistence](/guide/10-snapshots-and-persistence/).

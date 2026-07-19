@@ -1,300 +1,731 @@
 ---
-title: "Language"
+title: "Frothy in Y Minutes"
 weight: 1
-description: "Exact syntax and runtime semantics for Frothy values, calls, definitions, control flow, records, errors, events, and comments."
+description: "The complete Frothy language in one runnable, example-first page: values, words, state, control flow, records, errors, events, persistence, and the prompt."
+aliases:
+  - /reference/ten-minutes/
 icon: braces
-tags: [syntax, semantics, errors, records]
+tags: [language, syntax, semantics, examples]
 ---
 
-Use this page when you need the exact Frothy language rules, not a tutorial.
+Frothy is a small live language for programmable devices. You send it source,
+the device installs that source into its current image, and you can inspect,
+replace, save, and run the result without rebuilding firmware.
 
-## Source Shape
+This is the whole language, from the first expression to the edges of the
+current ESP32 profile. Read it top to bottom once, then use the [word
+catalog](/reference/words/) when you only need a signature.
 
-Frothy source is a sequence of expressions. A block uses square brackets and
-returns the value of its final expression. Semicolons separate multiple
-expressions inside a block.
+## The Thirty-Second Version
 
 ```frothy
-to pulse with pin, wait [
-  gpio.high: pin;
-  ms: wait;
+counter is 0
+
+to blink-and-count with pin, wait [
+  gpio.high: pin
+  ms: wait
+  gpio.low: pin
+  set counter to counter + 1
+  counter
+]
+
+blink-and-count: $led_builtin, 75
+save
+```
+
+That sample contains most of the model:
+
+- `counter is 0` binds a top-level name to a value.
+- `to ... [ ... ]` defines a word. Other languages usually say “function.”
+- `with pin, wait` declares parameters.
+- `gpio.high: pin` calls a word with `:`.
+- Newlines separate expressions inside a block.
+- The last expression is the block's result.
+- `set` changes an existing place.
+- `save` persists the user image.
+
+## Comments
+
+A line comment begins with two hyphens and ends at the newline.
+
+```frothy
+led.on: -- the rest of this line is ignored
+```
+
+A block comment begins with `-*` and ends with `*-`.
+
+```frothy
+-*
+This can span
+several lines.
+*-
+led.off:
+```
+
+Comments are recognized after whitespace or punctuation that can precede a
+comment. Hyphens may also be part of names, so this remains one name:
+
+```frothy
+read-next-byte
+```
+
+## Integers And Arithmetic
+
+Frothy has integers, not floating-point numbers. Decimal, hexadecimal, and
+binary literals are accepted.
+
+```frothy
+42
+-7
+0x2a
+0b101010
+```
+
+On the current 32-bit ESP32 profile, integers range from `-1073741824` through
+`1073741823`. An out-of-range literal or arithmetic result is an error; values
+do not silently wrap.
+
+The arithmetic operators are `+`, `-`, `*`, `/`, and `%`.
+
+```frothy
+2 * 3 + 4        -- 10
+(2 + 3) * 4      -- 20
+37 % 10          -- 7
+```
+
+`*`, `/`, and `%` bind more tightly than `+` and `-`. Operators at the same
+precedence associate from left to right. Division by zero is an error.
+
+`%` and the word `mod` use C-style truncating remainder semantics. The
+[math module](/reference/modules/math-and-random/) also provides `abs`, `min`,
+`max`, `clamp`, `map`, and integer `sqrt`.
+
+## Comparisons And Boolean Logic
+
+Integer comparisons use `<`, `>`, `<=`, `>=`, `=`, and `<>`.
+
+```frothy
+2 < 3            -- true
+10 >= 10         -- true
+4 <> 5           -- true
+```
+
+`not`, `and`, and `or` use Frothy truthiness and produce `Bool` results.
+`and` and `or` short-circuit, so the right side only runs when needed.
+
+```frothy
+not false                       -- true
+2 > 1 and 3 < 4                 -- true
+ready or attempt-connect:       -- skips the call when ready is truthy
+```
+
+Precedence, from tightest to loosest, is:
+
+1. `not`
+2. `*`, `/`, `%`
+3. `+`, `-`
+4. `<`, `>`, `<=`, `>=`, `=`, `<>`
+5. `and`
+6. `or`
+
+Use parentheses when the grouping is not immediately obvious.
+
+## Values
+
+The current ESP32 profile exposes these value families:
+
+| Value | Example | Lifetime |
+| --- | --- | --- |
+| `Nil` | `nil` | persistable |
+| `Bool` | `true`, `false` | persistable |
+| `Int` | `42`, `0xff` | persistable |
+| `Text` | `"ready"` | persistable |
+| `Code` | `fn [ 1 + 2 ]` | persistable |
+| `Cells` | `cells(4)` | persistable mutable storage |
+| record shape/value | `record Point [ x, y ]` | persistable |
+| `Bytes` | `bytes.from-text: "AT"` | transient |
+| `Handle` | `i2c.open: ...` | transient |
+
+Only `nil`, `false`, and integer `0` are falsy. Every other value is truthy,
+including empty text.
+
+```frothy
+if 5 [ "yes" ] else [ "no" ]       -- "yes"
+if 0 [ "yes" ] else [ "no" ]       -- "no"
+if nil [ "yes" ] else [ "no" ]     -- "no"
+```
+
+`0x10` is the integer `16`; it is not a byte buffer. Create `Bytes` explicitly
+with a `bytes.*` word or an I/O operation that returns bytes.
+
+Square brackets delimit bodies used by language forms. A standalone `[ 1 + 2
+]` is not a `Code` literal; use `fn [ 1 + 2 ]`.
+
+## Text
+
+Text is immutable and byte-oriented. A literal is enclosed in double quotes.
+
+```frothy
+greeting is "hello"
+print: greeting
+text.length: greeting       -- 5
+text.at: greeting, 1        -- 101, the byte for e
+```
+
+The supported escapes are:
+
+| Escape | Meaning |
+| --- | --- |
+| `\n` | newline |
+| `\r` | carriage return |
+| `\t` | tab |
+| `\"` | double quote |
+| `\\` | backslash |
+| `\xNN` | one byte written as two hexadecimal digits |
+
+```frothy
+print: "first\nsecond\n"
+packet is "\x02\x01\x06"
+```
+
+Text cannot contain a literal source newline. Use `\n`. The current ESP32
+profile allows an individual text value up to 4096 bytes and an 8192-byte text
+pool across the live image.
+
+Use [Text, Bytes & PAD](/reference/modules/text-bytes-pad/) for conversion and
+transient-buffer rules.
+
+## Names
+
+Names are intentionally permissive. Dots, hyphens, question marks, underscores,
+and exclamation marks are ordinary name characters.
+
+```frothy
+sensor.ready?
+read-next-byte
+all_my.friends!
+```
+
+Whitespace and syntax punctuation end a name. A name cannot contain `(`, `)`,
+`[`, `]`, `,`, `:`, `;`, `+`, `*`, `/`, `%`, comparison operators, or `->`.
+A hyphen stays inside a name unless it is clearly subtraction or the start of a
+negative integer.
+
+```frothy
+x - y       -- subtraction; spaces make the intent clear
+x-y         -- one name
+```
+
+Names are case-sensitive. The current profile permits up to 48 bytes per name.
+Language keywords cannot be used in positions where they would be ambiguous.
+
+## Top-Level Bindings
+
+Bind a top-level name with `is`.
+
+```frothy
+count is 10
+message is "ready"
+```
+
+Running another `is` definition for the same name rebinds its stable slot.
+
+```frothy
+count is 20
+```
+
+Use `set` when the intent is mutation rather than replacement of a definition.
+
+```frothy
+set count to count + 1
+```
+
+`set` only changes an existing name or place. It does not create one.
+
+A top-level `is` definition accepts literals, an existing name, `fn`, `cells`,
+a record value, or the result of a word call. An operator or control-flow
+expression is evaluated with `set` after the place exists:
+
+```frothy
+total is 0
+set total to 20 + 22
+```
+
+This boundary keeps image installation explicit. A call result may be bound
+when its value kind is slot-safe; `Bytes` is the exception and must be packed
+to Text first.
+
+## Words And Calls
+
+Frothy calls functions “words.” Define a word with `to` and call it with a
+colon.
+
+```frothy
+to add-three [ 1 + 2 ]
+add-three:                       -- 3
+
+to add with a, b [ a + b ]
+add: 5, 9                        -- 14
+```
+
+A bare name reads its value. It does not call it.
+
+```frothy
+add          -- displays a Code value at the prompt
+add: 5, 9    -- runs it
+```
+
+The last expression in a word body is its result.
+
+```frothy
+to describe with n [
+  print: "value: "
+  n
+]
+```
+
+Arguments are comma-separated. Parenthesize a nested call when it makes the
+argument boundary explicit.
+
+```frothy
+print: (text.from-int: 42)
+total is add: 1, (add: 2, 3)
+```
+
+Calls are checked against the word's arity. Too few or too many arguments are
+errors.
+
+Words may call themselves recursively. The ESP32 profile currently allows 24
+nested calls.
+
+```frothy
+to fib with n [
+  if n < 2 [ n ] else [ fib: n - 1 + fib: n - 2 ]
+]
+```
+
+## Code Values
+
+`fn` creates a `Code` value. `to name ...` is the convenient top-level spelling
+for binding that code to a name.
+
+```frothy
+double is fn with n [ n * 2 ]
+
+to double with n [ n * 2 ]
+```
+
+Code can be rebound to another top-level name, and either name can call the
+same code object.
+
+```frothy
+double is fn with n [ n * 2 ]
+also-double is double
+also-double: 21                 -- 42
+```
+
+Code is non-capturing. It can read its own parameters, locals declared in its
+own body, and top-level names. It cannot capture a local from another word.
+
+```frothy
+wait is 50
+
+-- This word can read the top-level wait.
+to blink-once with pin [
+  gpio.high: pin
+  ms: wait
   gpio.low: pin
 ]
 ```
 
-Call a word with a colon. A bare name looks up the value; it does not call it.
+When a word needs a value that is not top-level, pass that value as an
+argument. `fn` values themselves are currently installed from top-level
+definitions; Frothy does not build closures inside a running word. Calls also
+resolve a top-level word name: a Code value held only in a parameter, local,
+Cell, or record field is not dynamically callable, and there is no separate
+`call` word.
+
+## Parameters And Locals
+
+Parameters are immutable. Declare a local with `here`, then mutate that local
+with `set`.
 
 ```frothy
-double:
-double: 21
-```
-
-Use parentheses for grouping.
-
-```frothy
-(2 + 3) * 4
-```
-
-## Values And Truthiness
-
-The first public values are `Int`, `Bool`, `Nil`, `Text`, `Cells`, `Code`,
-records, bytes, and native handles. Feature-gated builds can expose fewer
-families, but the ESP32 plain profile exposes the documented surface.
-
-Only `nil`, `false`, and `0` take the false branch. Every other value is
-truthy.
-
-```frothy
-if 5 [ 1 ] else [ 2 ]
-if nil [ 1 ] else [ 2 ]
-if 0 [ 1 ] else [ 2 ]
-```
-
-Text is immutable and byte-oriented in the current implementation.
-
-```frothy
-label is "ready"
-text.length: label
-```
-
-## Operators
-
-Arithmetic precedence is conventional: `*`, `/`, and `%` bind tighter than
-`+` and `-`. Comparisons bind after arithmetic, `and` binds after comparisons,
-and `or` binds after `and`. Operators of the same precedence group associate
-left to right. Use parentheses when the intended grouping should be visible.
-
-```frothy
-2 * 3 + 4
-(2 + 3) * 4
-1 < 2 and 3 < 4
-```
-
-The prefix operator `not` applies to the next unary expression.
-
-```frothy
-not nil
-```
-
-## Definitions, Parameters, And Locals
-
-Top-level `name is expr` creates or rebinds a stable slot. Rebinding changes
-the current value in that slot without changing the slot identity.
-
-```frothy
-counter is 0
-counter is counter + 1
-```
-
-`to` binds a top-level word to `Code`. `fn` creates a `Code` value.
-
-```frothy
-to double with n [ n * 2 ]
-
-boot is fn [ led.on: ]
-```
-
-Parameters are immutable. If you need a counter or accumulator, declare a local
-with `here` and mutate it with `set`.
-
-```frothy
-to countdown with n [
-  here x is n;
-  while x > 0 [ set x to x - 1 ];
-  x
+to countdown with start [
+  here n is start
+  while n > 0 [
+    set n to n - 1
+  ]
+  n
 ]
 ```
 
-`here name is expr` creates a lexical local in the current block scope. Locals
-shadow outer locals and top-level names. Lookup prefers the nearest reachable
-local, then outer scopes, then the top level.
+Locals use lexical block scope. Lookup chooses the nearest local, then an outer
+local, then a parameter, then a top-level name.
 
 ```frothy
-speed is 75
+speed is 100
 
 to demo [
-  here speed is 10;
-  when true [
-    here speed is 3;
-    speed
+  here speed is 20
+  if true [
+    here speed is 5
+    speed                 -- 5
+  ]
+  speed                   -- 20
+]
+```
+
+The local declared inside the `if` block stops existing at its closing `]`.
+The current profile allows 8 parameters and 16 locals in one parsed definition.
+
+## Blocks And Expression Separation
+
+A body is enclosed in `[ ... ]`. It must contain at least one expression.
+Newlines separate expressions naturally.
+
+```frothy
+to pulse [
+  led.on:
+  ms: 50
+  led.off:
+]
+```
+
+A semicolon separates expressions on the same line.
+
+```frothy
+to pulse [ led.on:; ms: 50; led.off: ]
+```
+
+A trailing semicolon is allowed. In normal source, prefer newlines and use
+semicolons only when a compact one-line form is clearer.
+
+## Conditional Expressions
+
+`if` chooses a block and returns that block's value.
+
+```frothy
+if temperature > 30 [ "hot" ] else [ "comfortable" ]
+```
+
+`else if` can be repeated.
+
+```frothy
+if percent > 80 [
+  "high"
+] else if percent > 50 [
+  "medium"
+] else [
+  "low"
+]
+```
+
+Without `else`, a false `if` yields `nil`. `when` is the one-sided positive
+form; `unless` is the one-sided negative form.
+
+```frothy
+when wifi.ready?: [ print: "online\n" ]
+unless wifi.ready?: [ print: "offline\n" ]
+```
+
+## Loops
+
+`while` checks its condition before each pass.
+
+```frothy
+while count > 0 [
+  set count to count - 1
+]
+```
+
+`repeat` evaluates a count and runs a block that many times. A negative count is
+an error. Add `as name` for a zero-based loop index.
+
+```frothy
+repeat 3 [ print: "tick\n" ]
+
+repeat 3 as i [
+  print: (text.from-int: i)
+  print: "\n"
+]
+```
+
+The index is a local scoped to the repeat body.
+
+`forever` runs until the body errors or the evaluation is interrupted.
+
+```frothy
+forever [
+  led.toggle:
+  ms: 100
+]
+```
+
+`while`, `repeat`, and `forever` yield `nil` when they finish normally.
+
+## Cells
+
+Cells are fixed-size mutable indexed storage. Create them at the top level with
+a positive literal length.
+
+```frothy
+readings is cells(3)
+```
+
+New cells begin as `nil`. Indexes are zero-based.
+
+```frothy
+set readings[0] to 11
+set readings[1] to 22
+readings[0] + readings[1]       -- 33
+```
+
+An out-of-bounds index is an error. The current ESP32 profile allows up to 32
+elements in one Cells value and 128 cell elements across the live image.
+
+Cells and their persistable contents are included by `save`. Transient `Bytes`
+and `Handle` values are rejected as cell contents.
+
+## Records
+
+Records give names to small fixed shapes. Declare a shape at the top level.
+
+```frothy
+record Point [ x, y ]
+```
+
+The declaration creates a constructor word with the same name. Construct a
+record at the top level by calling it.
+
+```frothy
+point is Point: 3, 9
+```
+
+Read and write fields with `->`.
+
+```frothy
+point -> x                       -- 3
+set point -> y to 12
+```
+
+Field names cannot contain dots. The current ESP32 profile permits 4 fields per
+shape. Record construction inside a word body is not currently supported;
+construct records at the top level and pass them into words.
+
+Record shapes and values are persistable. Transient `Bytes` and `Handle` values
+cannot be stored in record fields.
+
+## Errors And Rescue
+
+An error returns control to the prompt instead of wedging the device. A typical
+diagnostic names the error, shows its numeric code, and points at the source
+span.
+
+```text
+error: bad value (3)
+2 / 0
+^^^^^
+```
+
+`attempt [ ... ] rescue [ ... ]` catches runtime errors.
+
+```frothy
+attempt [ 10 / divisor ] rescue [ 0 ]
+```
+
+If the attempt succeeds, the entire expression yields its value. If it fails,
+Frothy restores the value stack to the beginning of the attempt, runs the
+rescue block, and yields the rescue value.
+
+Inside the rescue block, `error.code` and `error.name` describe the caught
+error.
+
+```frothy
+to safe-divide with a, b [
+  attempt [ a / b ] rescue [
+    print: error.name
+    error.code
   ]
 ]
 ```
 
-`set place to expr` mutates an existing name, cells element, or record field.
-It does not create a new place.
+Errors raised by called words can be caught by the caller's attempt. Parse and
+compile errors happen before execution and cannot be caught. An interrupt is
+also never catchable.
+
+## Events
+
+Event forms register code that the device runs at safe points. Registration
+belongs inside a word body, not as a bare prompt expression.
+
+Register a repeating or one-shot timer:
 
 ```frothy
-set counter to counter + 1
-set readings[0] to 99
-set point -> x to 12
-```
-
-`Code` values may use their own parameters, locals they bind in their own
-body, and top-level names. They do not capture locals from an enclosing block.
-
-```frothy
-step is 1
-make-stepper is fn [ fn with x [ x + step ] ]
-```
-
-If a value is not top-level, pass it as an argument instead of trying to close
-over it.
-
-```frothy
-adder is fn with x, step [ x + step ]
-```
-
-## Control Flow
-
-`if` is an expression. It accepts an optional `else`, and `else if` chains into
-the same expression.
-
-```frothy
-if n < 2 [ n ] else [ fib: n - 1 + fib: n - 2 ]
-```
-
-`when` is the one-sided form. If the condition is false, it yields `nil`.
-`unless` runs its block when the condition is false and also yields `nil`
-otherwise.
-
-```frothy
-when adc.percent: $a0 > 50 [ led.on: ]
-unless ready [ led.off: ]
-```
-
-`while` checks the condition before each iteration and yields `nil`.
-
-```frothy
-while x > 0 [ set x to x - 1 ]
-```
-
-`repeat N [ body ]` runs the body `N` times. `repeat N as i [ body ]` also
-binds a zero-based local index for each iteration.
-
-```frothy
-repeat 4 as i [ led.blink: i + 1, 30 ]
-```
-
-`forever [ body ]` loops until interrupted or until the body errors.
-
-```frothy
-forever [ led.toggle:; ms: 100 ]
-```
-
-## Cells
-
-`cells(n)` creates fixed-size mutable indexed storage. Use cells when position
-is the real structure.
-
-```frothy
-readings is cells(3)
-set readings[0] to 11
-set readings[1] to 22
-readings[0] + readings[1]
-```
-
-Cell indexes are zero-based. An out-of-bounds read or write is a runtime
-error.
-
-## Records
-
-Declare record shapes at top level.
-
-```frothy
-record pt [ x, y ]
-```
-
-Construct records with the generated constructor word and a colon.
-
-```frothy
-p is pt: 3, 4
-```
-
-Read and write fields with arrows.
-
-```frothy
-p -> x + p -> y
-set p -> x to 30
-```
-
-Record construction inside a `to` body is currently unsupported, so construct
-records at top level and pass them into words that need them.
-
-## Errors And Attempt/Rescue
-
-Errors render as `error: <name> (N)`. Diagnostics may add typed context such
-as expected and got values for type errors, `call depth limit reached (24)`,
-or cell bounds context with the bad index and the cell length. Source-position
-errors print the source line with carets under the offending span. Near-miss
-names can add a suggestion line:
-
-```text
-help: did you mean "gpio.high"
-```
-
-`attempt [ body ] rescue [ fallback ]` is an expression. If `body` finishes,
-its value is the value of the whole expression. If `body` raises a catchable
-runtime error, Frothy restores the value stack to the point where the attempt
-started, runs `fallback`, and yields the fallback value.
-
-```frothy
-1 + attempt [ 2 / 0 ] rescue [ 9 ]
-```
-
-That expression yields `10`.
-
-Inside a rescue block, `error.code` and `error.name` expose the caught runtime
-error. They are only valid inside rescue blocks.
-
-```frothy
-attempt [ missing: ] rescue [ error.name ]
-```
-
-Interrupts are never catchable. Compile and parse errors happen before
-evaluation, so they do not reach `attempt`.
-
-## Events And Cancel
-
-Event registration belongs inside a definition body. Bare event registration at
-the prompt is unsupported.
-
-```frothy
-to start-ticking [
-  every 1000 [ print: "tick" ]
+to start-timers [
+  every 1000 [ print: "tick\n" ]
+  after 5000 [ led.off: ]
 ]
 ```
 
-`every <ms> [ body ]` registers a repeating timer. `after <ms> [ body ]`
-registers a one-shot timer. `on <pin> rising|falling|changes [ body ]`
-registers a GPIO event, with optional `debounce <ms>` before the body.
-`on wifi.disconnected [ body ]` and `on wifi.reconnected [ body ]` register
-Wi-Fi events when the network feature is present.
-
-`cancel` uses the same source identity that event registration stores. `cancel
-<pin>` cancels the GPIO binding for that pin, regardless of whether it was
-registered as `rising`, `falling`, or `changes`. `cancel every <ms>` cancels
-only an `every` timer with the same millisecond source. `cancel after <ms>`
-cancels only an `after` timer with the same millisecond source. `cancel
-wifi.disconnected` and `cancel wifi.reconnected` cancel only that exact Wi-Fi
-event kind; Wi-Fi cancels use a fixed source value of `0`. The defining word's
-name is not part of the event identity.
-
-## Comments
-
-Use `--` for a line comment.
+Register a GPIO edge handler:
 
 ```frothy
-led.on: -- turn the default LED on
+to watch-button [
+  on $boot_button falling debounce 25 [
+    led.toggle:
+  ]
+]
 ```
 
-Use `-* ... *-` for a block comment.
+The edge is `rising`, `falling`, or `changes`. `debounce <ms>` is optional.
+
+Wi-Fi exposes two event sources:
 
 ```frothy
--* temporary bench note *-
-led.off:
+to watch-network [
+  on wifi.disconnected [ led.off: ]
+  on wifi.reconnected [ led.on: ]
+]
 ```
 
-Comments are recognized at the start of input, after whitespace, or after
-punctuation that can legally precede a comment. A `--` sequence embedded in a
-name is not a comment.
+Cancel a registration with the same source identity:
+
+```frothy
+cancel every 1000
+cancel after 5000
+cancel $boot_button
+cancel wifi.disconnected
+```
+
+For GPIO, cancellation uses the pin regardless of edge or debounce settings.
+For timers, `every` and `after` are distinct and the millisecond value must
+match. Event output appears as asynchronous `! ` lines at the prompt.
+
+See the [events module](/reference/modules/events/) for lifecycle and capacity
+details.
+
+## Bytes And Handles
+
+`Bytes` and `Handle` are real Frothy values, but they represent live working
+state rather than saved project data.
+
+`Bytes` is a transient byte buffer returned by words such as `i2c.read`,
+`tcp.read`, `http.get`, and BLE reads.
+
+```frothy
+bytes.length: (http.get: "http://example.com/")
+```
+
+Bytes cannot be installed in top-level names, Cells, or record fields. A
+`here` local can hold them during one word call. Copy bytes into persistent
+Text when the content must survive the current evaluation or loop iteration:
+
+```frothy
+reply-text is text.pack: (http.get: "http://example.com/")
+```
+
+A `Handle` refers to an open platform resource such as I2C, UART, PWM, TCP,
+trace, pulse, or BLE state.
+
+```frothy
+bus is i2c.open: 0, $sda, $scl, 400000
+i2c.close: bus
+set bus to nil
+```
+
+Handles are volatile. Close them and remove them from top-level project slots
+before `save`. Reopen required resources from `boot` after restore.
+
+## The Image, Save, And Boot
+
+Frothy starts with a firmware-owned base image and adds your top-level bindings
+to an overlay image.
+
+```frothy
+threshold is 500
+to alarm [ when adc.read: $a0 > threshold [ led.on: ] ]
+```
+
+`save` writes the overlay to persistent storage. `restore` replaces the live
+overlay with that saved overlay. `clear` removes the live overlay but leaves the
+saved copy available. `dangerous.wipe` removes both.
+
+```frothy
+save
+clear
+restore
+```
+
+If the top-level `boot` slot holds Code after restore, Frothy runs it before
+returning to the prompt.
+
+```frothy
+boot is fn [
+  led.off:
+  wifi.connect:
+]
+save
+```
+
+Safe boot lets a human interrupt restore/startup and recover a bad saved
+program. The [image and persistence reference](/reference/device/image-and-persistence/)
+covers the full lifecycle.
+
+## The Prompt Is Part Of The Language Experience
+
+The prompt evaluates expressions and installs definitions. It also provides
+inspection commands without colons.
+
+```frothy
+words
+see blink
+status
+events
+mem
+```
+
+- `words` lists visible names.
+- `see name` reconstructs a definition or describes a value.
+- `status` reports the current session and runtime profile.
+- `events` lists active event bindings.
+- `mem` reports heap, slots, objects, and event capacity. Use `mem heap`, `mem
+  slots`, `mem objects`, or `mem events` for one group.
+- `clear` removes the live overlay and returns to the base image.
+
+Host tooling also uses `apply HEX`, `run HEX`, `install-library`,
+`install-user`, and `wipe-user`. They are prompt protocol or installation-tier
+commands rather than source-language forms; their exact contracts are in the
+[word catalog](/reference/words/#apply).
+
+Press Ctrl-C to abandon incomplete multiline input or interrupt running code.
+Frothy checks interrupts at safe points and returns the prompt to a usable
+state.
+
+## Source Files And Includes
+
+A `.fr` file contains the same top-level definitions and expressions you type
+at the prompt.
+
+```frothy
+to main [
+  led.blink: 3, 75
+]
+
+main:
+```
+
+`include "helper.fr"` is a host-side `frothy` tool directive. The CLI resolves
+it before sending source to the device. It is not device language syntax and
+does not create a runtime word.
+
+## What To Open Next
+
+- [Word catalog](/reference/words/) — every current form, command, constant,
+  helper, and ESP32 word in a searchable list.
+- [Modules](/reference/modules/) — broad usage guides for GPIO, Wi-Fi, I2C,
+  text, signals, BLE, and the rest of the built-in surface.
+- [Device & sessions](/reference/device/) — prompt behavior, persistence,
+  diagnostics, recovery, and tooling sessions.
+- [Toolchain](/reference/toolchain/) — projects, source files, CLI commands,
+  builds, flashing, and editor support.

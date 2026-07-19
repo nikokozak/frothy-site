@@ -1,25 +1,59 @@
 ---
-title: "Hardware"
+title: "Modules"
 weight: 3
-description: "ESP32 board words for GPIO, ADC, timing, UART, I2C, PWM, and Bluetooth Low Energy."
-icon: circuit-board
-tags: [gpio, adc, esp32]
+url: /reference/modules/
+aliases:
+  - /reference/hardware/
+description: "Start with a complete example, then narrow into every built-in Frothy module and its words."
+icon: boxes
+tags: [gpio, wifi, i2c, ble]
 ---
 
-This section is a lookup table for the hardware words currently worth documenting publicly.
+Module pages explain how a whole area fits together. Each starts with the common
+path, gives a complete example, explains state and limits, and ends with links
+to the exact entries in the [word catalog](/reference/words/).
 
-Start with the simple board surface:
+## Begin With The Board
 
-- [Base image](/reference/hardware/base-image/) for seeded pins, LED helpers, ADC, timing, and convenience words
-- [GPIO](/reference/hardware/gpio/) for digital input and output
-- [Timing](/reference/hardware/timing/) for `ms` and `millis`
+- [Board constants & helpers](/reference/modules/board/) — named pins, the
+  built-in LED, and the small source library available at boot
+- [GPIO & ADC](/reference/modules/gpio/) — digital input/output and analog
+  readings
+- [Timing](/reference/modules/timing/) — interruptible sleeps and uptime clocks
+- [Events](/reference/modules/events/) — timers, GPIO edges, Wi-Fi lifecycle,
+  cancellation, and asynchronous output
 
-Then use the more specific peripheral pages only when your circuit needs them:
+## Work With Data
 
-- [I2C](/reference/hardware/i2c/) for sensors and register-style devices
-- [UART](/reference/hardware/uart/) for auxiliary serial devices
-- [PWM](/reference/hardware/pwm/) for brightness and servo-style pulse work
-- [Bluetooth Low Energy](/reference/hardware/bluetooth/) for scanning,
-  advertising, connections, and short GATT values
+- [Math & random](/reference/modules/math-and-random/) — integer mapping,
+  clamping, square roots, wrapping, and repeatable pseudo-random values
+- [Text, Bytes & PAD](/reference/modules/text-bytes-pad/) — persistent text,
+  transient I/O bytes, and the 64-byte scratch pad
 
-Examples use `esp32_devkit_v1` because that is the board identifier used during development. It names the development-board shape, not a promise that only that exact retail board can work. Most classic Tensilica ESP32 dev boards should be plausible. Newer RISC-V ESP32 variants have not been tried yet.
+## Connect Hardware
+
+- [I2C](/reference/modules/i2c/) — buses, raw byte transfers, and register
+  helpers
+- [UART](/reference/modules/uart/) — auxiliary serial ports and byte I/O
+- [PWM](/reference/modules/pwm/) — frequency channels and 0–10000 duty
+- [Digital signals](/reference/modules/signals/) — edge capture and precisely
+  timed pulse output
+- [Console routing](/reference/modules/console/) — move the human REPL to a
+  selected UART and recover the default route
+
+## Connect Networks
+
+- [Wi-Fi, HTTP & TCP](/reference/modules/wifi/) — stored credentials, lifecycle
+  events, one-shot HTTP reads, and streaming TCP handles
+- [Bluetooth Low Energy](/reference/modules/bluetooth/) — scan, advertise,
+  connect, and use local or remote GATT
+- [Power](/reference/modules/power/) — watchdog supervision, GPIO wake, and deep
+  sleep
+
+The ESP32 plain profile exposes the full surface documented here. Smaller or
+custom profiles may omit modules; `words` on the device is authoritative for
+the firmware in front of you.
+
+I/O modules return transient `Bytes` and live `Handle` values. Copy bytes with
+`text.pack` when they must persist. Close handles and remove them from project
+slots before `save`, then reopen required resources from `boot`.

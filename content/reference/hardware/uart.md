@@ -1,70 +1,88 @@
 ---
 title: "UART"
-weight: 10
-description: "Auxiliary UART handles for boards that expose them."
-advanced: true
+weight: 8
+url: /reference/modules/uart/
+aliases:
+  - /reference/hardware/uart/
+description: "Open an auxiliary serial port, exchange bytes, check availability, and close its handle."
+icon: cable
+tags: [uart, serial, bytes]
 ---
 
-UART is a ESP32 peripheral surface. It is for serial devices. It is not part of
-the beginner Frothy path.
+Auxiliary UARTs connect Frothy to GPS receivers, modems, motor controllers, and
+other byte-oriented serial devices. They are separate from the active human
+console that carries the REPL.
 
-## Availability
-
-The `esp32_devkit_v1` board source exposes auxiliary UART bindings. The active
-console itself is still special: it carries REPL input, output, and host
-attachment.
-
-Baud rates are named special vars: `$baud_9600`, `$baud_19200`, `$baud_38400`,
-`$baud_57600`, and `$baud_115200`.
-
-## Auxiliary UART
-
-**`uart.open:`** *(uart)* `(port, baud) -> Int`
-
-Opens an auxiliary UART on a port at a baud rate and returns a handle.
-
-```frothy
-aux is uart.open: 1, $baud_115200
-```
-
-**`uart.open-on:`** *(uart)* `(port, tx, rx, baud) -> Int`
-
-Opens an auxiliary UART on a port with explicit TX and RX pins.
+## Send And Receive One Byte
 
 ```frothy
 aux is uart.open-on: 1, 17, 16, $baud_115200
-```
-
-**`uart.write-byte:`** *(uart)* `(handle, byte) -> nil`
-
-Writes one byte.
-
-```frothy
 uart.write-byte: aux, 65
-```
 
-**`uart.read-byte:`** *(uart)* `(handle) -> Int`
-
-Reads one byte.
-
-```frothy
-uart.read-byte: aux
-```
-
-**`uart.available:`** *(uart)* `(handle) -> Int`
-
-Returns the count of bytes waiting to be read.
-
-```frothy
 when (uart.available: aux) > 0 [
   uart.read-byte: aux
 ]
+
+uart.close: aux
+set aux to nil
 ```
 
-**`uart.close:`** *(uart)* `(handle) -> nil`
+`65` is ASCII `A`. UART words work with individual integers from `0` through
+`255`; build a loop when a protocol has a longer frame.
 
-Closes the UART and releases the handle.
+## Word Table
+
+| Word | Result | Use |
+| --- | --- | --- |
+| [`uart.open`](/reference/words/#uart-open) | `Handle` | Open a port on its target-default pins |
+| [`uart.open-on`](/reference/words/#uart-open-on) | `Handle` | Open a port on explicit TX and RX pins |
+| [`uart.available`](/reference/words/#uart-available) | `Int` | Count bytes ready to read without waiting |
+| [`uart.read-byte`](/reference/words/#uart-read-byte) | `Int` | Read one byte, or `-1` when none is ready |
+| [`uart.write-byte`](/reference/words/#uart-write-byte) | `nil` | Write one byte |
+| [`uart.close`](/reference/words/#uart-close) | `nil` | Close the port and release its handle |
+
+## Baud Constants
+
+Use one of the named baud values:
+
+| Constant | Baud |
+| --- | ---: |
+| [`$baud_1200`](/reference/words/#baud-1200) | 1200 |
+| [`$baud_9600`](/reference/words/#baud-9600) | 9600 |
+| [`$baud_19200`](/reference/words/#baud-19200) | 19200 |
+| [`$baud_38400`](/reference/words/#baud-38400) | 38400 |
+| [`$baud_57600`](/reference/words/#baud-57600) | 57600 |
+| [`$baud_115200`](/reference/words/#baud-115200) | 115200 |
 
 ```frothy
-uart.close: aux
+aux is uart.open: 1, $baud_9600
 ```
+
+`uart.open` uses the port's target-default pins. Use `uart.open-on` when the
+board exposes a different route. The chosen port and pins must be supported and
+must not conflict with the active console or another peripheral.
+
+## Nonblocking Reads
+
+`uart.read-byte` does not wait forever. It returns the next byte or `-1` when
+the receive queue is empty:
+
+```frothy
+to drain-uart handle [
+  while (uart.available: handle) > 0 [
+    print: (text.from-int: uart.read-byte: handle)
+  ]
+]
+```
+
+Check `uart.available` when `-1` would overlap an application sentinel. Read
+bytes are unsigned `0..255` integers.
+
+## Auxiliary Port Or Console?
+
+Use `uart.*` for application data while the REPL remains on its current route.
+Use [Console routing](/reference/modules/console/) only when you intentionally
+want the prompt and all console output to move to another UART.
+
+UART handles are volatile. Close them, replace top-level handle bindings, and
+reopen required ports from `boot` before using `save` and `restore`.

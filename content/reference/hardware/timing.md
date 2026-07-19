@@ -1,51 +1,60 @@
 ---
 title: "Timing"
-weight: 6
-description: "Board timing words for sleeping and reading monotonic uptime."
+weight: 3
+url: /reference/modules/timing/
+aliases:
+  - /reference/hardware/timing/
+description: "Interruptible millisecond delays, monotonic uptime reads, wrap-safe deltas, and when to use events instead."
+icon: clock
+tags: [timing, millis, micros]
 ---
 
-Use this page when you need the hardware timing contract for sleeps and uptime reads.
+Timing has two jobs: pause a straightforward sequence, or measure elapsed time.
+Use events when code should react later without holding the foreground
+evaluation.
 
-Timing words are simple on purpose: sleep for a while, or ask how long the board has been awake. The canonical word entries are in the [Word Catalog](/reference/words/).
-
-## Word Table
-
-| Word | Args | Result | Behavior |
-| --- | --- | --- | --- |
-| [`ms`](/reference/words/#ms) | 1 | `nil` | Sleep for a nonnegative number of milliseconds. |
-| [`millis`](/reference/words/#millis) | 0 | `Int` | Read milliseconds since boot, wrapped to the tagged integer range. |
-| [`micros`](/reference/words/#micros) | 0 | `Int` | Read microseconds since boot, wrapped to the tagged integer range. |
-
-## `ms`
-
-`ms` decodes one nonnegative integer argument, delays one millisecond at a
-time, polls for interrupts during the delay, and returns `nil`. A negative
-duration is a domain error.
+## Blink With A Delay
 
 ```frothy
-ms: 75
+repeat 3 [
+  led.on:
+  ms: 75
+  led.off:
+  ms: 75
+]
 ```
 
-Use `ms` for simple sketches, not hard real-time scheduling. While `ms` is
-running, no later Frothy code in that evaluation proceeds.
+`ms` accepts a nonnegative integer, polls for Ctrl-C once per millisecond, and
+returns `nil`. Later expressions in the same word do not run until the delay
+finishes.
 
-## Uptime Reads
-
-`millis` takes no arguments and returns platform uptime in milliseconds. On
-the current 32-bit tagged-int profile, the user-visible value wraps after
-`FR_TAGGED_INT_MAX + 1` milliseconds, about 12.4 days.
+## Measure A Short Span
 
 ```frothy
-millis:
+started is millis:
+ms: 25
+finished is millis:
+elapsed is 0
+set elapsed to finished - started
 ```
 
-`micros` takes no arguments and returns platform uptime in microseconds. On the
-same profile, the user-visible value wraps after about 17.9 minutes. Modular
-deltas across that wrap remain useful for short spans.
+| Word | Result | Current 32-bit wrap period |
+| --- | --- | --- |
+| [`ms`](/reference/words/#ms) | `nil` | not applicable |
+| [`millis`](/reference/words/#millis) | `Int` | about 12.4 days |
+| [`micros`](/reference/words/#micros) | `Int` | about 17.9 minutes |
 
-## Relationship To Utilities
+The visible clocks wrap at the tagged integer ceiling. Short modular deltas
+across the wrap remain useful; do not treat either clock as a wall-clock date or
+an indefinitely increasing persisted counter.
 
-Timing often appears alongside random and math helpers in small board sketches.
-This page is the low-level timing contract; higher-level helpers such as
-[`blink`](/reference/words/#blink) and [`led.blink`](/reference/words/#led-blink)
-are board-library words layered on top of GPIO and `ms`.
+## Delay, Timer Event, Or Signal Hardware?
+
+- Use `ms` for a short, linear sequence.
+- Use `after` or `every` when work should run at a later safe point while the
+  prompt remains live.
+- Use `trace.*` or `pulse.*` when edge timing must be captured or emitted with
+  100-nanosecond hardware quantization.
+
+Continue with [Events](/reference/modules/events/) or [Digital
+signals](/reference/modules/signals/).

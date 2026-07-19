@@ -1,8 +1,12 @@
 ---
 title: "Bluetooth Low Energy"
-weight: 11
+weight: 14
+url: /reference/modules/bluetooth/
+aliases:
+  - /reference/hardware/bluetooth/
 description: "Scan, advertise, connect, and exchange short GATT values on BLE-enabled ESP32 firmware."
 advanced: true
+icon: bluetooth
 tags: [bluetooth, ble, esp32, gatt]
 ---
 
@@ -288,28 +292,6 @@ These limits cover the common Arduino-style BLE peripheral and central paths
 without hiding BLE's useful diagnostics or committing Frothy to a large
 framework.
 
-## What BLE Costs On The ESP32
-
-The current `esp32_devkit_v1` development build measured:
-
-| Measurement | Used or free | Total or comparison |
-| --- | ---: | ---: |
-| Warm free heap, radio off | 112,188 bytes free | — |
-| Free heap, BLE active | 78,480 bytes free | 33,708-byte active cost |
-| Static DRAM linker region | 90,340 bytes used | 124,580 bytes total; 34,240 remain |
-| IRAM linker region | 126,939 bytes used | 131,072 bytes total; 4,133 remain |
-| Application partition | 238,576 bytes free | after the BLE client build |
-
-The practical reading is that BLE does not consume the whole board or make
-ordinary Frothy projects unusable. About 78 KB of general heap remained with
-BLE active in the measured build, and the profile's normal program and object
-budgets still fit. The narrow IRAM margin matters more when adding future
-native firmware features.
-
-Free heap and static linker margin are not two piles to add together. They are
-different views of memory at runtime and link time. These measurements are a
-build snapshot, not a permanent ABI promise.
-
 ## Diagnose Before Guessing
 
 Use the built-in reports first:
@@ -322,4 +304,6 @@ ble.connection.info: link
 
 They expose requested and actual timings, queue pressure, connection state,
 ATT errors, stack return codes, and disconnect reasons. That is the escape
-hatch when the friendly path is not enough.
+hatch when the friendly path is not enough. The [BLE entries in the word
+catalog](/reference/words/#ble-on) give the exact signature for every radio,
+scan, advertising, connection, GATT, and constant word.

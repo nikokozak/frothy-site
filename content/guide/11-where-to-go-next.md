@@ -24,10 +24,11 @@ Use [Tutorials](/tutorials/) when you want one result at a time:
 
 Use [Reference](/reference/) when the wording has to be exact:
 
-- [Language](/reference/language/) for core syntax and values
+- [Frothy in Y Minutes](/reference/language/) for the complete language
+- [Word catalog](/reference/words/) to search every current word
 - [Interactive profile](/reference/device/interactive-profile/) for prompt behavior, interrupts, and inspection
 - [Image and persistence](/reference/device/image-and-persistence/) for `save`, `restore`, and recovery
-- [Hardware](/reference/hardware/) for ESP32-facing words
+- [Modules](/reference/modules/) for GPIO, Wi-Fi, I2C, BLE, and every other ESP32 area
 - [CLI](/reference/toolchain/cli/) and [Editor](/reference/toolchain/editor/) for tooling
 
 ## If You Are Extending Frothy

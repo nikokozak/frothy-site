@@ -46,6 +46,7 @@
     {{- range $sub := $top.Sections.ByWeight }}
     <div class="side-group">
       <div class="side-h">{{ $sub.Title }}</div>
+      <a class="side-link{{ if eq $sub.RelPermalink $cur }} active{{ end }}" href="{{ $sub.RelPermalink }}">{{ partial "icon" "compass" }} Overview</a>
       {{- range where $sub.RegularPages.ByWeight "Params.hidden" "!=" true }}
       <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "hash") }} {{ .Title }}</a>
       {{- end }}

@@ -15,8 +15,8 @@ fail() { echo "smoke: FAIL — $1" >&2; exit 1; }
 # 1. search index contains core Frothy terms
 INDEX="public/index.json"
 test -f "$INDEX" || fail "missing $INDEX"
-for needle in 'save' 'dangerous.wipe' 'gpio' 'adc' 'blink' 'words' 'frothy' 'ten minutes' 'attempt' 'rescue'; do
-  grep -qi "$needle" "$INDEX" || fail "search index missing term: $needle"
+for needle in 'save' 'dangerous.wipe' 'gpio' 'adc' 'blink' 'frothy in y minutes' 'attempt' 'rescue' 'trace.open' 'pulse.play' 'console.uart' 'ble.gatt.find' '$baud_1200'; do
+  grep -Fqi "$needle" "$INDEX" || fail "search index missing term: $needle"
 done
 
 # 2. core routes exist (section indexes + a few representative deep pages)
@@ -34,6 +34,21 @@ for route in \
   public/reference/ten-minutes/index.html \
   public/reference/language/index.html \
   public/reference/words/index.html \
+  public/reference/modules/index.html \
+  public/reference/modules/board/index.html \
+  public/reference/modules/gpio/index.html \
+  public/reference/modules/timing/index.html \
+  public/reference/modules/events/index.html \
+  public/reference/modules/math-and-random/index.html \
+  public/reference/modules/text-bytes-pad/index.html \
+  public/reference/modules/i2c/index.html \
+  public/reference/modules/uart/index.html \
+  public/reference/modules/pwm/index.html \
+  public/reference/modules/wifi/index.html \
+  public/reference/modules/power/index.html \
+  public/reference/modules/signals/index.html \
+  public/reference/modules/console/index.html \
+  public/reference/modules/bluetooth/index.html \
   public/reference/hardware/index.html \
   public/reference/hardware/gpio/index.html \
   public/reference/device/index.html \
@@ -70,6 +85,13 @@ test -f public/reference/interactive-profile/index.html || fail "missing alias f
 test -f public/reference/image-and-persistence/index.html || fail "missing alias for old image-and-persistence URL"
 test -f public/reference/cli/index.html || fail "missing alias for old CLI URL"
 test -f public/reference/editor/index.html || fail "missing alias for old editor URL"
+test -f public/reference/hardware/bluetooth/index.html || fail "missing alias for old Bluetooth module URL"
+grep -q 'data-word-catalog' public/reference/words/index.html || fail "word catalog missing split-browser hook"
+node --check static/js/reference-layout.js >/dev/null || fail "word catalog script does not parse"
+CATALOG_ANCHORS="$(grep -o '<a id=' public/reference/words/index.html | wc -l | tr -d ' ')"
+CATALOG_ENTRIES="$(grep -o '<strong><code>' public/reference/words/index.html | wc -l | tr -d ' ')"
+test "$CATALOG_ANCHORS" -eq "$CATALOG_ENTRIES" || fail "word catalog anchors and entries differ"
+test "$CATALOG_ENTRIES" -ge 200 || fail "word catalog is unexpectedly incomplete"
 
 # 5. canonical tools own the public shells; /test holds internal assets only
 test ! -f public/test/editor/index.html || fail "old editor shell is still public"

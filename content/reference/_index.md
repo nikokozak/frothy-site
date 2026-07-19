@@ -1,17 +1,22 @@
 ---
 title: "Reference"
 weight: 2
-description: "Exact behavior for the Frothy language, word catalog, hardware words, device sessions, persistence, and toolchain."
+description: "Learn the complete Frothy language, scan every available word, then work module by module."
 ---
 
-Use the reference when you need the exact surface rather than the teaching arc. If you are new, start with [Install](/install/) or [Getting Started](/guide/02-getting-started/) first.
+Use the reference when you need the actual surface in current ESP32 firmware.
+Start with the language tour, scan or search the catalog, then open a module for
+the full working context around a group of words.
 
 The main sections are:
 
-- Start with [Frothy in ten minutes](/reference/ten-minutes/) for the shortest complete pass through the language
-- [Language](/reference/language/) for exact syntax and runtime semantics
-- [Word catalog](/reference/words/) for one entry per word, form, constant, and prompt-facing built-in
-- [Hardware](/reference/hardware/) for ESP32 board words and peripheral surfaces
+- [Frothy in Y Minutes](/reference/language/) is the complete, example-first
+  language guide: values, words, control flow, data, errors, events, and the
+  saved image
+- [Word catalog](/reference/words/) puts every current form, command, constant,
+  helper, and ESP32 word in one searchable left/right browser
+- [Modules](/reference/modules/) starts broad for GPIO, Wi-Fi, I2C, BLE, text,
+  timing, signals, power, and the rest, then links to exact word entries
 - [Device & sessions](/reference/device/) for REPL behavior, diagnostics, persistence, boot, and recovery
 - [Toolchain](/reference/toolchain/) for CLI, project/build files, flashing, source files, and editor support
 - [Extending](/reference/ffi/) for libraries, dependency manifests, and native words
