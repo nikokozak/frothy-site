@@ -79,11 +79,6 @@ remain usable, so you can keep evaluating code. It is also not a successful
 save: the previous durable overlay remains unchanged, and that older overlay
 is what a later reboot or `restore` will load.
 
-`Bytes` are volatile too, but they fail earlier: Frothy rejects an attempt to
-put `Bytes` in a top-level slot, cell, or record field with an `error: not saved
-(13)` response. Keep them transient or convert them to a persistable value
-when appropriate.
-
 Release the resource and replace its top-level binding before trying again:
 
 ```frothy
@@ -96,6 +91,22 @@ If the resource is needed after restore, reopen it from `boot` instead of
 persisting its native handle. See [Error and notice codes](/errors/#code-13)
 for the distinction between a standalone save notice and a save error inside a
 larger form.
+
+### Bytes Fail Before Save
+
+`Bytes` are volatile too, but they fail earlier. For example, Frothy rejects a
+top-level binding with the actual byte count in the headline:
+
+```text
+> x is bytes.from-text: "hi"
+error: not saved: bytes 2 (13)
+detail: value cannot be stored in a slot
+>
+```
+
+Cells and record fields use the same `error: not saved: bytes N (13)` headline;
+the detail line names the destination. Keep `Bytes` transient or convert them
+to a persistable value when appropriate.
 
 ## Restore
 
