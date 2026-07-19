@@ -40,11 +40,21 @@ frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001
 frothy connect
 ```
 
-**`frothy session`** opens the structured record/session path used by editor tooling.
+**`frothy session`** opens the session transport. Add `--records` to emit the
+structured NDJSON path used by editor tooling.
 
 ```sh
-frothy session
+frothy session --records
 ```
+
+Structured response records preserve device notices. A notice response has
+`status: "ok"` and `ok: true`, keeps the complete raw response in `text`, and
+may include the canonical notice headline in an optional `notice` field.
+Editor integrations should render that as a warning, keep source progress
+moving, and reserve error state for a response whose `ok` field is false.
+
+The human wire shapes and all stable numeric categories are listed under
+[Error and notice codes](/errors/).
 
 **`frothy send`** reads a source file and sends each complete form in order.
 
@@ -86,6 +96,12 @@ frothy fetch
 ```sh
 frothy install --port /dev/cu.usbserial-0001
 ```
+
+Install preserves device notices. A response such as `notice: not saved (13)`
+and its `detail:` lines is printed to stderr without an `error:` prefix, then
+the next source form is sent. Notices alone leave the command with exit status
+zero; a true device or transport error still stops installation and returns a
+nonzero status.
 
 ## Recovery Commands
 

@@ -85,6 +85,37 @@ save
 What is saved here is the overlay slot `cursor` plus the persistable record
 value it owns.
 
+At the prompt, `save` has two non-error response shapes:
+
+- `ok` with no notice means the new overlay was made durable
+- `notice: not saved (13)` followed by its details and `ok` means evaluation
+  completed, but the durable write did not happen
+
+`save` can also fail outright—for example because the snapshot exceeds
+capacity or storage I/O fails. Those responses use an `error:` headline and do
+not end in `ok`.
+
+For example, a top-level live handle prevents a snapshot:
+
+```text
+> save
+notice: not saved (13)
+detail: cannot save slot 'appuart' - bound to a live handle or buffer
+ok
+>
+```
+
+The live overlay remains usable and the previously saved overlay remains
+intact. Close the resource, rebind the named top-level slot to `nil` or another
+persistable value, and save again. Hardware needed after restore belongs in
+`boot`.
+
+The notice presentation applies only when the complete prompt form is bare
+`save` or `save:`. When `save:` is evaluated as part of another word or
+expression, the same condition is `error: not saved (13)`. That failure can be
+caught by `attempt`/`rescue` and stops the rest of the current form. See the
+complete [error and notice contract](/errors/#code-13).
+
 **`restore`** *(interactive base image)*
 
 Layer: `core`  

@@ -25,6 +25,7 @@ for route in \
   public/install/index.html \
   public/editor/index.html \
   public/flash/index.html \
+  public/errors/index.html \
   public/guide/index.html \
   public/guide/01-what-is-froth/index.html \
   public/guide/12-ffi-and-c/index.html \
@@ -65,6 +66,20 @@ do
   test -f "$route" || fail "missing route: $route"
 done
 
+# Public host tooling links directly to stable error-code anchors.
+ERRORS_PAGE="public/errors/index.html"
+for ((code = 0; code <= 25; code++)); do
+  grep -Eq "id=[\"']?code-${code}[\"'> ]" "$ERRORS_PAGE" || fail "errors page missing code-${code} anchor"
+done
+grep -Fq 'error: wrong type:' "$ERRORS_PAGE" || fail "errors page missing rejected type example"
+grep -Fq 'error: bad value:' "$ERRORS_PAGE" || fail "errors page missing rejected value example"
+grep -Fq 'notice: not saved (13)' "$ERRORS_PAGE" || fail "errors page missing nonfatal save notice"
+grep -Fq 'error: busy: 0 (25)' "$ERRORS_PAGE" || fail "errors page missing busy resource example"
+grep -Fq 'class=cl>interrupted' "$ERRORS_PAGE" || fail "errors page missing successful interrupt completion"
+grep -Fq 'class=cl>error: interrupted (10)' "$ERRORS_PAGE" || fail "errors page missing startup interrupt failure"
+grep -Fq 'href=../reference/ class=active' "$ERRORS_PAGE" || fail "errors page is outside reference navigation"
+grep -Fq 'class="side-link active" href=../errors/' "$ERRORS_PAGE" || fail "errors page sidebar is not active"
+
 # Contact email must not appear as a harvestable plain-text address in the source.
 grep -q 'nkozak@nyu.edu' public/contact/index.html && fail "contact email is plain-text in source" || true
 
@@ -85,6 +100,7 @@ test -f public/reference/interactive-profile/index.html || fail "missing alias f
 test -f public/reference/image-and-persistence/index.html || fail "missing alias for old image-and-persistence URL"
 test -f public/reference/cli/index.html || fail "missing alias for old CLI URL"
 test -f public/reference/editor/index.html || fail "missing alias for old editor URL"
+test -f public/reference/errors/index.html || fail "missing alias for error-code reference URL"
 test -f public/reference/hardware/bluetooth/index.html || fail "missing alias for old Bluetooth module URL"
 grep -q 'data-word-catalog' public/reference/words/index.html || fail "word catalog missing split-browser hook"
 node --check static/js/reference-layout.js >/dev/null || fail "word catalog script does not parse"

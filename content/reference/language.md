@@ -518,15 +518,19 @@ cannot be stored in record fields.
 
 ## Errors And Rescue
 
-An error returns control to the prompt instead of wedging the device. A typical
-diagnostic names the error, shows its numeric code, and points at the source
-span.
+An error returns control to the prompt instead of wedging the device. A
+diagnostic names the error and shows its numeric code. Reader and parser
+diagnostics can also point at the offending source span.
 
 ```text
-error: bad value (3)
-2 / 0
-^^^^^
+error: bad value: 0 (3)
 ```
+
+Type, domain, and range failures include the value that was rejected. Extra
+lines may identify the expected kind, native argument position, source span,
+or valid bound. Values are escaped and bounded for the transcript, and secret
+arguments are redacted. See [Error and notice codes](/errors/) for the full
+wire shape and recovery table.
 
 `attempt [ ... ] rescue [ ... ]` catches runtime errors.
 

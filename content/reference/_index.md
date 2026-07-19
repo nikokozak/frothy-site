@@ -15,6 +15,8 @@ The main sections are:
   saved image
 - [Word catalog](/reference/words/) puts every current form, command, constant,
   helper, and ESP32 word in one searchable left/right browser
+- [Error and notice codes](/errors/) defines every numeric status category,
+  rejected-value headline, and the difference between warnings and failures
 - [Modules](/reference/modules/) starts broad for GPIO, Wi-Fi, I2C, BLE, text,
   timing, signals, power, and the rest, then links to exact word entries
 - [Device & sessions](/reference/device/) for REPL behavior, diagnostics, persistence, boot, and recovery

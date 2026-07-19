@@ -5,7 +5,7 @@ weight: 7
 aliases:
   - /guide/05-inspection-and-live-workflow/
 icon: rotate-cw
-readTime: "6 min"
+readTime: "8 min"
 ---
 
 A live microcontroller language needs mistakes to be survivable. If a bad
@@ -18,9 +18,10 @@ possible. The target should report the error and return to a usable prompt.
 
 ## What an Error Looks Like
 
-An error does more than say "no". It names the problem, gives it a code, and
-points a caret at the exact token in your line. Mistype a word and the prompt
-shows you where:
+An error does more than say "no". It names the problem, gives it a code, and,
+when a value was rejected, puts that value in the headline. Reader and parser
+errors instead point a caret at the exact token in your line. Mistype a word
+and the prompt shows you where:
 
 ```text
 > gpio.hihg: 5
@@ -45,8 +46,73 @@ to [ ]
 
 The caret is under the offending span, the `name:` line names the value the
 reader could not resolve, and the parenthesized number is the error code. After
-any of these, the prompt is still yours — nothing about the reported line
-changed your saved image or your live overlay.
+any of these, the prompt is still yours. An error never saves automatically;
+effects completed earlier in a multi-expression form may still be live.
+
+## Rejected Values
+
+Type, domain, and range errors show the value that caused the rejection:
+
+```text
+> "string" + 5
+error: wrong type: "string" (2)
+expected an int, got text
+>
+```
+
+```text
+> 2 / 0
+error: bad value: 0 (3)
+>
+```
+
+```text
+> set scores[9] to 10
+error: out of range: 9 (1)
+cell index 9 is past the end (length 2)
+>
+```
+
+Native words use the same mechanism and can add the rejected argument:
+
+```text
+> gpio.mode: $led_builtin, 3
+error: bad value: 3 (3)
+detail: gpio.mode argument 2 was rejected
+>
+```
+
+Text is quoted and escaped so one value cannot forge extra transcript lines;
+text that cannot fit falls back to `text length`. Bytes, cells, records, record
+shapes, and handles are always summarized by kind plus size or name. Secret
+arguments are shown as `<redacted>`.
+
+See [Error and notice codes](/errors/) for every numeric code and its usual
+recovery.
+
+## Notices Are Not Errors
+
+A notice says that a requested side effect did not happen, but evaluation can
+continue. The current example is `save` when the overlay contains a live
+handle or buffer:
+
+```text
+> save
+notice: not saved (13)
+detail: cannot save slot 'appuart' - bound to a live handle or buffer
+ok
+>
+```
+
+The `ok` means the form completed and the prompt or source batch may continue.
+It does not mean a new durable image was written. The live overlay remains
+usable, and the previous saved image remains the one restored after reboot.
+
+The notice presentation applies only when the complete prompt form is bare
+`save` or `save:`. If `save:` is part of a word or larger expression, the same
+code 13 is an error instead. That lets the caller handle it with
+`attempt`/`rescue` and prevents later work in that form from silently
+continuing.
 
 ## Typical Errors
 
@@ -81,7 +147,8 @@ scores is cells(2)
 set scores[3] to 10
 ```
 
-The cells object exists, but index `3` is outside a two-element store.
+The cells object exists, but index `3` is outside a two-element store. The
+error headline reports `3`, and the following detail reports the length.
 
 ## Interrupts
 

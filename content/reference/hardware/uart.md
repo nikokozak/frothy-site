@@ -62,6 +62,21 @@ aux is uart.open: 1, $baud_9600
 board exposes a different route. The chosen port and pins must be supported and
 must not conflict with the active console or another peripheral.
 
+## Exclusive Ports And Busy Errors
+
+A UART port has one owner. Opening a valid port that is already claimed reports
+the rejected port in a `busy` error:
+
+```text
+error: busy: 0 (25)
+detail: uart.open argument 1 was rejected
+```
+
+Reuse the existing handle, close that handle before opening the port again, or
+select a different supported port. Code 25 is distinct from a bad port number:
+it means the resource exists but is currently exclusive to another owner. See
+[Error and notice codes](/errors/#code-25) for the general recovery contract.
+
 ## Nonblocking Reads
 
 `uart.read-byte` does not wait forever. It returns the next byte or `-1` when
@@ -85,4 +100,8 @@ Use [Console routing](/reference/modules/console/) only when you intentionally
 want the prompt and all console output to move to another UART.
 
 UART handles are volatile. Close them, replace top-level handle bindings, and
-reopen required ports from `boot` before using `save` and `restore`.
+reopen required ports from `boot` before using `save` and `restore`. If a
+top-level UART handle remains, a bare `save` or `save:` prompt form produces a
+nonfatal [`not saved (13)` notice](/errors/#code-13); the live session
+continues, but the durable image is not replaced. A save inside a larger form
+is an error instead.
