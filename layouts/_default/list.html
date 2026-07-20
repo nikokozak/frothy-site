@@ -1,12 +1,15 @@
 {{ define "main" }}
+{{ $isDocsSection := or (eq .Section "guide") (eq .Section "reference") }}
 <div class="docs page">
   {{ partial "docs-sidebar" . }}
 
   <main class="docs-main">
+    {{ if not $isDocsSection }}
     <div class="crumb">
       <a href="{{ "/" | relURL }}">Home</a> {{ partial "icon" "chevron-right" }} <b>{{ .Title }}</b>
     </div>
     <span class="doc-kicker">{{ partial "icon" "book-open" }} {{ .Title }}</span>
+    {{ end }}
     <h1 class="doc-h1">{{ .Title }}</h1>
     {{ with .Description }}<p class="doc-lede">{{ . }}</p>{{ end }}
 
@@ -16,10 +19,9 @@
     {{ $pages := where .RegularPages.ByWeight "Params.hidden" "!=" true }}
 
     {{ if eq .Section "reference" }}
-    {{/* Reference: card grid over direct pages + sub-sections */}}
+    {{/* Reference is intentionally limited to the two lookup surfaces. */}}
     <div class="ref-grid">
-      {{ range .Pages.ByWeight }}
-      {{ if ne .Params.hidden true }}
+      {{ range where .Pages.ByWeight "Params.referenceCatalog" true }}
       <a class="ref-card" href="{{ .RelPermalink }}">
         <div class="ref-card-top">
           <span class="ref-card-ic">{{ partial "icon" (or .Params.icon "hash") }}</span>
@@ -31,7 +33,6 @@
         <div class="ref-card-tags">{{ range . }}<span class="ref-tag">{{ . }}</span>{{ end }}</div>
         {{ end }}
       </a>
-      {{ end }}
       {{ end }}
     </div>
 
@@ -71,6 +72,23 @@
       </a></li>
       {{ end }}
     </ol>
+    {{ end }}
+
+    {{ $reference := $.Site.GetPage "/reference" }}
+    {{ $topics := where $reference.Pages.ByWeight "Params.guideTopic" true }}
+    {{ if $topics }}
+    <div class="guide-adv-h">More guides</div>
+    <div class="ref-grid guide-topic-grid">
+      {{ range $topics }}
+      <a class="ref-card" href="{{ .RelPermalink }}">
+        <div class="ref-card-top">
+          <span class="ref-card-ic">{{ partial "icon" (or .Params.icon "book-open") }}</span>
+        </div>
+        <h3 class="ref-card-title">{{ .Title }}</h3>
+        <p class="ref-card-desc">{{ or .Description .Summary }}</p>
+      </a>
+      {{ end }}
+    </div>
     {{ end }}
 
     {{ else }}

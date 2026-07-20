@@ -5,13 +5,8 @@ description: "Canonical lookup entries for Frothy words, forms, constants, and p
 icon: hash
 tags: [words, built-ins, catalog]
 wordCatalog: true
+referenceCatalog: true
 ---
-
-Use this page when you know the word you want and need its signature, one-line purpose, and a small example.
-
-Syntax and semantic rules live in [Frothy in Y
-Minutes](/reference/language/). [Module pages](/reference/modules/) link back
-here for canonical word entries.
 
 ## Language Forms
 

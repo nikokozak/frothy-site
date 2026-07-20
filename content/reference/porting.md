@@ -5,6 +5,7 @@ description: "Bring Frothy to a new MCU by implementing one platform header."
 advanced: true
 icon: cpu
 tags: [porting, platform, target, board]
+guideTopic: true
 ---
 
 Frothy's kernel — parser, compiler, VM, persistence, event scheduler — is

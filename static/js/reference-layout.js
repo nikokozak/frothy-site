@@ -59,10 +59,7 @@
     );
   }
 
-  function groupWordEntries(root) {
-    var content = root.querySelector(".content");
-    if (!content) return;
-
+  function groupEntries(content) {
     var current = null;
     var currentSection = "";
     var currentSubsection = "";
@@ -113,6 +110,7 @@
         node.parentNode.insertBefore(current, node);
         current.appendChild(node);
         node.classList.add("ref-entry-signature");
+        node.tabIndex = -1;
         if (explicitId) explicitAnchor.remove();
 
         var badge = node.querySelector("em");
@@ -161,12 +159,18 @@
     };
   }
 
-  function buildWordBrowser(root) {
-    if (!root.hasAttribute("data-word-catalog")) return;
+  function buildCatalog(root) {
+    var content = root.querySelector(".catalog-main .content");
+    var list = root.querySelector("[data-catalog-list]");
+    var input = root.querySelector("[data-catalog-filter]");
+    var status = root.querySelector("[data-catalog-status]");
+    var clear = root.querySelector("[data-catalog-clear]");
+    var back = root.querySelector("[data-catalog-back]");
+    var main = root.querySelector(".catalog-main");
+    var noun = root.dataset.catalogNoun || "entry";
+    if (!content || !list || !input || !status || !clear || !back || !main) return;
 
-    var content = root.querySelector(".content");
-    var firstHeading = content && content.querySelector("h2");
-    if (!content || !firstHeading) return;
+    groupEntries(content);
 
     var sections = [];
     var entries = [];
@@ -219,81 +223,43 @@
     });
     if (!entries.length) return;
 
-    var browser = createNode("section", "words-browser");
-    browser.setAttribute("data-words-browser", "true");
-
-    var toolbar = createNode("div", "words-browser-toolbar");
-    browser.appendChild(toolbar);
-
-    var field = createNode("label", "words-browser-filter");
-    field.setAttribute("for", "words-filter");
-    field.appendChild(createNode("span", "words-browser-filter-label", "Search all words"));
-    toolbar.appendChild(field);
-
-    var input = createNode("input", "");
-    input.id = "words-filter";
-    input.type = "search";
-    input.autocomplete = "off";
-    input.spellcheck = false;
-    input.placeholder = "Name, module, signature, or description";
-    field.appendChild(input);
-
-    var toolbarMeta = createNode("div", "words-browser-toolbar-meta");
-    toolbar.appendChild(toolbarMeta);
-    var status = createNode("p", "words-browser-status", pluralize(entries.length, "word"));
-    status.setAttribute("aria-live", "polite");
-    toolbarMeta.appendChild(status);
-    var clear = createNode("button", "words-browser-clear", "Clear");
-    clear.type = "button";
-    clear.disabled = true;
-    toolbarMeta.appendChild(clear);
-
-    var grid = createNode("div", "words-browser-grid");
-    browser.appendChild(grid);
-    var catalog = createNode("nav", "words-browser-catalog");
-    catalog.setAttribute("aria-label", "All Frothy words");
-    grid.appendChild(catalog);
-    var detail = createNode("div", "words-browser-detail");
-    detail.setAttribute("aria-live", "polite");
-    grid.appendChild(detail);
-
-    var empty = createNode("div", "words-browser-empty is-hidden");
-    empty.appendChild(createNode("h3", "", "No matching words"));
+    var empty = createNode("div", "catalog-empty is-hidden");
+    empty.appendChild(createNode("h2", "", "No matching " + noun + "s"));
     empty.appendChild(createNode("p", "", "Try a broader term or clear the search."));
-    detail.appendChild(empty);
+    main.appendChild(empty);
 
     sections.forEach(function (section) {
-      var card = createNode("section", "words-browser-section");
+      var card = createNode("section", "catalog-section");
       section.card = card;
-      catalog.appendChild(card);
+      list.appendChild(card);
 
-      var sectionHead = createNode("div", "words-browser-section-head");
-      sectionHead.appendChild(createNode("h3", "words-browser-section-title", section.title));
-      section.countNode = createNode("span", "words-browser-section-count");
+      var sectionHead = createNode("div", "catalog-section-head");
+      sectionHead.appendChild(createNode("h2", "catalog-section-title", section.title));
+      section.countNode = createNode("span", "catalog-section-count");
       sectionHead.appendChild(section.countNode);
       card.appendChild(sectionHead);
 
       section.groups.forEach(function (group) {
         if (!group.entries.length) return;
-        var bucket = createNode("div", "words-browser-group");
+        var bucket = createNode("div", "catalog-group");
         group.bucket = bucket;
         card.appendChild(bucket);
-        if (group.title) bucket.appendChild(createNode("h4", "words-browser-group-title", group.title));
+        if (group.title) bucket.appendChild(createNode("h3", "catalog-group-title", group.title));
 
-        var list = createNode("ul", "words-browser-list");
-        bucket.appendChild(list);
+        var items = createNode("ul", "catalog-list");
+        bucket.appendChild(items);
         group.entries.forEach(function (meta) {
-          var item = createNode("li", "words-browser-item-wrap");
-          var link = createNode("a", "words-browser-item");
+          var item = createNode("li", "catalog-item-wrap");
+          var link = createNode("a", "catalog-item");
           link.href = "#" + meta.id;
-          link.appendChild(createNode("code", "words-browser-word-name", meta.name));
+          link.appendChild(createNode("code", "catalog-item-name", meta.name));
           item.appendChild(link);
-          list.appendChild(item);
+          items.appendChild(item);
           meta.item = item;
           meta.link = link;
           link.addEventListener("click", function (event) {
             event.preventDefault();
-            select(meta, true);
+            select(meta, true, true);
           });
         });
       });
@@ -301,7 +267,11 @@
 
     var active = null;
 
-    function select(meta, updateHash) {
+    function isMobile() {
+      return window.matchMedia("(max-width: 980px)").matches;
+    }
+
+    function select(meta, updateHash, moveFocus) {
       active = meta;
       entries.forEach(function (entry) {
         var selected = entry === meta;
@@ -311,9 +281,18 @@
         else entry.link.removeAttribute("aria-current");
       });
       empty.classList.toggle("is-hidden", !!meta);
-      if (meta && updateHash) history.pushState(null, "", "#" + meta.id);
-      if (meta && window.matchMedia("(max-width: 720px)").matches) {
-        detail.scrollIntoView({ block: "start" });
+      if (!meta) return;
+
+      if (updateHash) history.pushState(null, "", "#" + meta.id);
+      if (isMobile()) {
+        root.classList.add("catalog-detail-open");
+        back.hidden = false;
+        main.scrollIntoView({ block: "start" });
+      }
+      if (moveFocus) {
+        window.requestAnimationFrame(function () {
+          meta.node.querySelector(".ref-entry-signature").focus({ preventScroll: true });
+        });
       }
     }
 
@@ -341,10 +320,10 @@
       });
 
       status.textContent = terms.length
-        ? visibleEntries.length + " of " + entries.length + " words"
-        : pluralize(entries.length, "word");
+        ? visibleEntries.length + " of " + entries.length + " " + noun + "s"
+        : pluralize(entries.length, noun);
       clear.disabled = !terms.length;
-      if (!active || !active.visible) select(visibleEntries[0] || null, false);
+      if (!active || !active.visible) select(visibleEntries[0] || null, false, false);
     }
 
     function selectHash() {
@@ -352,26 +331,39 @@
       var match = entries.find(function (meta) {
         return meta.id === id;
       });
-      if (!match) return;
-      if (!match.visible) {
-        input.value = "";
-        applyFilter();
+      if (match) {
+        if (!match.visible) {
+          input.value = "";
+          applyFilter();
+        }
+        select(match, false, false);
+      } else {
+        if (isMobile()) {
+          root.classList.remove("catalog-detail-open");
+          back.hidden = true;
+        } else {
+          select(entries.find(function (entry) { return entry.visible; }) || null, false, false);
+        }
       }
-      select(match, false);
     }
 
+    input.disabled = false;
     input.addEventListener("input", applyFilter);
     clear.addEventListener("click", function () {
       input.value = "";
       input.focus();
       applyFilter();
     });
-    window.addEventListener("hashchange", selectHash);
-
-    content.insertBefore(browser, firstHeading);
-    entries.forEach(function (meta) {
-      detail.appendChild(meta.node);
+    back.addEventListener("click", function () {
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+      root.classList.remove("catalog-detail-open");
+      back.hidden = true;
+      input.focus();
+      root.scrollIntoView({ block: "start" });
     });
+    window.addEventListener("hashchange", selectHash);
+    window.addEventListener("popstate", selectHash);
+
     sections.forEach(function (section) {
       section.heading.remove();
       section.groups.forEach(function (group) {
@@ -382,17 +374,15 @@
       if (node.tagName === "HR") node.remove();
     });
 
+    root.classList.add("catalog-ready");
     applyFilter();
     selectHash();
   }
 
-  document.querySelectorAll(".reference-page").forEach(function (page) {
-    wrapTables(page);
-    groupWordEntries(page);
-    buildWordBrowser(page);
-  });
+  document.querySelectorAll(".reference-page").forEach(wrapTables);
+  document.querySelectorAll("[data-reference-catalog]").forEach(buildCatalog);
 
-  if (window.location.hash && !document.querySelector("[data-word-catalog]")) {
+  if (window.location.hash && !document.querySelector("[data-reference-catalog]")) {
     var target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
     if (target) window.setTimeout(function () { target.scrollIntoView(); }, 0);
   }

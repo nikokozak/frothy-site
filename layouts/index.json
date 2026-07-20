@@ -1,10 +1,14 @@
 [
   {{- $pages := where (where .Site.RegularPages "Params.searchExclude" "!=" true) "Params.hidden" "!=" true -}}
   {{- range $index, $page := $pages.ByTitle -}}
+    {{- $section := $page.Section | humanize -}}
+    {{- $isGuideTopic := $page.Params.guideTopic -}}
+    {{- with $page.CurrentSection }}{{ if .Params.guideTopic }}{{ $isGuideTopic = true }}{{ end }}{{ end -}}
+    {{- if $isGuideTopic }}{{ $section = "Guide" }}{{ end -}}
     {{- if $index }},{{ end }}
     {
       "title": {{ $page.Title | jsonify }},
-      "section": {{ $page.Section | humanize | jsonify }},
+      "section": {{ $section | jsonify }},
       "permalink": {{ $page.RelPermalink | jsonify }},
       "summary": {{ (or $page.Description $page.Summary) | plainify | htmlUnescape | jsonify }},
       "content": {{ $page.Plain | htmlUnescape | jsonify }},

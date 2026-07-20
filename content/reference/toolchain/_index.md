@@ -4,6 +4,7 @@ weight: 6
 description: "CLI, project/build files, flashing, sending source, and editor integration."
 icon: wrench
 tags: [cli, build, editor]
+guideTopic: true
 ---
 
 Use this section when you need host-side commands, project shape, or editor behavior.

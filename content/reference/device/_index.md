@@ -4,6 +4,7 @@ weight: 4
 description: "Prompt sessions, control sessions, diagnostics, persistence, boot, and recovery on a Frothy device."
 icon: monitor-cog
 tags: [repl, sessions, persistence]
+guideTopic: true
 ---
 
 Use this section when you need the device contract rather than the language syntax.

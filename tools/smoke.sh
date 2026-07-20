@@ -71,14 +71,10 @@ ERRORS_PAGE="public/errors/index.html"
 for ((code = 0; code <= 25; code++)); do
   grep -Eq "id=[\"']?code-${code}[\"'> ]" "$ERRORS_PAGE" || fail "errors page missing code-${code} anchor"
 done
-grep -Fq 'error: wrong type:' "$ERRORS_PAGE" || fail "errors page missing rejected type example"
-grep -Fq 'error: bad value:' "$ERRORS_PAGE" || fail "errors page missing rejected value example"
-grep -Fq 'notice: not saved (13)' "$ERRORS_PAGE" || fail "errors page missing nonfatal save notice"
-grep -Fq 'error: busy: 0 (25)' "$ERRORS_PAGE" || fail "errors page missing busy resource example"
-grep -Fq 'class=cl>interrupted' "$ERRORS_PAGE" || fail "errors page missing successful interrupt completion"
-grep -Fq 'class=cl>error: interrupted (10)' "$ERRORS_PAGE" || fail "errors page missing startup interrupt failure"
-grep -Fq 'href=../reference/ class=active' "$ERRORS_PAGE" || fail "errors page is outside reference navigation"
-grep -Fq 'class="side-link active" href=../errors/' "$ERRORS_PAGE" || fail "errors page sidebar is not active"
+grep -q 'data-reference-catalog' "$ERRORS_PAGE" || fail "errors page missing catalog shell"
+grep -q 'data-diagnostic-catalog' "$ERRORS_PAGE" || fail "errors page missing diagnostic hook"
+grep -Fq '13 — not saved' "$ERRORS_PAGE" || fail "errors page missing save status"
+grep -Fq 'only a nonfatal notice' "$ERRORS_PAGE" || fail "errors page loses notice semantics"
 
 # Contact email must not appear as a harvestable plain-text address in the source.
 grep -q 'nkozak@nyu.edu' public/contact/index.html && fail "contact email is plain-text in source" || true
@@ -102,96 +98,27 @@ test -f public/reference/cli/index.html || fail "missing alias for old CLI URL"
 test -f public/reference/editor/index.html || fail "missing alias for old editor URL"
 test -f public/reference/errors/index.html || fail "missing alias for error-code reference URL"
 test -f public/reference/hardware/bluetooth/index.html || fail "missing alias for old Bluetooth module URL"
-grep -q 'data-word-catalog' public/reference/words/index.html || fail "word catalog missing split-browser hook"
+grep -q 'data-word-catalog' public/reference/words/index.html || fail "word catalog missing catalog hook"
+grep -q 'data-catalog-list' public/reference/words/index.html || fail "word catalog missing page sidebar"
+grep -q 'data-catalog-filter' public/reference/words/index.html || fail "word catalog missing search"
 node --check static/js/reference-layout.js >/dev/null || fail "word catalog script does not parse"
 CATALOG_ANCHORS="$(grep -o '<a id=' public/reference/words/index.html | wc -l | tr -d ' ')"
 CATALOG_ENTRIES="$(grep -o '<strong><code>' public/reference/words/index.html | wc -l | tr -d ' ')"
 test "$CATALOG_ANCHORS" -eq "$CATALOG_ENTRIES" || fail "word catalog anchors and entries differ"
 test "$CATALOG_ENTRIES" -ge 200 || fail "word catalog is unexpectedly incomplete"
 
-# 5. canonical tools own the public shells; /test holds internal assets only
-test ! -f public/test/editor/index.html || fail "old editor shell is still public"
-test ! -f public/test/flash/index.html || fail "old flasher shell is still public"
+# 5. editor and flasher belong to app.frothy.dev; copied tool assets are not published.
+grep -Fq 'https://app.frothy.dev/editor' public/editor/index.html || fail "editor route does not hand off to app"
+grep -Fq 'https://app.frothy.dev/flash' public/flash/index.html || fail "flasher route does not hand off to app"
+grep -Fq 'https://app.frothy.dev/editor' public/index.html || fail "site nav does not link to app editor"
+grep -Fq 'https://app.frothy.dev/flash' public/index.html || fail "site nav does not link to app flasher"
+test -z "$(find public/test -type f -print -quit 2>/dev/null)" || fail "legacy tool assets are still published"
 
-grep -q 'test/editor/style.css' public/editor/index.html || fail "editor page missing stylesheet"
-grep -q 'test/editor/app.js' public/editor/index.html || fail "editor page missing script"
-test -f public/test/editor/style.css || fail "missing editor stylesheet asset"
-test -f public/test/editor/app.js || fail "missing editor script asset"
-
-EDITOR_BUNDLE="$(sed -n 's#.*"\./\(vendor/frothy-editor/[^\"]*/index\.js\)".*#\1#p' static/test/editor/app.js)"
-test -n "$EDITOR_BUNDLE" || fail "editor app has no pinned bundle import"
-test -f "public/test/editor/$EDITOR_BUNDLE" || fail "missing pinned editor bundle: $EDITOR_BUNDLE"
-grep -q 'source-form ' "public/test/editor/$EDITOR_BUNDLE" || fail "pinned editor bundle flattens multiline forms"
-
-grep -q 'test/flash/style.css' public/flash/index.html || fail "flasher page missing stylesheet"
-grep -q 'test/flash/app.js' public/flash/index.html || fail "flasher page missing script"
-test -f public/test/flash/style.css || fail "missing flasher stylesheet asset"
-test -f public/test/flash/app.js || fail "missing flasher script asset"
-grep -q 'id=firmware-label' public/flash/index.html || fail "flasher does not render firmware label"
-grep -q 'id=firmware-version' public/flash/index.html || fail "flasher does not render firmware version"
-grep -q 'id=firmware-picker[^>]*>Board' public/flash/index.html || fail "flasher selector is not labeled Board"
-grep -q 'Continue to Editor' public/flash/index.html || fail "flasher has no editor handoff"
-
-node <<'NODE'
-const crypto = require("crypto");
-const fs = require("fs");
-const path = require("path");
-
-const manifestFile = "public/test/flash/firmware/manifest.json";
-const firmwareDir = path.dirname(manifestFile);
-const rows = JSON.parse(fs.readFileSync(manifestFile, "utf8"));
-if (!Array.isArray(rows) || rows.length === 0) throw new Error("firmware manifest is empty");
-const boards = new Set();
-const files = new Set();
-for (const [rowIndex, row] of rows.entries()) {
-  for (const field of ["board", "profile", "label", "version"]) {
-    if (typeof row[field] !== "string" || !row[field]) {
-      throw new Error(`firmware ${rowIndex} has no ${field}`);
-    }
-  }
-  if (boards.has(row.board)) throw new Error(`manifest repeats board ${row.board}`);
-  boards.add(row.board);
-  if (!Array.isArray(row.segments) || row.segments.length === 0) {
-    throw new Error(`firmware ${rowIndex} has no segments`);
-  }
-  const addresses = new Set();
-  for (const segment of row.segments) {
-    if (!Number.isSafeInteger(segment.address) || segment.address < 0) {
-      throw new Error(`firmware ${rowIndex} has an invalid address`);
-    }
-    if (addresses.has(segment.address)) {
-      throw new Error(`firmware ${rowIndex} repeats address ${segment.address}`);
-    }
-    addresses.add(segment.address);
-    if (typeof segment.file !== "string" || path.basename(segment.file) !== segment.file) {
-      throw new Error(`firmware ${rowIndex} has an invalid segment file`);
-    }
-    if (typeof segment.md5 !== "string" || !/^[0-9a-f]{32}$/.test(segment.md5)) {
-      throw new Error(`firmware ${rowIndex} has an invalid segment checksum`);
-    }
-    if (files.has(segment.file)) {
-      throw new Error(`manifest repeats segment file ${segment.file}`);
-    }
-    files.add(segment.file);
-    const segmentPath = path.join(firmwareDir, segment.file);
-    if (!fs.existsSync(segmentPath) || !fs.statSync(segmentPath).isFile()) {
-      throw new Error(`firmware segment is not a file: ${segment.file}`);
-    }
-    const actualMD5 = crypto.createHash("md5")
-      .update(fs.readFileSync(segmentPath))
-      .digest("hex");
-    if (actualMD5 !== segment.md5) {
-      throw new Error(`firmware checksum mismatch: ${segment.file}`);
-    }
-  }
-}
-const bundledFiles = fs.readdirSync(firmwareDir)
-  .filter((file) => file.endsWith(".bin"))
-  .sort();
-const referencedFiles = [...files].sort();
-if (JSON.stringify(bundledFiles) !== JSON.stringify(referencedFiles)) {
-  throw new Error("firmware directory and manifest segment files differ");
-}
-NODE
+# 6. visible documentation IA keeps deep guides out of Reference.
+grep -Fq 'href=../reference/words/' public/reference/index.html || fail "reference index missing word catalog"
+grep -Fq 'href=../errors/' public/reference/index.html || fail "reference index missing diagnostic catalog"
+grep -Fq 'href=../reference/modules/' public/guide/index.html || fail "guide index missing module guides"
+grep -Fq 'href=../reference/language/' public/guide/index.html || fail "guide index missing language tour"
+test "$(grep -o '<a class=ref-card ' public/reference/index.html | wc -l | tr -d ' ')" -eq 2 || fail "reference index contains more than two catalogs"
 
 echo "smoke: OK"

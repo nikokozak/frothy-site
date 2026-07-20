@@ -7,7 +7,7 @@ tags: [development, build, esp-idf]
 ---
 
 This is the source checkout path for firmware and Frothy contributors. Most
-users should start with the [browser flasher](/flash/) instead; it needs no
+users should start with the [browser flasher](https://app.frothy.dev/flash) instead; it needs no
 local compiler or ESP-IDF installation.
 
 ## Requirements
@@ -63,7 +63,7 @@ The browser flasher's release bundle is built from every official board
 manifest and each ESP-IDF build's own flash addresses:
 
 ```sh
-tools/build-flasher-bundle.sh ../frothy-site/static/test/flash/firmware
+tools/build-flasher-bundle.sh ../app/priv/static/firmware
 ```
 
 ## Local Projects

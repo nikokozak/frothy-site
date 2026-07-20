@@ -34,6 +34,9 @@
   {{/* top-section key: section name, or the base filename for root-level pages (install, about) */}}
   {{ $cur := .Section }}
   {{ if and (eq $cur "") .IsPage .File }}{{ $cur = .File.BaseFileName }}{{ end }}
+  {{ $isGuideTopic := .Params.guideTopic }}
+  {{ with .CurrentSection }}{{ if .Params.guideTopic }}{{ $isGuideTopic = true }}{{ end }}{{ end }}
+  {{ if $isGuideTopic }}{{ $cur = "guide" }}{{ end }}
   <div class="site-top">
     <div class="prealpha-banner" aria-label="Frothy is pre-alpha. It is primeval, but usable, goop.">
       <div class="ticker" aria-hidden="true">{{ range seq 12 }}<span>Frothy is pre-alpha</span><span class="t-sep">·</span><span>It is primeval, but usable, goop</span><span class="t-sep">·</span>{{ end }}</div>
@@ -50,9 +53,21 @@
         <a href="{{ "tutorials/" | relURL }}"{{ if eq $cur "tutorials" }} class="active"{{ end }}>Tutorials</a>
         <a href="{{ "reference/" | relURL }}"{{ if eq $cur "reference" }} class="active"{{ end }}>Reference</a>
         <a href="{{ "what-makes-frothy-different/" | relURL }}"{{ if eq $cur "what-makes-frothy-different" }} class="active"{{ end }}>About</a>
-        <a href="{{ "flash/" | relURL }}"{{ if eq $cur "flash" }} class="active"{{ end }}>Flasher</a>
-        <a href="{{ "editor/" | relURL }}"{{ if eq $cur "editor" }} class="active"{{ end }}>Editor</a>
+        <a href="https://app.frothy.dev/flash">Flasher</a>
+        <a href="https://app.frothy.dev/editor">Editor</a>
       </nav>
+      <details class="fm-menu">
+        <summary>{{ partial "icon" "menu" }} Menu</summary>
+        <nav class="fm-menu-links" aria-label="Frothy navigation">
+          <a href="{{ "install/" | relURL }}"{{ if eq $cur "install" }} class="active"{{ end }}>Install</a>
+          <a href="{{ "guide/" | relURL }}"{{ if eq $cur "guide" }} class="active"{{ end }}>Guide</a>
+          <a href="{{ "tutorials/" | relURL }}"{{ if eq $cur "tutorials" }} class="active"{{ end }}>Tutorials</a>
+          <a href="{{ "reference/" | relURL }}"{{ if eq $cur "reference" }} class="active"{{ end }}>Reference</a>
+          <a href="{{ "what-makes-frothy-different/" | relURL }}"{{ if eq $cur "what-makes-frothy-different" }} class="active"{{ end }}>About</a>
+          <a href="https://app.frothy.dev/flash">Flasher</a>
+          <a href="https://app.frothy.dev/editor">Editor</a>
+        </nav>
+      </details>
       <div class="fm-nav-right">
         <button class="fm-search" type="button" data-search-open aria-haspopup="dialog" aria-controls="site-search-dialog">
           {{ partial "icon" "search" }} <span class="sb-label">Search the docs</span> <kbd>⌘K</kbd>

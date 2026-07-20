@@ -1,10 +1,41 @@
 {{ define "main" }}
 {{ $isRef := eq .Section "reference" }}
 {{ $isTop := eq .Section "" }}
+{{ $isCatalog := or .Params.wordCatalog .Params.diagnosticCatalog }}
+{{ $isDocsSection := or (eq .Section "guide") $isRef }}
+{{ $isGuideTopic := .Params.guideTopic }}
+{{ with .CurrentSection }}{{ if .Params.guideTopic }}{{ $isGuideTopic = true }}{{ end }}{{ end }}
+{{ if $isCatalog }}
+{{ $noun := "code" }}{{ if .Params.wordCatalog }}{{ $noun = "word" }}{{ end }}
+<div class="docs docs-catalog page" data-reference-catalog data-catalog-noun="{{ $noun }}">
+  <aside class="docs-side catalog-side" aria-label="{{ .Title }}">
+    <div class="catalog-side-head">
+      <h1 class="catalog-title">{{ .Title }}</h1>
+      <label class="catalog-filter">
+        <span class="catalog-filter-label">Search {{ $noun }}s</span>
+        <input type="search" autocomplete="off" spellcheck="false" placeholder="{{ if .Params.wordCatalog }}Name, module, or purpose{{ else }}Number, label, or recovery{{ end }}" data-catalog-filter disabled>
+      </label>
+      <div class="catalog-meta">
+        <p class="catalog-status" role="status" aria-live="polite" data-catalog-status></p>
+        <button class="catalog-clear" type="button" data-catalog-clear disabled>Clear</button>
+      </div>
+    </div>
+    <nav class="catalog-index" aria-label="All {{ $noun }}s" data-catalog-list></nav>
+  </aside>
+
+  <main class="docs-main catalog-main reference-page" aria-live="polite"{{ if .Params.wordCatalog }} data-word-catalog{{ end }}{{ if .Params.diagnosticCatalog }} data-diagnostic-catalog{{ end }}>
+    <button class="catalog-back" type="button" data-catalog-back hidden>← All {{ $noun }}s</button>
+    <div class="content">
+      {{ .Content }}
+    </div>
+  </main>
+</div>
+{{ else }}
 <div class="docs page">
   {{ partial "docs-sidebar" . }}
 
-  <main class="docs-main{{ if $isRef }} reference-page{{ end }}"{{ if .Params.wordCatalog }} data-word-catalog{{ end }}>
+  <main class="docs-main{{ if $isRef }} reference-page{{ end }}">
+    {{ if not $isDocsSection }}
     <div class="crumb">
       <a href="{{ "/" | relURL }}">Home</a>
       {{ if not $isTop }}{{ partial "icon" "chevron-right" }}
@@ -13,6 +44,7 @@
     </div>
 
     <span class="doc-kicker">{{ partial "icon" (or .Params.icon "book-open") }} {{ if $isTop }}Frothy{{ else }}{{ .FirstSection.Title }}{{ end }}</span>
+    {{ end }}
     <h1 class="doc-h1">{{ .Title }}</h1>
     {{ with .Description }}<p class="doc-lede">{{ . }}</p>{{ end }}
     {{ with .Params.readTime }}<p class="g-chap-time" style="margin-top:14px;color:var(--ink-3);font-size:13px;display:inline-flex;align-items:center;gap:6px">{{ partial "icon" "clock" }} {{ . }}</p>{{ end }}
@@ -24,8 +56,9 @@
 
     {{/* prev / next pager within the section, by weight */}}
     {{ $section := .Parent }}
+    {{ $isDirectGuideTopic := and $isGuideTopic $section (eq $section.RelPermalink .FirstSection.RelPermalink) }}
     {{ $prev := false }}{{ $next := false }}
-    {{ if and $section (ne $section.Kind "home") }}
+    {{ if and $section (not $isDirectGuideTopic) (ne $section.Kind "home") }}
       {{ $sib := where $section.RegularPages.ByWeight "Params.hidden" "!=" true }}
       {{ range $i, $p := $sib }}
         {{ if eq $p.RelPermalink $.RelPermalink }}
@@ -54,4 +87,5 @@
 
   {{ partial "docs-toc" . }}
 </div>
+{{ end }}
 {{ end }}

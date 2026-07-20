@@ -7,6 +7,7 @@ aliases:
 description: "Start with a complete example, then narrow into every built-in Frothy module and its words."
 icon: boxes
 tags: [gpio, wifi, i2c, ble]
+guideTopic: true
 ---
 
 Module pages explain how a whole area fits together. Each starts with the common

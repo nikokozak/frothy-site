@@ -69,7 +69,7 @@ definitions. `Frothy: Restore Overlay` reloads that saved state.
 
 ## Browser Editor
 
-The [browser editor](/editor/) uses WebSerial and runs Frothy straight from the
+The [browser editor](https://app.frothy.dev/editor) uses WebSerial and runs Frothy straight from the
 page. Use Chrome or Edge on desktop.
 
 - **Examples** — the picker in the header loads any of the bundled examples into the buffer. The same set is available in VS Code via `Frothy: Open Example`.

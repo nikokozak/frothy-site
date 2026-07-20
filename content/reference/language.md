@@ -6,6 +6,7 @@ aliases:
   - /reference/ten-minutes/
 icon: braces
 tags: [language, syntax, semantics, examples]
+guideTopic: true
 ---
 
 Frothy is a small live language for programmable devices. You send it source,

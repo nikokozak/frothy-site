@@ -4,6 +4,12 @@ title = "Frothy"
 relativeURLs = true
 disableKinds = ["taxonomy", "term"]
 
+[module]
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+    excludeFiles = ["test/**"]
+
 [outputs]
   home = ["HTML", "RSS", "JSON"]
 

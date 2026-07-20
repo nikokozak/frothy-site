@@ -4,6 +4,7 @@ weight: 5
 description: "Use libraries, write pure Frothy libraries, and add native words when C is required."
 icon: plug-zap
 tags: [libraries, native, c]
+guideTopic: true
 ---
 
 Frothy has libraries. A library is a directory with `lib.fr` and, optionally,

@@ -17,7 +17,7 @@ the board directly over USB.
 
 ## 1. Flash The Board
 
-Open the [Frothy browser flasher](/flash/), choose your board, and select
+Open the [Frothy browser flasher](https://app.frothy.dev/flash), choose your board, and select
 **Flash Frothy**. Keep the page open until the progress bar reaches the end and
 the board resets.
 
@@ -35,7 +35,7 @@ again.
 
 ## 3. Start Writing
 
-Continue to the [browser editor](/editor/), choose **Connect**, and select the
+Continue to the [browser editor](https://app.frothy.dev/editor), choose **Connect**, and select the
 same board. Put the cursor in a complete form and choose **Run Form**, or select
 one complete form and run that selection. **Run File** sends the complete
 sketch in order.

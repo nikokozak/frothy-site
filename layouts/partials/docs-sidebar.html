@@ -1,9 +1,8 @@
-{{- /* Section-scoped sidebar nav. Root-level pages (install, about) get a small
-       fixed group; section pages list their own pages, guide split into Advanced. */ -}}
+{{- /* Section navigation. Reference owns only lookup catalogs; longer explanatory
+      material keeps its stable URL but is presented as part of the Guide. */ -}}
 {{- $cur := .RelPermalink -}}
 <aside class="docs-side">
 {{- if and .IsPage (eq .Section "") -}}
-  {{/* root-level pages (install, about): a single self link — each is its own top-nav page now */}}
   {{- $base := "" }}{{ with .File }}{{ $base = .BaseFileName }}{{ end -}}
   <div class="side-group">
     <div class="side-h">Frothy</div>
@@ -15,27 +14,62 @@
   </div>
 {{- else -}}
   {{- $top := .FirstSection -}}
-  {{- $isGuide := eq $top.Section "guide" -}}
-  {{- $direct := where $top.RegularPages.ByWeight "Params.hidden" "!=" true -}}
-  {{- if $isGuide -}}
-    {{- $main := where $direct "Params.advanced" "!=" true -}}
-    {{- $adv := where $direct "Params.advanced" true -}}
+  {{- $isGuideTopic := .Params.guideTopic -}}
+  {{- with .CurrentSection }}{{ if .Params.guideTopic }}{{ $isGuideTopic = true }}{{ end }}{{ end -}}
+
+  {{- if or (eq $top.Section "guide") $isGuideTopic -}}
+    {{- $guide := .Site.GetPage "/guide" -}}
+    {{- $reference := .Site.GetPage "/reference" -}}
+    {{- $topics := where $reference.Pages.ByWeight "Params.guideTopic" true -}}
+
+    {{- if eq $top.Section "guide" -}}
+      {{- $direct := where $guide.RegularPages.ByWeight "Params.hidden" "!=" true -}}
+      {{- $main := where $direct "Params.advanced" "!=" true -}}
+      {{- $adv := where $direct "Params.advanced" true -}}
+      <div class="side-group">
+        <div class="side-h">Guide</div>
+        <a class="side-link{{ if eq $guide.RelPermalink $cur }} active{{ end }}" href="{{ $guide.RelPermalink }}">{{ partial "icon" "compass" }} Overview</a>
+        {{- range $main }}
+        <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "hash") }} {{ .Title }}</a>
+        {{- end }}
+      </div>
+      {{- if $adv }}
+      <div class="side-group">
+        <div class="side-h">Advanced</div>
+        {{- range $adv }}
+        <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "plug-zap") }} {{ .Title }}</a>
+        {{- end }}
+      </div>
+      {{- end }}
+    {{- else }}
+      <div class="side-group">
+        <div class="side-h">Guide</div>
+        <a class="side-link" href="{{ $guide.RelPermalink }}">{{ partial "icon" "compass" }} Learning path</a>
+      </div>
+    {{- end }}
+
     <div class="side-group">
-      <div class="side-h">{{ $top.Title }}</div>
-      <a class="side-link{{ if eq $top.RelPermalink $cur }} active{{ end }}" href="{{ $top.RelPermalink }}">{{ partial "icon" "compass" }} Overview</a>
-      {{- range $main }}
-      <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "hash") }} {{ .Title }}</a>
+      <div class="side-h">More guides</div>
+      {{- range $topics }}
+      <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "book-open") }} {{ .Title }}</a>
       {{- end }}
     </div>
-    {{- if $adv }}
-    <div class="side-group">
-      <div class="side-h">Advanced</div>
-      {{- range $adv }}
-      <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "plug-zap") }} {{ .Title }}</a>
+
+    {{- if $isGuideTopic -}}
+      {{- $topic := .CurrentSection -}}
+      {{- if and $topic (ne $topic.RelPermalink $reference.RelPermalink) -}}
+      <div class="side-group">
+        <div class="side-h">{{ $topic.Title }}</div>
+        <a class="side-link{{ if eq $topic.RelPermalink $cur }} active{{ end }}" href="{{ $topic.RelPermalink }}">{{ partial "icon" "compass" }} Overview</a>
+        {{- range where $topic.RegularPages.ByWeight "Params.hidden" "!=" true }}
+        <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "hash") }} {{ .Title }}</a>
+        {{- end }}
+      </div>
       {{- end }}
-    </div>
     {{- end }}
   {{- else -}}
+    {{- $direct := where $top.RegularPages.ByWeight "Params.hidden" "!=" true -}}
+    {{- if eq $top.Section "reference" }}{{ $direct = where $direct "Params.referenceCatalog" true }}{{ end -}}
     <div class="side-group">
       <div class="side-h">{{ $top.Title }}</div>
       <a class="side-link{{ if eq $top.RelPermalink $cur }} active{{ end }}" href="{{ $top.RelPermalink }}">{{ partial "icon" "compass" }} Overview</a>
@@ -43,14 +77,16 @@
       <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "hash") }} {{ .Title }}</a>
       {{- end }}
     </div>
-    {{- range $sub := $top.Sections.ByWeight }}
-    <div class="side-group">
-      <div class="side-h">{{ $sub.Title }}</div>
-      <a class="side-link{{ if eq $sub.RelPermalink $cur }} active{{ end }}" href="{{ $sub.RelPermalink }}">{{ partial "icon" "compass" }} Overview</a>
-      {{- range where $sub.RegularPages.ByWeight "Params.hidden" "!=" true }}
-      <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "hash") }} {{ .Title }}</a>
+    {{- if ne $top.Section "reference" }}
+      {{- range $sub := $top.Sections.ByWeight }}
+      <div class="side-group">
+        <div class="side-h">{{ $sub.Title }}</div>
+        <a class="side-link{{ if eq $sub.RelPermalink $cur }} active{{ end }}" href="{{ $sub.RelPermalink }}">{{ partial "icon" "compass" }} Overview</a>
+        {{- range where $sub.RegularPages.ByWeight "Params.hidden" "!=" true }}
+        <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "hash") }} {{ .Title }}</a>
+        {{- end }}
+      </div>
       {{- end }}
-    </div>
     {{- end }}
   {{- end -}}
 {{- end -}}
