@@ -21,6 +21,8 @@
     {{- $guide := .Site.GetPage "/guide" -}}
     {{- $reference := .Site.GetPage "/reference" -}}
     {{- $topics := where $reference.Pages.ByWeight "Params.guideTopic" true -}}
+    {{- $language := .Site.GetPage "/reference/language" -}}
+    {{- $concepts := .Site.GetPage "/guide/concepts" -}}
 
     {{- if eq $top.Section "guide" -}}
       {{- $direct := where $guide.RegularPages.ByWeight "Params.hidden" "!=" true -}}
@@ -29,6 +31,11 @@
       <div class="side-group">
         <div class="side-h">Guide</div>
         <a class="side-link{{ if eq $guide.RelPermalink $cur }} active{{ end }}" href="{{ $guide.RelPermalink }}">{{ partial "icon" "compass" }} Overview</a>
+        <a class="side-link{{ if eq $language.RelPermalink $cur }} active{{ end }}" href="{{ $language.RelPermalink }}">{{ partial "icon" (or $language.Params.icon "braces") }} {{ $language.Title }}</a>
+      </div>
+      <div class="side-group">
+        <div class="side-h">Frothy Concepts</div>
+        <a class="side-link{{ if eq $concepts.RelPermalink $cur }} active{{ end }}" href="{{ $concepts.RelPermalink }}">{{ partial "icon" (or $concepts.Params.icon "book-open") }} Overview</a>
         {{- range $main }}
         <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "hash") }} {{ .Title }}</a>
         {{- end }}
@@ -44,14 +51,18 @@
     {{- else }}
       <div class="side-group">
         <div class="side-h">Guide</div>
-        <a class="side-link" href="{{ $guide.RelPermalink }}">{{ partial "icon" "compass" }} Learning path</a>
+        <a class="side-link" href="{{ $guide.RelPermalink }}">{{ partial "icon" "compass" }} Overview</a>
+        <a class="side-link{{ if eq $language.RelPermalink $cur }} active{{ end }}" href="{{ $language.RelPermalink }}">{{ partial "icon" (or $language.Params.icon "braces") }} {{ $language.Title }}</a>
+        <a class="side-link" href="{{ $concepts.RelPermalink }}">{{ partial "icon" (or $concepts.Params.icon "book-open") }} {{ $concepts.Title }}</a>
       </div>
     {{- end }}
 
     <div class="side-group">
       <div class="side-h">More guides</div>
       {{- range $topics }}
+      {{- if ne .RelPermalink $language.RelPermalink }}
       <a class="side-link{{ if eq .RelPermalink $cur }} active{{ end }}" href="{{ .RelPermalink }}">{{ partial "icon" (or .Params.icon "book-open") }} {{ .Title }}</a>
+      {{- end }}
       {{- end }}
     </div>
 

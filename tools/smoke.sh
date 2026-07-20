@@ -27,6 +27,7 @@ for route in \
   public/flash/index.html \
   public/errors/index.html \
   public/guide/index.html \
+  public/guide/concepts/index.html \
   public/guide/01-what-is-froth/index.html \
   public/guide/12-ffi-and-c/index.html \
   public/tutorials/index.html \
@@ -101,6 +102,7 @@ test -f public/reference/hardware/bluetooth/index.html || fail "missing alias fo
 grep -q 'data-word-catalog' public/reference/words/index.html || fail "word catalog missing catalog hook"
 grep -q 'data-catalog-list' public/reference/words/index.html || fail "word catalog missing page sidebar"
 grep -q 'data-catalog-filter' public/reference/words/index.html || fail "word catalog missing search"
+grep -Fq 'Bytes values live only for the current evaluation' public/reference/words/index.html && fail "word catalog repeats section copy inside entries" || true
 node --check static/js/reference-layout.js >/dev/null || fail "word catalog script does not parse"
 CATALOG_ANCHORS="$(grep -o '<a id=' public/reference/words/index.html | wc -l | tr -d ' ')"
 CATALOG_ENTRIES="$(grep -o '<strong><code>' public/reference/words/index.html | wc -l | tr -d ' ')"
@@ -119,6 +121,10 @@ grep -Fq 'href=../reference/words/' public/reference/index.html || fail "referen
 grep -Fq 'href=../errors/' public/reference/index.html || fail "reference index missing diagnostic catalog"
 grep -Fq 'href=../reference/modules/' public/guide/index.html || fail "guide index missing module guides"
 grep -Fq 'href=../reference/language/' public/guide/index.html || fail "guide index missing language tour"
+grep -q 'data-guide-cards' public/guide/index.html || fail "guide index missing card directory"
+grep -q '<ol class=guide-arc' public/guide/index.html && fail "guide index still contains the concepts arc" || true
+grep -q '<ol class=guide-arc' public/guide/concepts/index.html || fail "concepts page missing learning arc"
+grep -Eq 'data-guide-cards.*reference/language/.*guide/concepts/.*reference/modules/' public/guide/index.html || fail "guide cards are out of order"
 test "$(grep -o '<a class=ref-card ' public/reference/index.html | wc -l | tr -d ' ')" -eq 2 || fail "reference index contains more than two catalogs"
 
 echo "smoke: OK"

@@ -1371,11 +1371,6 @@ pwm.close: led
 
 ## Text, Bytes, Network, And Power
 
-`Bytes` values live only for the current evaluation or loop iteration. They
-cannot be installed in top-level names, Cells, or record fields. Consume them
-directly, keep them in a `here` local during one call, or copy them into Text
-with `text.pack`.
-
 <a id="text-length"></a>
 **`text.length`** *(text)* `(text) -> Int`
 

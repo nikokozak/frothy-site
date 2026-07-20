@@ -36,10 +36,12 @@
       {{ end }}
     </div>
 
-    {{ else if eq .Section "guide" }}
-    {{/* Guide: learning-arc timeline, main + advanced */}}
-    {{ $main := where $pages "Params.advanced" "!=" true }}
-    {{ $adv := where $pages "Params.advanced" true }}
+    {{ else if and (eq .Section "guide") .Params.guideConcepts }}
+    {{/* Concepts owns the existing learning path without changing its URLs. */}}
+    {{ $guide := $.Site.GetPage "/guide" }}
+    {{ $conceptPages := where $guide.RegularPages.ByWeight "Params.hidden" "!=" true }}
+    {{ $main := where $conceptPages "Params.advanced" "!=" true }}
+    {{ $adv := where $conceptPages "Params.advanced" true }}
     <ol class="guide-arc">
       {{ range $main }}
       <li><a class="arc-item" href="{{ .RelPermalink }}">
@@ -74,12 +76,14 @@
     </ol>
     {{ end }}
 
+    {{ else if eq .Section "guide" }}
+    {{/* Guide is a directory: language first, Concepts second, focused guides after. */}}
     {{ $reference := $.Site.GetPage "/reference" }}
     {{ $topics := where $reference.Pages.ByWeight "Params.guideTopic" true }}
-    {{ if $topics }}
-    <div class="guide-adv-h">More guides</div>
-    <div class="ref-grid guide-topic-grid">
-      {{ range $topics }}
+    {{ $language := $.Site.GetPage "/reference/language" }}
+    {{ $concepts := $.Site.GetPage "/guide/concepts" }}
+    <div class="ref-grid guide-topic-grid" data-guide-cards>
+      {{ range (slice $language $concepts) }}
       <a class="ref-card" href="{{ .RelPermalink }}">
         <div class="ref-card-top">
           <span class="ref-card-ic">{{ partial "icon" (or .Params.icon "book-open") }}</span>
@@ -88,8 +92,18 @@
         <p class="ref-card-desc">{{ or .Description .Summary }}</p>
       </a>
       {{ end }}
+      {{ range $topics }}
+      {{ if ne .RelPermalink $language.RelPermalink }}
+      <a class="ref-card" href="{{ .RelPermalink }}">
+        <div class="ref-card-top">
+          <span class="ref-card-ic">{{ partial "icon" (or .Params.icon "book-open") }}</span>
+        </div>
+        <h3 class="ref-card-title">{{ .Title }}</h3>
+        <p class="ref-card-desc">{{ or .Description .Summary }}</p>
+      </a>
+      {{ end }}
+      {{ end }}
     </div>
-    {{ end }}
 
     {{ else }}
     {{/* Generic section index: arc list */}}
