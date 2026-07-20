@@ -4,7 +4,7 @@
     "chip": "esp32",
     "profile": "esp32_plain",
     "label": "ESP32 DevKit V1",
-    "version": "v0.1.4",
+    "version": "v0.1.5",
     "segments": [
       {
         "address": 4096,
@@ -19,7 +19,7 @@
       {
         "address": 65536,
         "file": "esp32_devkit_v1-esp32_plain-0x00010000.bin",
-        "md5": "6dcea8ab3234dfe898920080c0879c69"
+        "md5": "7434bf839f9b500ab04b49a7e454b3ff"
       }
     ]
   },
@@ -28,7 +28,7 @@
     "chip": "esp32s3",
     "profile": "esp32_plain",
     "label": "Seeed Studio XIAO ESP32S3",
-    "version": "v0.1.4",
+    "version": "v0.1.5",
     "segments": [
       {
         "address": 0,
@@ -43,7 +43,7 @@
       {
         "address": 65536,
         "file": "seeed_xiao_esp32s3-esp32_plain-0x00010000.bin",
-        "md5": "b2c930dad81625fbf3877336767d4422"
+        "md5": "8e884cdb5bfe34a37dedd05cdda324c1"
       }
     ]
   }
