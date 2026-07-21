@@ -39,8 +39,8 @@ to the exact entries in the [word catalog](/reference/words/).
 - [PWM](/reference/modules/pwm/) — frequency channels and 0–10000 duty
 - [Digital signals](/reference/modules/signals/) — edge capture and precisely
   timed pulse output
-- [Console routing](/reference/modules/console/) — move the human REPL to a
-  selected UART and recover the default route
+- [Console input & routing](/reference/modules/console/) — read a line as data,
+  move the human REPL to a selected UART, and recover the default route
 
 ## Connect Networks
 

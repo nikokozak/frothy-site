@@ -3,7 +3,7 @@ title: "08. Text and I/O"
 description: "Persistent Text, transient Bytes, the shared PAD, prompt output, and board I/O."
 weight: 8
 icon: message-circle
-readTime: "7 min"
+readTime: "8 min"
 ---
 
 Frothy has `Text` values, but it does not pretend to be a desktop scripting
@@ -45,6 +45,41 @@ result into persistent Text when it must outlive the current call:
 ```frothy
 body is text.pack: (http.get: "http://example.com/")
 ```
+
+## Read A Console Line As Data
+
+Normally, a line entered at the prompt is Frothy source. `console.read-line:`
+lets a running form ask for one line as data instead:
+
+```frothy
+to echo-once [
+  here line is console.read-line:
+  print: line
+  print: "\n"
+]
+
+echo-once:
+```
+
+The call blocks until you submit a line. Frothy removes its line ending and
+returns the printable characters as volatile `Bytes`; it does not parse or run
+them. A blank line returns empty Bytes. Ctrl-C interrupts the read.
+
+In the browser editor, start the form, enter the data below Output in **Input
+for console.read-line**, and choose **Send input**. The editor cannot tell which
+word a running form is currently waiting in, so use that field only when your
+code is blocked at `console.read-line:`. Use **Interrupt** for Ctrl-C.
+
+Consume the result in the current evaluation, keep it in a `here` local during
+one call, or copy it into persistent Text:
+
+```frothy
+answer is text.pack: console.read-line:
+```
+
+The word reads from the active human console, including a console moved with
+`console.uart:`. It is for printable, line-oriented input. Use `uart.read-byte:`
+and `uart.available:` for arbitrary bytes or an independent serial device.
 
 ## The Shared PAD
 

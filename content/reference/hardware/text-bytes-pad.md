@@ -71,6 +71,7 @@ use transient Bytes for working I/O rather than packing every intermediate.
 | [`bytes.at`](/reference/words/#bytes-at) | `Int` | Byte at an index |
 | [`bytes.equals?`](/reference/words/#bytes-equals) | `Bool` | Byte-for-byte equality |
 | [`bytes.concat`](/reference/words/#bytes-concat) | `Bytes` | Join two transient buffers |
+| [`console.read-line`](/reference/words/#console-read-line) | `Bytes` | Read one printable console line as data |
 
 The ESP32 plain runtime provides eight Bytes entries backed by a 4096-byte
 arena. A buffer is reset at the end of the outer prompt evaluation, after boot,
@@ -92,8 +93,8 @@ frame-text is make-frame:
 ```
 
 Words such as `print`, `i2c.write`, `tcp.write`, and BLE write operations accept
-Text or Bytes directly. `i2c.read`, `tcp.read`, `http.get`, and BLE read
-operations return Bytes.
+Text or Bytes directly. `console.read-line`, `i2c.read`, `tcp.read`, `http.get`,
+and BLE read operations return Bytes.
 
 ## PAD
 

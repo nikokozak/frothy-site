@@ -15,7 +15,7 @@ fail() { echo "smoke: FAIL — $1" >&2; exit 1; }
 # 1. search index contains core Frothy terms
 INDEX="public/index.json"
 test -f "$INDEX" || fail "missing $INDEX"
-for needle in 'save' 'dangerous.wipe' 'gpio' 'adc' 'blink' 'frothy in y minutes' 'attempt' 'rescue' 'record point' 'wifi.disconnected' 'pad.emit-byte' 'trace.open' 'pulse.play' 'console.uart' 'ble.gatt.find' '$baud_1200'; do
+for needle in 'save' 'dangerous.wipe' 'gpio' 'adc' 'blink' 'frothy in y minutes' 'attempt' 'rescue' 'record point' 'wifi.disconnected' 'pad.emit-byte' 'trace.open' 'pulse.play' 'console.read-line' 'console.uart' 'ble.gatt.find' '$baud_1200'; do
   grep -Fqi "$needle" "$INDEX" || fail "search index missing term: $needle"
 done
 
@@ -102,6 +102,7 @@ test -f public/reference/hardware/bluetooth/index.html || fail "missing alias fo
 grep -q 'data-word-catalog' public/reference/words/index.html || fail "word catalog missing catalog hook"
 grep -q 'data-catalog-list' public/reference/words/index.html || fail "word catalog missing page sidebar"
 grep -q 'data-catalog-filter' public/reference/words/index.html || fail "word catalog missing search"
+grep -Eq 'id="?console-read-line"?' public/reference/words/index.html || fail "word catalog missing console.read-line"
 grep -Fq 'Bytes values live only for the current evaluation' public/reference/words/index.html && fail "word catalog repeats section copy inside entries" || true
 node --check static/js/reference-layout.js >/dev/null || fail "word catalog script does not parse"
 CATALOG_ANCHORS="$(grep -o '<a id=' public/reference/words/index.html | wc -l | tr -d ' ')"
@@ -132,6 +133,8 @@ grep -Fq 'record Point' public/guide/05-perm-and-named/index.html || fail "conce
 grep -Fq 'attempt' public/guide/07-error-handling/index.html || fail "concepts missing attempt/rescue"
 grep -Fq 'wifi.disconnected' public/guide/06-quotations-and-control/index.html || fail "concepts missing Wi-Fi events"
 grep -Fq 'pad.emit-byte' public/guide/08-strings-and-io/index.html || fail "concepts missing PAD"
+grep -Fq 'id=read-a-console-line-as-data' public/guide/08-strings-and-io/index.html || fail "concepts missing console data input"
+grep -Fq 'console.read-line' public/reference/modules/console/index.html || fail "console module missing data input"
 grep -Fq 'ble.on' public/guide/09-talking-to-hardware/index.html || fail "concepts missing Bluetooth"
 grep -Fq 'Persist the Recipe, Not the Handle' public/guide/10-snapshots-and-persistence/index.html || fail "persistence guide missing volatile Handle pattern"
 grep -Fq 'Do not hide this cycle inside one word' public/guide/10-snapshots-and-persistence/index.html || fail "persistence guide missing save boundary warning"

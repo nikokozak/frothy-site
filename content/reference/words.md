@@ -2066,7 +2066,30 @@ pulse.close: wave
 set wave to nil
 ```
 
-## Console Routing
+## Console Input And Routing
+
+<a id="console-read-line"></a>
+**`console.read-line`** *(console)* `() -> Bytes`
+
+Blocks until one printable line arrives on the active console, removes its line
+ending, and returns it as data instead of evaluating it as Frothy source. A
+blank line returns empty Bytes. Ctrl-C interrupts the read.
+
+The result is volatile. Consume it during the current evaluation or loop
+iteration, keep it in a `here` local during one call, or copy it into persistent
+Text with `text.pack`.
+
+**Example**
+
+```frothy
+answer is text.pack: console.read-line:
+```
+
+In the browser editor, submit the line with **Input for console.read-line**
+while the form is running. Use `uart.read-byte` for binary data or an auxiliary
+serial connection.
+
+---
 
 <a id="console-uart"></a>
 **`console.uart`** *(console)* `(tx, rx, baud) -> nil`

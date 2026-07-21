@@ -96,8 +96,10 @@ bytes are unsigned `0..255` integers.
 ## Auxiliary Port Or Console?
 
 Use `uart.*` for application data while the REPL remains on its current route.
-Use [Console routing](/reference/modules/console/) only when you intentionally
-want the prompt and all console output to move to another UART.
+Use [`console.read-line`](/reference/modules/console/#read-input-as-data) when a
+running form needs one printable data line from the human console. Use console
+routing only when you intentionally want the prompt and all console output to
+move to another UART.
 
 UART handles are volatile. Close them, replace top-level handle bindings, and
 reopen required ports from `boot` before using `save` and `restore`. If a
