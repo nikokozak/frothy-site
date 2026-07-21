@@ -5,7 +5,7 @@ weight: 7
 aliases:
   - /guide/05-inspection-and-live-workflow/
 icon: rotate-cw
-readTime: "8 min"
+readTime: "9 min"
 ---
 
 A live microcontroller language needs mistakes to be survivable. If a bad
@@ -113,6 +113,28 @@ The notice presentation applies only when the complete prompt form is bare
 code 13 is an error instead. That lets the caller handle it with
 `attempt`/`rescue` and prevents later work in that form from silently
 continuing.
+
+## Catch Runtime Errors
+
+Use `attempt` and `rescue` when the program has a meaningful fallback:
+
+```frothy
+to safe-divide with numerator, denominator [
+  attempt [ numerator / denominator ] rescue [
+    print: error.name
+    0
+  ]
+]
+```
+
+If the attempt succeeds, the expression yields its value. If it raises a
+catchable runtime error, Frothy restores the value stack to the start of the
+attempt, runs the rescue block, and yields the rescue value.
+
+Inside `rescue`, `error.name` and `error.code` describe the caught error. Errors
+raised by called words can be caught by their caller. Reader, parser, and
+compile errors happen before execution and cannot be caught; deliberate Ctrl-C
+interruption is also never catchable.
 
 ## Typical Errors
 

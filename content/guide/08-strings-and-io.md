@@ -1,9 +1,9 @@
 ---
 title: "08. Text and I/O"
-description: "Text literals, byte-oriented indexing, prompt output, and the split between language values and board I/O."
+description: "Persistent Text, transient Bytes, the shared PAD, prompt output, and board I/O."
 weight: 8
 icon: message-circle
-readTime: "5 min"
+readTime: "7 min"
 ---
 
 Frothy has `Text` values, but it does not pretend to be a desktop scripting
@@ -26,6 +26,42 @@ scope. That is a deliberate choice for a small device-first language.
 Where text operations are available, they should be understood as byte
 operations. A parser that looks at `"L68"` is looking at bytes, not grapheme
 clusters or locale-sensitive characters.
+
+## Transient Bytes
+
+I/O words such as `http.get`, `tcp.read`, `i2c.read`, and BLE reads return
+`Bytes`. Consume them during the current evaluation or loop iteration:
+
+```frothy
+to fetch-size with url [
+  here body is http.get: url
+  bytes.length: body
+]
+```
+
+Bytes cannot be installed in top-level names, Cells, or record fields. Copy a
+result into persistent Text when it must outlive the current call:
+
+```frothy
+body is text.pack: (http.get: "http://example.com/")
+```
+
+## The Shared PAD
+
+PAD is one 64-byte scratch buffer for building a short sequence one byte at a
+time without allocating a Bytes value:
+
+```frothy
+pad.reset:
+pad.emit-byte: 65
+pad.emit-byte: 84
+pad.type:
+command is pad.pack:
+```
+
+`pad.pack` copies the current contents into persistent Text. Reset PAD before
+building the next value. The [Text, Bytes & PAD module](/reference/modules/text-bytes-pad/)
+lists the exact lifetime and capacity rules.
 
 ## Prompt Output
 
@@ -86,9 +122,10 @@ aux is uart.open: 1, $baud_115200
 uart.write-byte: aux, 65
 ```
 
-Not every board exposes every I/O family. The Frothy board exposes GPIO and
-ADC. The source-level ESP32 DevKit V1 board also carries I2C, UART, and PWM
-bindings.
+Not every board or firmware composition exposes every I/O family. The full
+`esp32_plain` profile carries the complete module surface, while board pin maps
+and optional capabilities still vary. Run `words` against the device in front
+of you when availability matters.
 
 That split keeps examples honest. A tutorial can be device-first without
 implying that every board has every peripheral.

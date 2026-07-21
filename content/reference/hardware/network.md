@@ -45,12 +45,16 @@ platform connection budget and remains interruptible with Ctrl-C.
 ## Wi-Fi State And Events
 
 ```frothy
-to watch-wifi [
+to watch-wifi-down [
   on wifi.disconnected [ print: "offline\n" ]
+]
+
+to watch-wifi-up [
   on wifi.reconnected [ print: "online\n" ]
 ]
 
-watch-wifi:
+watch-wifi-down:
+watch-wifi-up:
 wifi.connect:
 wifi.ready?:
 ```

@@ -1,9 +1,9 @@
 ---
 title: "05. Locals, Names, and State"
-description: "Lexical locals, explicit mutation, and top-level Cells."
+description: "Lexical locals, explicit mutation, top-level Cells, and small records."
 weight: 5
 icon: boxes
-readTime: "6 min"
+readTime: "7 min"
 ---
 
 Frothy keeps data flow explicit, but the public tools are named and lexical:
@@ -11,7 +11,7 @@ Frothy keeps data flow explicit, but the public tools are named and lexical:
 - parameters for inputs
 - locals for intermediate values
 - `set` for mutation
-- top-level `Cells` for indexed persistent state
+- top-level `Cells` and records for persistent state
 
 You should not need a vocabulary of stack shuffles to read ordinary Frothy.
 
@@ -73,7 +73,7 @@ for things you want to inspect, redefine, save, and restore.
 ## `Cells`
 
 `Cells` is the first fixed-size mutable collection. It is intentionally narrow.
-Elements may hold `Int`, `Bool`, `Nil`, or `Text`.
+Elements may hold `Nil`, `Bool`, `Int`, `Text`, or record values.
 
 Create cells at top level:
 
@@ -87,6 +87,28 @@ scores[1]
 Cells are good for small tables, board-sized state, and simple buffers. They
 are not a general heap. In current Frothy, `cells(n)` belongs in a top-level
 binding so the image can reason about ownership and persistence.
+
+## Records
+
+Records give names to small fixed shapes. Declare the shape and construct
+values at the top level:
+
+```frothy
+record Point [ x, y ]
+position is Point: 3, 9
+```
+
+Read and update fields with `->`:
+
+```frothy
+position -> x
+set position -> y to 12
+```
+
+Record shapes and values are persistable, and record values can be stored in
+Cells. `Bytes` and live `Handle` values cannot be stored in either. Record
+construction currently belongs at the top level; pass constructed records into
+words when behavior needs them.
 
 ## Prefer Named Data Flow
 

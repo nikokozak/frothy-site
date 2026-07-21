@@ -15,7 +15,7 @@ fail() { echo "smoke: FAIL — $1" >&2; exit 1; }
 # 1. search index contains core Frothy terms
 INDEX="public/index.json"
 test -f "$INDEX" || fail "missing $INDEX"
-for needle in 'save' 'dangerous.wipe' 'gpio' 'adc' 'blink' 'frothy in y minutes' 'attempt' 'rescue' 'trace.open' 'pulse.play' 'console.uart' 'ble.gatt.find' '$baud_1200'; do
+for needle in 'save' 'dangerous.wipe' 'gpio' 'adc' 'blink' 'frothy in y minutes' 'attempt' 'rescue' 'record point' 'wifi.disconnected' 'pad.emit-byte' 'trace.open' 'pulse.play' 'console.uart' 'ble.gatt.find' '$baud_1200'; do
   grep -Fqi "$needle" "$INDEX" || fail "search index missing term: $needle"
 done
 
@@ -126,5 +126,16 @@ grep -q '<ol class=guide-arc' public/guide/index.html && fail "guide index still
 grep -q '<ol class=guide-arc' public/guide/concepts/index.html || fail "concepts page missing learning arc"
 grep -Eq 'data-guide-cards.*reference/language/.*guide/concepts/.*reference/modules/' public/guide/index.html || fail "guide cards are out of order"
 test "$(grep -o '<a class=ref-card ' public/reference/index.html | wc -l | tr -d ' ')" -eq 2 || fail "reference index contains more than two catalogs"
+
+# 7. Concepts introduces the major language/runtime ideas; Modules owns depth.
+grep -Fq 'record Point' public/guide/05-perm-and-named/index.html || fail "concepts missing records"
+grep -Fq 'attempt' public/guide/07-error-handling/index.html || fail "concepts missing attempt/rescue"
+grep -Fq 'wifi.disconnected' public/guide/06-quotations-and-control/index.html || fail "concepts missing Wi-Fi events"
+grep -Fq 'pad.emit-byte' public/guide/08-strings-and-io/index.html || fail "concepts missing PAD"
+grep -Fq 'ble.on' public/guide/09-talking-to-hardware/index.html || fail "concepts missing Bluetooth"
+grep -Fq 'one event body per definition' public/reference/modules/events/index.html || fail "events guide omits definition limit"
+for module in board gpio timing events math-and-random text-bytes-pad i2c uart pwm wifi power signals console bluetooth; do
+  grep -Fq "reference/modules/${module}/" public/reference/modules/index.html || fail "modules index missing ${module}"
+done
 
 echo "smoke: OK"

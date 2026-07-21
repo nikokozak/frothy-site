@@ -16,19 +16,29 @@ handler at a safe statement boundary.
 Event registration belongs inside a word:
 
 ```frothy
-to start-events [
+to start-ticks [
   every 1000 [ print: "tick\n" ]
+]
+
+to stop-later [
   after 10000 [ led.off: ]
+]
+
+to watch-button [
   on $boot_button falling debounce 25 [
     led.toggle:
   ]
 ]
 
-start-events:
+start-ticks:
+stop-later:
+watch-button:
 ```
 
 `every` repeats. `after` removes itself before its body runs. The GPIO handler
-can use `rising`, `falling`, or `changes`; `debounce` is optional.
+can use `rising`, `falling`, or `changes`; `debounce` is optional. The current
+profile allows one event body per definition, so each source gets one small
+registration word.
 
 ## Event Forms
 
@@ -104,12 +114,16 @@ possible.
 Register Wi-Fi handlers before connecting:
 
 ```frothy
-to network-events [
+to watch-wifi-down [
   on wifi.disconnected [ print: "wifi down\n" ]
+]
+
+to watch-wifi-up [
   on wifi.reconnected [ print: "wifi back\n" ]
 ]
 
-network-events:
+watch-wifi-down:
+watch-wifi-up:
 wifi.connect:
 ```
 

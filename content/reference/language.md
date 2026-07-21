@@ -567,8 +567,11 @@ belongs inside a word body, not as a bare prompt expression.
 Register a repeating or one-shot timer:
 
 ```frothy
-to start-timers [
+to start-ticking [
   every 1000 [ print: "tick\n" ]
+]
+
+to stop-later [
   after 5000 [ led.off: ]
 ]
 ```
@@ -588,11 +591,17 @@ The edge is `rising`, `falling`, or `changes`. `debounce <ms>` is optional.
 Wi-Fi exposes two event sources:
 
 ```frothy
-to watch-network [
+to watch-network-down [
   on wifi.disconnected [ led.off: ]
+]
+
+to watch-network-up [
   on wifi.reconnected [ led.on: ]
 ]
 ```
+
+The current profile permits one event body per definition. Use one small
+registration word for each event source, then call those words during setup.
 
 Cancel a registration with the same source identity:
 

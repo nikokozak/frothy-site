@@ -5,7 +5,7 @@ weight: 6
 aliases:
   - /guide/04-control-flow-cells-and-records/
 icon: repeat-2
-readTime: "7 min"
+readTime: "8 min"
 ---
 
 Frothy keeps code as a value, but the syntax is lexical and direct.
@@ -147,10 +147,34 @@ to button.ignore with pin [
 ]
 ```
 
-Register events inside a definition body. Timer cancellation repeats the timer
-kind and delay; GPIO cancellation names the pin. Event bodies run
-cooperatively at statement-boundary safe points, not inside the hardware
-interrupt handler.
+Wi-Fi lifecycle events use named sources:
+
+```frothy
+to network.down [
+  on wifi.disconnected [ led.off: ]
+]
+
+to network.up [
+  on wifi.reconnected [ led.on: ]
+]
+
+to network.ignore [
+  cancel wifi.disconnected
+  cancel wifi.reconnected
+]
+```
+
+Call `network.down:` and `network.up:` once before connecting. The current
+profile allows one event body per definition, so give each source a small
+registration word. Timer cancellation repeats the timer kind and delay; GPIO
+cancellation names the pin; Wi-Fi cancellation names the lifecycle source.
+GPIO edges may originate in a hardware interrupt, but Frothy runs the event
+body cooperatively at a safe statement boundary—not inside the interrupt
+handler. Ctrl-C interruption of foreground code is a separate mechanism,
+covered in the next chapter.
+
+The [Events module](/reference/modules/events/) covers capacity, replacement,
+asynchronous output, and persistence.
 
 ## `Code` As A Value
 
