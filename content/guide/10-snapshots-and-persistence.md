@@ -5,7 +5,7 @@ weight: 10
 aliases:
   - /guide/06-persistence-boot-and-recovery/
 icon: save
-readTime: "5 min"
+readTime: "8 min"
 ---
 
 Frothy persists the overlay image, not the current execution.
@@ -91,6 +91,65 @@ If the resource is needed after restore, reopen it from `boot` instead of
 persisting its native handle. See [Error and notice codes](/errors/#code-13)
 for the distinction between a standalone save notice and a save error inside a
 larger form.
+
+### Persist the Recipe, Not the Handle
+
+A hardware resource has two different kinds of state:
+
+- durable configuration and setup `Code`, which belong in the saved overlay
+- the live `Handle`, which belongs only to the current runtime session
+
+Persist the first and rebuild the second. Keep the live Handle in a top-level
+slot with a falsey durable sentinel:
+
+```frothy
+sensor.port is 0
+sensor.frequency is 400000
+sensor.bus is false
+
+to sensor.open [
+  unless sensor.bus [
+    set sensor.bus to i2c.open: sensor.port, $sda, $scl, sensor.frequency
+  ]
+]
+
+to sensor.close [
+  when sensor.bus [
+    i2c.close: sensor.bus
+    set sensor.bus to false
+  ]
+]
+
+boot is fn [ sensor.open: ]
+```
+
+Closing releases the platform resource, but it does not rewrite the slot that
+held the Handle. The explicit `set ... to false` is what makes the overlay
+persistable. `false` also makes `when` and `unless` useful lifecycle guards.
+
+During interactive work, save with this cycle:
+
+```frothy
+sensor.close:
+save
+sensor.open:
+```
+
+The saved overlay contains `sensor.bus is false` plus the configuration and
+reopening recipe. Reopening afterward changes only the live overlay. On the next
+restore, `boot` opens a fresh Handle for the new runtime session.
+
+Do not hide this cycle inside one word. A successful `save` is a commit boundary:
+execution does not continue into a later reopen expression in that definition.
+Keep close, save, and reopen as separate foreground forms. A nested failed
+`save:` is catchable with `attempt` and `rescue`, but Frothy has no
+`finally`-style construct that can guarantee reopening after both outcomes.
+
+Use the same shape for UART, PWM, TCP, BLE connections, and handle-bearing
+native libraries: persist parameters and setup words, provide a matching close
+word, clear every Handle slot before saving, and recreate resources from
+`boot`. Session-scoped integer IDs should be rediscovered too, even though an
+integer is technically persistable.
 
 ### Bytes Fail Before Save
 

@@ -133,6 +133,8 @@ grep -Fq 'attempt' public/guide/07-error-handling/index.html || fail "concepts m
 grep -Fq 'wifi.disconnected' public/guide/06-quotations-and-control/index.html || fail "concepts missing Wi-Fi events"
 grep -Fq 'pad.emit-byte' public/guide/08-strings-and-io/index.html || fail "concepts missing PAD"
 grep -Fq 'ble.on' public/guide/09-talking-to-hardware/index.html || fail "concepts missing Bluetooth"
+grep -Fq 'Persist the Recipe, Not the Handle' public/guide/10-snapshots-and-persistence/index.html || fail "persistence guide missing volatile Handle pattern"
+grep -Fq 'Do not hide this cycle inside one word' public/guide/10-snapshots-and-persistence/index.html || fail "persistence guide missing save boundary warning"
 grep -Fq 'one event body per definition' public/reference/modules/events/index.html || fail "events guide omits definition limit"
 for module in board gpio timing events math-and-random text-bytes-pad i2c uart pwm wifi power signals console bluetooth; do
   grep -Fq "reference/modules/${module}/" public/reference/modules/index.html || fail "modules index missing ${module}"

@@ -95,6 +95,9 @@ while it remains there. Neither belongs in cells or record fields. Close open
 resources and rebind top-level Handle names before `save`; reopen them from
 `boot` after restore.
 
+The Concepts guide gives the complete reusable pattern in [Persist the Recipe,
+Not the Handle](/guide/10-snapshots-and-persistence/#persist-the-recipe-not-the-handle).
+
 Native words live in the firmware base image. A saved overlay references them by
 name. At boot, the native implementation is rebuilt from firmware, so saved
 images stay pointer-safe.

@@ -124,5 +124,9 @@ to sensor.close [
 boot is fn [ sensor.open: ]
 ```
 
+See [Persist the Recipe, Not the Handle](/guide/10-snapshots-and-persistence/#persist-the-recipe-not-the-handle)
+for the generalized close/save/reopen lifecycle and the important `save`
+commit-boundary behavior.
+
 See [Text, Bytes & PAD](/reference/modules/text-bytes-pad/) for byte lifetimes
 and [Board constants & helpers](/reference/modules/board/) for the named pins.

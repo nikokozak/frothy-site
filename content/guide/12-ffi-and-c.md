@@ -76,6 +76,9 @@ After closing a handle held by a top-level name, rebind that name before
 code can contain the setup recipe, but `boot` must open fresh handles after
 restore.
 
+Use [Persist the Recipe, Not the Handle](/guide/10-snapshots-and-persistence/#persist-the-recipe-not-the-handle)
+for the canonical slot, close/save/reopen, and `boot` pattern.
+
 Native words live in the firmware base image. A saved overlay references them by
 name. At boot, the native implementation is rebuilt from firmware, so saved
 images stay pointer-safe.
