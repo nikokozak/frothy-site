@@ -189,7 +189,7 @@ value_flags is 0
 set value_flags to $ble.gatt.read + $ble.gatt.write + $ble.gatt.notify
 value is GattRow: $ble.gatt.characteristic, "FFF1", value_flags, 20
 
-gatt_rows is cells(2)
+gatt_rows is cells: 2
 set gatt_rows[0] to service
 set gatt_rows[1] to value
 ```

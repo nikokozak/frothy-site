@@ -37,7 +37,7 @@ platform connection budget and remains interruptible with Ctrl-C.
 | [`wifi.ready?`](/reference/words/#wifi-ready) | `Bool` | Test current address-ready state |
 | [`http.get`](/reference/words/#http-get) | `Bytes` | Fetch one successful response body |
 | [`tcp.open`](/reference/words/#tcp-open) | `Handle` | Open a host and port |
-| [`tcp.bytes-ready?`](/reference/words/#tcp-bytes-ready) | `Int` | Count immediately readable bytes |
+| [`tcp.available`](/reference/words/#tcp-available) | `Int` | Count immediately readable bytes |
 | [`tcp.read`](/reference/words/#tcp-read) | `Bytes` | Read up to a requested count |
 | [`tcp.write`](/reference/words/#tcp-write) | `nil` | Send Text or Bytes |
 | [`tcp.close`](/reference/words/#tcp-close) | `nil` | Close and release a socket handle |
@@ -92,7 +92,7 @@ errors; `attempt ... rescue ...` can provide an application fallback.
 socket is tcp.open: "example.com", 80
 tcp.write: socket, "GET / HTTP/1.0\r\nHost: example.com\r\n\r\n"
 
-when (tcp.bytes-ready?: socket) > 0 [
+when (tcp.available: socket) > 0 [
   print: (tcp.read: socket, 256)
 ]
 

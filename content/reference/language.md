@@ -22,9 +22,9 @@ catalog](/reference/words/) when you only need a signature.
 ```frothy
 counter is 0
 
-to blink-and-count with pin, wait [
+to blink-and-count with pin, delay [
   gpio.high: pin
-  ms: wait
+  wait: delay
   gpio.low: pin
   set counter to counter + 1
   counter
@@ -38,7 +38,7 @@ That sample contains most of the model:
 
 - `counter is 0` binds a top-level name to a value.
 - `to ... [ ... ]` defines a word. Other languages usually say “function.”
-- `with pin, wait` declares parameters.
+- `with pin, delay` declares parameters.
 - `gpio.high: pin` calls a word with `:`.
 - Newlines separate expressions inside a block.
 - The last expression is the block's result.
@@ -80,7 +80,15 @@ binary literals are accepted.
 -7
 0x2a
 0b101010
+1_000_000
+2s
+500ms
 ```
+
+Underscores may group digits in any base. A trailing `s` converts seconds to
+milliseconds; `ms`, `us`, and `ns` leave the number unchanged so a literal can
+name the unit expected by an API, such as `wait: 500ms` or
+`pulse.add: wave, 1, 400ns`.
 
 On the current 32-bit ESP32 profile, integers range from `-1073741824` through
 `1073741823`. An out-of-range literal or arithmetic result is an error; values
@@ -116,16 +124,21 @@ Integer comparisons use `<`, `>`, `<=`, `>=`, `=`, and `<>`.
 
 ```frothy
 not false                       -- true
+not temperature = 0             -- not (temperature = 0)
 2 > 1 and 3 < 4                 -- true
 ready or attempt-connect:       -- skips the call when ready is truthy
 ```
 
+A comparison cannot be chained. Write `1 < x and x < 3`, not `1 < x < 3`.
+`not` negates a complete comparison; parenthesize it when using its result
+inside arithmetic.
+
 Precedence, from tightest to loosest, is:
 
-1. `not`
-2. `*`, `/`, `%`
-3. `+`, `-`
-4. `<`, `>`, `<=`, `>=`, `=`, `<>`
+1. `*`, `/`, `%`
+2. `+`, `-`
+3. `<`, `>`, `<=`, `>=`, `=`, `<>`
+4. `not`
 5. `and`
 6. `or`
 
@@ -142,7 +155,7 @@ The current ESP32 profile exposes these value families:
 | `Int` | `42`, `0xff` | persistable |
 | `Text` | `"ready"` | persistable |
 | `Code` | `fn [ 1 + 2 ]` | persistable |
-| `Cells` | `cells(4)` | persistable mutable storage |
+| `Cells` | `cells: 4` | persistable mutable storage |
 | record shape/value | `record Point [ x, y ]` | persistable |
 | `Bytes` | `bytes.from-text: "AT"` | transient |
 | `Handle` | `i2c.open: ...` | transient |
@@ -293,6 +306,17 @@ print: (text.from-int: 42)
 total is add: 1, (add: 2, 3)
 ```
 
+Without parentheses, a following call begins a new expression at every
+operator boundary. This makes recursive code read naturally:
+
+```frothy
+fib: n - 1 - fib: n - 2
+gpio.write: pin, (1 - gpio.read: pin)
+```
+
+The parentheses in the second line deliberately keep the inner call inside
+`gpio.write`'s second argument.
+
 Calls are checked against the word's arity. Too few or too many arguments are
 errors.
 
@@ -329,12 +353,12 @@ Code is non-capturing. It can read its own parameters, locals declared in its
 own body, and top-level names. It cannot capture a local from another word.
 
 ```frothy
-wait is 50
+delay is 50
 
--- This word can read the top-level wait.
+-- This word can read the top-level delay.
 to blink-once with pin [
   gpio.high: pin
-  ms: wait
+  wait: delay
   gpio.low: pin
 ]
 ```
@@ -348,12 +372,13 @@ Cell, or record field is not dynamically callable, and there is no separate
 
 ## Parameters And Locals
 
-Parameters are immutable. Declare a local with `here`, then mutate that local
-with `set`.
+Parameters are immutable. Inside a block, `is` declares a lexical local; `here`
+is the explicit spelling of the same declaration. Mutate that local with
+`set`.
 
 ```frothy
 to countdown with start [
-  here n is start
+  n is start
   while n > 0 [
     set n to n - 1
   ]
@@ -368,7 +393,7 @@ local, then a parameter, then a top-level name.
 speed is 100
 
 to demo [
-  here speed is 20
+  speed is 20
   if true [
     here speed is 5
     speed                 -- 5
@@ -388,7 +413,7 @@ Newlines separate expressions naturally.
 ```frothy
 to pulse [
   led.on:
-  ms: 50
+  wait: 50
   led.off:
 ]
 ```
@@ -396,7 +421,7 @@ to pulse [
 A semicolon separates expressions on the same line.
 
 ```frothy
-to pulse [ led.on:; ms: 50; led.off: ]
+to pulse [ led.on:; wait: 50; led.off: ]
 ```
 
 A trailing semicolon is allowed. In normal source, prefer newlines and use
@@ -459,7 +484,7 @@ The index is a local scoped to the repeat body.
 ```frothy
 forever [
   led.toggle:
-  ms: 100
+  wait: 100
 ]
 ```
 
@@ -471,7 +496,7 @@ Cells are fixed-size mutable indexed storage. Create them at the top level with
 a positive literal length.
 
 ```frothy
-readings is cells(3)
+readings is cells: 3
 ```
 
 New cells begin as `nil`. Indexes are zero-based.

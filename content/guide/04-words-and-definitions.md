@@ -17,7 +17,7 @@ The shortest reusable definition looks like this:
 ```frothy
 to flash [
   led.on:;
-  ms: 100;
+  wait: 100;
   led.off:
 ]
 ```
@@ -36,10 +36,10 @@ zero-argument `Code` value.
 Use `with` when the code expects arguments:
 
 ```frothy
-to pulse with pin, wait [
+to pulse with pin, delay [
   gpio.mode: pin, 1;
   gpio.high: pin;
-  ms: wait;
+  wait: delay;
   gpio.low: pin
 ]
 
@@ -55,15 +55,15 @@ over the old style. You can say `pin` and `wait` exactly where you need them.
 The docs use two styles:
 
 ```frothy
-to pulse with pin, wait [
+to pulse with pin, delay [
   gpio.high: pin;
-  ms: wait;
+  wait: delay;
   gpio.low: pin
 ]
 
 heartbeat is fn [
   led.toggle:;
-  ms: 250
+  wait: 250
 ]
 ```
 
@@ -117,10 +117,10 @@ holds different code.
 `Code` does not capture outer locals in the current language. This is rejected:
 
 ```frothy
-to make-blink with wait [
+to make-blink with delay [
   fn with pin [
     gpio.high: pin;
-    ms: wait;
+    wait: delay;
     gpio.low: pin
   ]
 ]
@@ -130,9 +130,9 @@ The inner `fn` tries to use `wait` from the outer function. Frothy requires you
 to make that flow explicit. Usually the better definition is:
 
 ```frothy
-to blink.once with pin, wait [
+to blink.once with pin, delay [
   gpio.high: pin;
-  ms: wait;
+  wait: delay;
   gpio.low: pin
 ]
 ```

@@ -40,7 +40,7 @@ Then drive it by hand:
 
 ```frothy
 gpio.high: $led_builtin
-ms: 200
+wait: 200
 gpio.low: $led_builtin
 ```
 
@@ -53,11 +53,11 @@ or board-selection problem inside a larger definition.
 At the prompt, define one small word:
 
 ```frothy
-to pulse with pin, wait [
+to pulse with pin, delay [
   gpio.high: pin;
-  ms: wait;
+  wait: delay;
   gpio.low: pin;
-  ms: wait
+  wait: delay
 ]
 ```
 

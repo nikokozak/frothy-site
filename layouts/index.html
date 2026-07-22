@@ -75,7 +75,7 @@
           <p class="icard-b">Redefine a word and every place that uses it picks up the new version on the spot. No build step, no re-upload — the device never stops to listen.</p>
 <pre class="icard-code"><code class="language-frothy">to blink with n [
   repeat n [
-    led.toggle:; ms: 90
+    led.toggle:; wait: 90
   ]
 ]
 blink: 3</code></pre>
@@ -88,16 +88,16 @@ blink: 3</code></pre>
 <pre class="icard-code"><code class="language-frothy">frothy> words
 led.on  led.off  blink
 frothy> see blink
-to blink with pin, count, wait [ ... ]</code></pre>
+to blink with pin, count, delay [ ... ]</code></pre>
           <p class="icard-note">The whole device, readable, out in the open.</p>
         </article>
         <article class="icard read">
           <div class="icard-top"><span class="icard-ic">{{ partial "icon" "pen-line" }}</span><span class="icard-kw">Readable</span></div>
           <h3 class="icard-h">Read it, and<br>you can write it.</h3>
           <p class="icard-b">Name a word with <code>to</code>, say what it takes <code>with</code>, and put the steps in brackets. Drastically simpler than C, and friendly to beginners.</p>
-<pre class="icard-code"><code class="language-frothy">to pulse with pin, wait [
+<pre class="icard-code"><code class="language-frothy">to pulse with pin, delay [
   gpio.high: pin;
-  ms: wait;
+  wait: delay;
   gpio.low: pin
 ]</code></pre>
           <p class="icard-note">No headers, no build flags, no datasheet to read first.</p>
@@ -165,10 +165,10 @@ ok</code></pre>
 ]
 
 scale: 80, 255</code></pre>
-<pre class="fm-play-pre" data-play-code-pane="1" hidden><code class="language-frothy">to blink with pin, count, wait [
+<pre class="fm-play-pre" data-play-code-pane="1" hidden><code class="language-frothy">to blink with pin, count, delay [
   repeat count [
-    gpio.high: pin; ms: wait;
-    gpio.low: pin;  ms: wait
+    gpio.high: pin; wait: delay;
+    gpio.low: pin;  wait: delay
   ]
 ]
 
@@ -230,7 +230,7 @@ save</code></pre>
               <p><code>here</code> binds a value that's local to the block, so <code>bounded</code> exists only inside <code>scale</code>. A block hands back its last line — here, the scaled number.</p>
             </div>
             <div class="fm-play-note" data-play-note-pane="1" hidden>
-              <p>The hello-world of hardware — and it already ships in the base image. <code>repeat</code> runs the block a fixed number of times, <code>ms:</code> waits, <code>$led_builtin</code> is the onboard LED.</p>
+              <p>The hello-world of hardware — and it already ships in the base image. <code>repeat</code> runs the block a fixed number of times, <code>wait:</code> waits, <code>$led_builtin</code> is the onboard LED.</p>
               <p>Arguments follow the colon, comma-separated: a pin, a count, a delay.</p>
             </div>
             <div class="fm-play-note" data-play-note-pane="2" hidden>

@@ -19,7 +19,7 @@ channel is pwm.open: $led_builtin, 1000
 
 repeat 21 as i [
   pwm.write: channel, i * 500
-  ms: 30
+  wait: 30
 ]
 
 pwm.write: channel, 0

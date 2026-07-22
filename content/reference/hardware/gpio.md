@@ -72,13 +72,13 @@ identity, output, and capacity rules.
 ```frothy
 raw is adc.read: $a0
 percent is adc.percent: $a0
-above-half? is adc.above: $a0, 2047
+above-half? is adc.above?: $a0, 2047
 ```
 
 | Word | Result | Use |
 | --- | --- | --- |
 | [`adc.read`](/reference/words/#adc-read) | `Int` | Read the platform ADC value |
-| [`adc.above`](/reference/words/#adc-above) | `Bool` | Compare one reading with a threshold |
+| [`adc.above?`](/reference/words/#adc-above) | `Bool` | Compare one reading with a threshold |
 | [`adc.percent`](/reference/words/#adc-percent) | `Int` | Map the ESP32 0–4095 range to 0–100 |
 
 An unconnected analog pin floats. A stable application circuit needs the

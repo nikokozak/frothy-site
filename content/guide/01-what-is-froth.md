@@ -25,14 +25,14 @@ unit is 75
 
 to pulse with pin [
   gpio.high: pin;
-  ms: unit;
+  wait: unit;
   gpio.low: pin
 ]
 
 to blink with pin [
   repeat 3 [
     pulse: pin;
-    ms: unit
+    wait: unit
   ]
 ]
 
@@ -44,7 +44,7 @@ Read that as ordinary named code:
 - `unit` is a top-level slot
 - `pulse` and `blink` are top-level `Code` values
 - `repeat` is a loop expression
-- `gpio.high` and `ms` are base-image board bindings
+- `gpio.high` and `wait` are base-image board bindings
 
 If you redefine `blink`, old callers see the new definition because they still
 resolve through the same stable top-level slot.

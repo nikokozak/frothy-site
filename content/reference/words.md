@@ -13,15 +13,16 @@ referenceCatalog: true
 <a id="is"></a>
 **`is`** *(language)* `name is expr`
 
-Creates or rebinds a top-level slot from a literal, existing name, `fn`,
-`cells`, record value, or word-call result. Use `set` after initialization for
-an operator or control-flow expression.
+At the top level, creates or rebinds a slot from a literal, existing name,
+`fn`, `cells`, record value, or word-call result. Inside a block, declares a
+lexical local. Use `set` to mutate an existing name after initialization.
 
 **Example**
 
 ```frothy
 counter is 0
 set counter to counter + 1
+to demo [ local-value is 42; local-value ]
 ```
 
 ---
@@ -59,7 +60,8 @@ adder: 20, 22
 <a id="here"></a>
 **`here`** *(language)* `here name is expr`
 
-Declares a lexical local in the current block.
+Explicitly declares a lexical local in the current block. Inside a block,
+`name is expr` means the same thing.
 
 **Example**
 
@@ -157,20 +159,20 @@ Repeats a block until interrupted or until the body errors.
 **Example**
 
 ```frothy
-forever [ led.toggle:; ms: 100 ]
+forever [ led.toggle:; wait: 100 ]
 ```
 
 ---
 
 <a id="cells"></a>
-**`cells`** *(language)* `cells(length) -> Cells`
+**`cells`** *(language)* `cells: length -> Cells`
 
 Creates fixed-size mutable indexed storage.
 
 **Example**
 
 ```frothy
-readings is cells(3)
+readings is cells: 3
 set readings[0] to 11
 ```
 
@@ -826,14 +828,14 @@ adc.read: $a0
 ---
 
 <a id="adc-above"></a>
-**`adc.above`** *(adc)* `(pin, threshold) -> Bool`
+**`adc.above?`** *(adc)* `(pin, threshold) -> Bool`
 
 Returns true when a raw ADC reading is above a threshold.
 
 **Example**
 
 ```frothy
-adc.above: $a0, 2000
+adc.above?: $a0, 2000
 ```
 
 ---
@@ -851,15 +853,16 @@ adc.percent: $a0
 
 ## Timing, Math, And Random
 
-<a id="ms"></a>
-**`ms`** *(timing)* `(millis) -> nil`
+<span id="ms"></span>
+<a id="wait"></a>
+**`wait`** *(timing)* `(millis) -> nil`
 
 Sleeps for a nonnegative number of milliseconds while still polling interrupts.
 
 **Example**
 
 ```frothy
-ms: 75
+wait: 75ms
 ```
 
 ---
@@ -1644,15 +1647,16 @@ tcp.close: sock
 
 ---
 
-<a id="tcp-bytes-ready"></a>
-**`tcp.bytes-ready?`** *(network)* `(sock) -> Int`
+<span id="tcp-bytes-ready"></span>
+<a id="tcp-available"></a>
+**`tcp.available`** *(network)* `(sock) -> Int`
 
 Returns the bytes available for immediate `tcp.read`.
 
 **Example**
 
 ```frothy
-tcp.bytes-ready?: sock
+tcp.available: sock
 ```
 
 ---
@@ -1735,15 +1739,16 @@ pad.emit-byte: 65
 
 ---
 
-<a id="pad-len"></a>
-**`pad.len`** *(pad)* `() -> Int`
+<span id="pad-len"></span>
+<a id="pad-length"></a>
+**`pad.length`** *(pad)* `() -> Int`
 
 Returns the transient pad buffer length.
 
 **Example**
 
 ```frothy
-pad.len:
+pad.length:
 ```
 
 ---

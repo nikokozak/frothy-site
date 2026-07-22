@@ -18,7 +18,7 @@ watchdog.arm: 5000
 forever [
   -- do one bounded unit of useful work
   watchdog.feed:
-  ms: 1000
+  wait: 1000
 ]
 ```
 
@@ -57,6 +57,6 @@ ext0 deep-sleep wake mechanism. The wake configuration is pending state for the
 next sleep, not a persistent event handler. The same sleep can wake because the
 timer expires or the configured pin reaches the requested level.
 
-Deep sleep is not `ms`: it tears down live handles and runtime state. Reopen
+Deep sleep is not `wait`: it tears down live handles and runtime state. Reopen
 peripherals in `boot`, and design the boot path so a permanently asserted wake
 pin does not create a rapid sleep/wake loop.

@@ -32,7 +32,8 @@ From a Frothy source checkout, it builds and flashes that checkout instead.
 frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001
 ```
 
-`esp32_devkit_v1` is the development-board identifier used in Frothy today. Most classic Tensilica ESP32 dev boards with USB serial should be plausible; newer RISC-V ESP32 variants have not been tried yet.
+Official board identifiers are `esp32_devkit_v1`, `seeed_xiao_esp32s3`, and
+`seeed_xiao_esp32c6`.
 
 **`frothy connect`** opens the simple serial REPL.
 

@@ -38,7 +38,7 @@ to button.frame [
 
 repeat 300 [
   button.frame:;
-  ms: 20
+  wait: 20
 ]
 ```
 
@@ -66,6 +66,6 @@ to button.toggle-frame [
 
 repeat 1000 [
   button.toggle-frame:;
-  ms: 20
+  wait: 20
 ]
 ```

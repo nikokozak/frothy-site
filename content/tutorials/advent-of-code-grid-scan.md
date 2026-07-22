@@ -18,7 +18,7 @@ Use a 4 by 4 sample:
 ```frothy
 grid.w is 4
 grid.h is 4
-scan.grid is cells(16)
+scan.grid is cells: 16
 
 set scan.grid[0] to 0
 set scan.grid[1] to 1

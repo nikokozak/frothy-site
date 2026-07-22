@@ -113,7 +113,7 @@ command is pad.pack:
 | --- | --- | --- |
 | [`pad.reset`](/reference/words/#pad-reset) | `nil` | Empty the PAD |
 | [`pad.emit-byte`](/reference/words/#pad-emit-byte) | `nil` | Append one `0..255` byte |
-| [`pad.len`](/reference/words/#pad-len) | `Int` | Current byte count |
+| [`pad.length`](/reference/words/#pad-length) | `Int` | Current byte count |
 | [`pad.peek-byte`](/reference/words/#pad-peek-byte) | `Int` | Read one byte by index |
 | [`pad.type`](/reference/words/#pad-type) | `nil` | Write PAD bytes to the console |
 | [`pad.pack`](/reference/words/#pad-pack) | `Text` | Copy PAD into persistent Text |

@@ -78,14 +78,14 @@ Elements may hold `Nil`, `Bool`, `Int`, `Text`, or record values.
 Create cells at top level:
 
 ```frothy
-scores is cells(4)
+scores is cells: 4
 set scores[0] to 10
 set scores[1] to 25
 scores[1]
 ```
 
 Cells are good for small tables, board-sized state, and simple buffers. They
-are not a general heap. In current Frothy, `cells(n)` belongs in a top-level
+are not a general heap. In current Frothy, `cells: n` belongs in a top-level
 binding so the image can reason about ownership and persistence.
 
 ## Records

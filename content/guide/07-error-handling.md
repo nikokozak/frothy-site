@@ -150,9 +150,9 @@ delay:
 Calling code with the wrong number of arguments is also an error:
 
 ```frothy
-to pulse with pin, wait [
+to pulse with pin, delay [
   gpio.high: pin;
-  ms: wait;
+  wait: delay;
   gpio.low: pin
 ]
 
@@ -165,7 +165,7 @@ the problem.
 Cells bounds and kind errors are another common class:
 
 ```frothy
-scores is cells(2)
+scores is cells: 2
 set scores[3] to 10
 ```
 
@@ -180,7 +180,7 @@ The runtime checks interruption at safe points, including loop back edges.
 ```frothy
 while true [
   led.toggle:;
-  ms: 100
+  wait: 100
 ]
 ```
 

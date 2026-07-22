@@ -34,11 +34,11 @@ pwm.write: led, 512
 Start with a simple upward fade:
 
 ```frothy
-to fade.up with handle, step, wait [
+to fade.up with handle, step, delay [
   here duty is 0;
   while duty <= 1023 [
     pwm.write: handle, duty;
-    ms: wait;
+    wait: delay;
     set duty to duty + step
   ]
 ]
@@ -47,11 +47,11 @@ to fade.up with handle, step, wait [
 Then the downward half:
 
 ```frothy
-to fade.down with handle, step, wait [
+to fade.down with handle, step, delay [
   here duty is 1023;
   while duty >= 0 [
     pwm.write: handle, duty;
-    ms: wait;
+    wait: delay;
     set duty to duty - step
   ]
 ]
@@ -72,9 +72,9 @@ Compose the two halves:
 to breathe with handle, count [
   repeat count [
     fade.up: handle, 16, 6;
-    ms: 120;
+    wait: 120;
     fade.down: handle, 16, 6;
-    ms: 240
+    wait: 240
   ]
 ]
 ```

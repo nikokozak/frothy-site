@@ -66,7 +66,7 @@ If an `if` has no `else` and the condition is false, it yields `nil`.
 ```frothy
 to waitForPress [
   while (gpio.read: $boot_button) == 1 [
-    ms: 20
+    wait: 20
   ]
 ]
 ```
@@ -79,12 +79,12 @@ after the loop.
 Use `repeat` for counted loops:
 
 ```frothy
-to blink.times with count, wait [
+to blink.times with count, delay [
   repeat count [
     led.on:;
-    ms: wait;
+    wait: delay;
     led.off:;
-    ms: wait
+    wait: delay
   ]
 ]
 ```
@@ -110,7 +110,7 @@ interrupt it:
 to beacon [
   forever [
     led.toggle:;
-    ms: 250
+    wait: 250
   ]
 ]
 ```

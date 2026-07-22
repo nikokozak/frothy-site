@@ -19,7 +19,7 @@ turns are positive.
 For a small example, store rotations in cells:
 
 ```frothy
-dial.turns is cells(6)
+dial.turns is cells: 6
 set dial.turns[0] to -50
 set dial.turns[1] to 1
 set dial.turns[2] to -1

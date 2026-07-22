@@ -60,7 +60,7 @@
 
   var SRC = [
     "gpio.output: LED_BUILTIN", "", "to blink with n [", "  repeat n [",
-    "    led.on:", "    ms: 250", "    led.off:", "    ms: 250", "  ]", "]", "", "blink: 5"
+    "    led.on:", "    wait: 250", "    led.off:", "    wait: 250", "  ]", "]", "", "blink: 5"
   ].join("\n");
   var BLINK_COUNT = 5, BLINK_MS = 230;
 

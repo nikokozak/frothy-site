@@ -45,6 +45,6 @@ to sensor.frame [
 
 repeat 500 [
   sensor.frame:;
-  ms: 20
+  wait: 20
 ]
 ```

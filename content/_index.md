@@ -14,7 +14,7 @@ If you are new here, treat Frothy less like a finished product and more like a s
 ```text
 frothy> led.on:
 ok
-frothy> ms: 250
+frothy> wait: 250
 ok
 frothy> led.off:
 ok
@@ -31,16 +31,16 @@ Most embedded programming goes like this: write code, compile, upload, wait, and
 Frothy turns that into a conversation. You define a word. You run it. You redefine it. You ask the board to show you what it knows. When something works, you save it.
 
 ```frothy
-to pulse with pin, wait [
+to pulse with pin, delay [
   gpio.high: pin;
-  ms: wait;
+  wait: delay;
   gpio.low: pin
 ]
 
 to blink with pin [
   repeat 3 [
     pulse: pin, 75;
-    ms: 75
+    wait: 75
   ]
 ]
 
@@ -60,7 +60,9 @@ If none of this made sense: **Frothy feels a bit like p5.js, but the canvas is a
 - save and restore device state
 - write small C/native extensions when a project really needs one
 
-The current happy path is an ESP32 development board. The command examples use `esp32_devkit_v1` because that is the board identifier used during development. Most classic Tensilica ESP32 dev boards should be plausible; newer RISC-V ESP32 boards have not been tried yet.
+The current happy path is one of the three boards in the flasher: ESP32 DevKit
+V1, Seeed Studio XIAO ESP32S3, or Seeed Studio XIAO ESP32C6. Command examples
+use `esp32_devkit_v1`; choose the matching identifier for your board.
 
 ## Start Here
 

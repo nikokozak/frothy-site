@@ -10,9 +10,10 @@ readTime: "9 min"
 
 Frothy is device-first. The host tools help you reach the board, but the board is the real environment.
 
-Start with the small surface: `led.*`, `gpio.*`, `adc.read`, `ms`, and `millis`. Reach for I2C, UART, or PWM only when your circuit needs them.
+Start with the small surface: `led.*`, `gpio.*`, `adc.read`, `wait`, and
+`millis`. Reach for I2C, UART, or PWM only when your circuit needs them.
 
-## The Development Board Identifier
+## Board Identifiers
 
 Most examples use:
 
@@ -20,13 +21,15 @@ Most examples use:
 esp32_devkit_v1
 ```
 
-That is Frothy's current board identifier for the ESP32 development-board shape used during development. It should be read as "the current ESP32 dev-board path," not "only this exact branded board works." Most classic Tensilica ESP32 development boards with USB serial should be plausible. Newer RISC-V ESP32 variants have not been tried yet.
+The other official identifiers are `seeed_xiao_esp32s3` and
+`seeed_xiao_esp32c6`. Choose the one matching the board selected in the
+flasher.
 
 ## LED
 
 ```frothy
 led.on:
-ms: 100
+wait: 100
 led.off:
 ```
 
@@ -42,7 +45,7 @@ to led.off [ gpio.write: $led_builtin, 1 - $led_active_level ]
 ```frothy
 gpio.mode: $led_builtin, 1
 gpio.write: $led_builtin, 1
-ms: 100
+wait: 100
 gpio.write: $led_builtin, 0
 ```
 

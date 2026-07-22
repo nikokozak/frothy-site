@@ -18,21 +18,21 @@ evaluation.
 ```frothy
 repeat 3 [
   led.on:
-  ms: 75
+  wait: 75ms
   led.off:
-  ms: 75
+  wait: 75ms
 ]
 ```
 
-`ms` accepts a nonnegative integer, polls for Ctrl-C once per millisecond, and
-returns `nil`. Later expressions in the same word do not run until the delay
-finishes.
+`wait` accepts a nonnegative millisecond count, polls for Ctrl-C once per
+millisecond, and returns `nil`. Later expressions in the same word do not run
+until the delay finishes.
 
 ## Measure A Short Span
 
 ```frothy
 started is millis:
-ms: 25
+wait: 25ms
 finished is millis:
 elapsed is 0
 set elapsed to finished - started
@@ -40,7 +40,7 @@ set elapsed to finished - started
 
 | Word | Result | Current 32-bit wrap period |
 | --- | --- | --- |
-| [`ms`](/reference/words/#ms) | `nil` | not applicable |
+| [`wait`](/reference/words/#wait) | `nil` | not applicable |
 | [`millis`](/reference/words/#millis) | `Int` | about 12.4 days |
 | [`micros`](/reference/words/#micros) | `Int` | about 17.9 minutes |
 
@@ -50,7 +50,7 @@ an indefinitely increasing persisted counter.
 
 ## Delay, Timer Event, Or Signal Hardware?
 
-- Use `ms` for a short, linear sequence.
+- Use `wait` for a short, linear sequence.
 - Use `after` or `every` when work should run at a later safe point while the
   prompt remains live.
 - Use `trace.*` or `pulse.*` when edge timing must be captured or emitted with

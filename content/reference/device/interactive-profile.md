@@ -35,7 +35,7 @@ Example:
 ```frothy
 to blink with pin [
   gpio.high: pin;
-  ms: 75;
+  wait: 75;
   gpio.low: pin
 ]
 ```

@@ -30,7 +30,7 @@ After boot, your top-level edits form the overlay:
 speed is 75
 to pulse with pin [
   gpio.high: pin;
-  ms: speed;
+  wait: speed;
   gpio.low: pin
 ]
 ```

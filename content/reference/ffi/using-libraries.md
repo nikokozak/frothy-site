@@ -16,7 +16,7 @@ name   = "stage-lights"
 board  = "esp32_devkit_v1"
 
 [deps]
-servo = { git = "https://github.com/nikokozak/frothy-servo", rev = "2f40b97c8ab32ca604ee4e685acc23cc129da9ea" }
+servo = { git = "https://github.com/nikokozak/frothy-servo", rev = "1efa9e4a661216183e012f4cf0df400d1f72006a" }
 blink = { path = "libs/blink" }
 ```
 

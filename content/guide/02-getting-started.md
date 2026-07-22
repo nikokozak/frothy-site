@@ -50,7 +50,7 @@ status
 
 ```frothy
 led.on:
-ms: 200
+wait: 200
 led.off:
 ```
 
@@ -59,7 +59,7 @@ Then define a small word:
 ```frothy
 to blink.once [
   led.on:;
-  ms: delay;
+  wait: delay;
   led.off:
 ]
 

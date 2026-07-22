@@ -68,7 +68,7 @@ behavior.
 ```frothy
 to pulse with pin [
   gpio.high: pin;
-  ms: 75;
+  wait: 75;
   gpio.low: pin
 ]
 
@@ -76,7 +76,7 @@ pulse: $led_builtin
 
 to pulse with pin [
   gpio.high: pin;
-  ms: 20;
+  wait: 20;
   gpio.low: pin
 ]
 ```
@@ -89,7 +89,7 @@ Foreign bindings and Frothy definitions use the same call surface:
 
 ```frothy
 gpio.write: $led_builtin, 1
-ms: 100
+wait: 100
 blink: $led_builtin, 3, 75
 ```
 
