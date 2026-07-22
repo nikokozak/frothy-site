@@ -1,0 +1,5 @@
+{{- $entries := slice -}}
+{{- range findRESubmatch "(?m)^\\*\\*`([^`]+)`\\*\\* \\*\\(([^)]+)\\)\\*" .RawContent -}}
+  {{- $entries = $entries | append (dict "name" (index . 1) "kind" (index . 2)) -}}
+{{- end -}}
+{{- dict "entries" $entries | jsonify -}}

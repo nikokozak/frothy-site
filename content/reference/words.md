@@ -6,6 +6,7 @@ icon: hash
 tags: [words, built-ins, catalog]
 wordCatalog: true
 referenceCatalog: true
+outputs: [HTML, JSON]
 ---
 
 ## Language Forms

@@ -36,6 +36,7 @@ for route in \
   public/reference/ten-minutes/index.html \
   public/reference/language/index.html \
   public/reference/words/index.html \
+  public/reference/words/index.json \
   public/reference/modules/index.html \
   public/reference/modules/board/index.html \
   public/reference/modules/gpio/index.html \
@@ -109,6 +110,23 @@ CATALOG_ANCHORS="$(grep -o '<a id=' public/reference/words/index.html | wc -l | 
 CATALOG_ENTRIES="$(grep -o '<strong><code>' public/reference/words/index.html | wc -l | tr -d ' ')"
 test "$CATALOG_ANCHORS" -eq "$CATALOG_ENTRIES" || fail "word catalog anchors and entries differ"
 test "$CATALOG_ENTRIES" -ge 200 || fail "word catalog is unexpectedly incomplete"
+node -e '
+  const fs = require("node:fs");
+  const catalog = JSON.parse(fs.readFileSync("public/reference/words/index.json", "utf8"));
+  if (!Array.isArray(catalog.entries) || catalog.entries.length !== Number(process.argv[1])) {
+    process.exit(1);
+  }
+  for (const expected of [
+    ["is", "language"],
+    ["save", "persistence"],
+    ["wipe-user", "installation command"],
+    ["gpio.write", "gpio"],
+  ]) {
+    if (!catalog.entries.some(({name, kind}) => name === expected[0] && kind === expected[1])) {
+      process.exit(1);
+    }
+  }
+' "$CATALOG_ENTRIES" || fail "word catalog JSON does not match the reference page"
 
 # 5. Editor and flasher belong only to app.frothy.dev. The site keeps handoff
 # pages, but no second implementation or copied firmware tree.
