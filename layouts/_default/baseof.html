@@ -38,14 +38,14 @@
   {{ with .CurrentSection }}{{ if .Params.guideTopic }}{{ $isGuideTopic = true }}{{ end }}{{ end }}
   {{ if $isGuideTopic }}{{ $cur = "guide" }}{{ end }}
   <div class="site-top">
-    <div class="prealpha-banner" aria-label="Frothy is pre-alpha. It is primeval, but usable, goop.">
-      <div class="ticker" aria-hidden="true">{{ range seq 12 }}<span>Frothy is pre-alpha</span><span class="t-sep">·</span><span>It is primeval, but usable, goop</span><span class="t-sep">·</span>{{ end }}</div>
-    </div>
   <header class="fm-nav" data-nav>
     <div class="fm-nav-in">
-      <a href="{{ "/" | relURL }}" class="fm-brand">
-        {{ partial "mascot" 28 }}
-        <span class="word">Frothy</span>
+      <a href="{{ "/" | relURL }}" class="fm-brand" title="Frothy is pre-alpha. It is primeval, but usable, goop.">
+        {{ partial "mascot" 26 }}
+        <span class="fm-brand-text">
+          <span class="word">Frothy</span>
+          <span class="prealpha-pill">pre-alpha</span>
+        </span>
       </a>
       <nav class="fm-nav-links">
         <a href="{{ "install/" | relURL }}"{{ if eq $cur "install" }} class="active"{{ end }}>Install</a>
