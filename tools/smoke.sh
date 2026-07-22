@@ -110,11 +110,14 @@ CATALOG_ENTRIES="$(grep -o '<strong><code>' public/reference/words/index.html | 
 test "$CATALOG_ANCHORS" -eq "$CATALOG_ENTRIES" || fail "word catalog anchors and entries differ"
 test "$CATALOG_ENTRIES" -ge 200 || fail "word catalog is unexpectedly incomplete"
 
-# 5. editor and flasher belong to app.frothy.dev; copied tool assets are not published.
+# 5. Editor and flasher belong only to app.frothy.dev. The site keeps handoff
+# pages, but no second implementation or copied firmware tree.
 grep -Fq 'https://app.frothy.dev/editor' public/editor/index.html || fail "editor route does not hand off to app"
 grep -Fq 'https://app.frothy.dev/flash' public/flash/index.html || fail "flasher route does not hand off to app"
 grep -Fq 'https://app.frothy.dev/editor' public/index.html || fail "site nav does not link to app editor"
 grep -Fq 'https://app.frothy.dev/flash' public/index.html || fail "site nav does not link to app flasher"
+test ! -e static/test/editor || fail "legacy site editor implementation returned"
+test ! -e static/test/flash || fail "legacy site flasher implementation returned"
 test -z "$(find public/test -type f -print -quit 2>/dev/null)" || fail "legacy tool assets are still published"
 
 # 6. visible documentation IA keeps deep guides out of Reference.
