@@ -919,6 +919,12 @@ span, and readings are noisy by nature. Read real values from your circuit
 before depending on exact thresholds, and average several readings when
 stability matters.
 
+Only pins on the chip's ADC1 unit are accepted; other pins fail with a
+`bad value` error. ADC2 is not exposed because it shares hardware with the
+Wi-Fi radio. On the ESP32 DevKit V1 the ADC1 pins are GPIO 32, 33, 34, 35,
+36, and 39, and the board's `$a0` constant (GPIO 34) is always a safe
+choice.
+
 **Example**
 
 ```frothy

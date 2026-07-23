@@ -81,6 +81,11 @@ above-half? is adc.above?: $a0, 2047
 | [`adc.above?`](/reference/words/#adc-above) | `Bool` | Compare one reading with a threshold |
 | [`adc.percent`](/reference/words/#adc-percent) | `Int` | Map the ESP32 0–4095 range to 0–100 |
 
+Analog reads accept only pins on the chip's ADC1 unit; any other pin fails
+with `bad value`. ADC2 is not exposed because it shares hardware with the
+Wi-Fi radio. On the ESP32 DevKit V1 the ADC1 pins are GPIO 32, 33, 34, 35,
+36, and 39 — `$a0` (GPIO 34) is always safe.
+
 An unconnected analog pin floats. A stable application circuit needs the
 appropriate source impedance, reference, filtering, and calibration; the
 language helper cannot replace those physical details.
