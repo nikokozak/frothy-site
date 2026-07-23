@@ -36,12 +36,12 @@ again.
 ## 3. Start Writing
 
 Continue to the [browser editor](https://app.frothy.dev/editor), choose **Connect**, and select the
-same board. Put the cursor in a complete form and choose **Run Form**, or select
-one complete form and run that selection. **Run File** sends the complete
-sketch in order.
+same board. Put the cursor in a complete code-block and choose **Run Block**,
+or click the play marker in the gutter next to the line. **Run Project** runs
+every file of the project in order.
 
-Edits save locally in the browser. Use **Download .fr** when you want a normal
-file copy.
+Edits save locally in the browser. Use the file navigator's download button
+when you want a normal copy of the project.
 
 ## VS Code And The CLI
 
@@ -49,12 +49,18 @@ Install the **Frothy** extension from the VS Code Marketplace (publisher:
 **NikolaiKozak**) when you want a local project workflow. The extension uses
 the installed `frothy` CLI for serial sessions; the browser tools do not.
 
-Homebrew is the intended packaged CLI path. It installs the CLI, `esptool`, and
-the official release firmware, so `frothy flash BOARD` does not require a source
-checkout or ESP-IDF. The new tap is not published yet, so there is no honest
-Homebrew command to run today. Until the first packaged release, follow the
-[developer setup](/reference/toolchain/development/) to build the CLI from
-source.
+Homebrew is the packaged CLI path. It installs the CLI, `esptool`, and the
+official release firmware, so `frothy flash BOARD` does not require a source
+checkout or ESP-IDF:
+
+```sh
+brew install nikokozak/frothy/frothy
+frothy doctor
+```
+
+`frothy doctor` confirms the install and looks for a connected board. To build
+the CLI from source instead, follow the
+[developer setup](/reference/toolchain/development/).
 
 ## What To Read Next
 
