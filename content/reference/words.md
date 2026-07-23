@@ -413,7 +413,7 @@ boot is fn [
   here led is pwm.open: $led_builtin, 1000
   forever [
     pwm.write: led, (map: (adc.read: $a0), 0, 4095, 0, 10000)
-    wait: 20ms
+    wait: 20
   ]
 ]
 save
@@ -971,21 +971,21 @@ Sleeps for a nonnegative number of milliseconds while still polling interrupts.
 a long wait is always interruptible. Registered event bodies do not run
 while a `wait` is in progress; they queue and run at the next safe point
 after it returns. Millisecond resolution is the floor — there is no
-nanosecond wait. A duration literal like `2s` compiles to `2000`; suffixes
-such as `ms` are labels on the number, so `wait: 50ns` waits 50
-*milliseconds* (see the [literal rules](/reference/language/#integers-and-arithmetic)).
+finer-grained wait. Nanosecond-scale timing lives in the
+[signal words](/reference/modules/signals/), which capture and emit edges
+with dedicated hardware.
 
 **Example**
 
 ```frothy
-wait: 75ms
+wait: 75
 ```
 
 ```frothy
 to slow-blink [
   repeat 5 [
     led.toggle:
-    wait: 2s
+    wait: 2000
   ]
 ]
 ```
@@ -1011,7 +1011,7 @@ millis:
 
 ```frothy
 started is millis:
-wait: 25ms
+wait: 25
 elapsed is 0
 set elapsed to (millis:) - started
 ```
@@ -1858,11 +1858,11 @@ window.
 **Example**
 
 ```frothy
-watchdog.arm: 5s
+watchdog.arm: 5000
 ```
 
 ```frothy
-watchdog.arm: 5s
+watchdog.arm: 5000
 forever [
   do-one-unit-of-work:
   watchdog.feed:
