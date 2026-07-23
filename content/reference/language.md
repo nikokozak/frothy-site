@@ -88,7 +88,10 @@ binary literals are accepted.
 Underscores may group digits in any base. A trailing `s` converts seconds to
 milliseconds; `ms`, `us`, and `ns` leave the number unchanged so a literal can
 name the unit expected by an API, such as `wait: 500ms` or
-`pulse.add: wave, 1, 400ns`.
+`pulse.add: wave, 1, 400ns`. The suffix is a compile-time multiply into the
+same integer — there is no duration type, and the suffix is not checked
+against the word being called. `500ms` and `500` are the same value
+everywhere; `wait: 50ns` is `wait: 50` and waits 50 milliseconds.
 
 On the current 32-bit ESP32 profile, integers range from `-1073741824` through
 `1073741823`. An out-of-range literal or arithmetic result is an error; values

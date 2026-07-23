@@ -48,6 +48,20 @@ The visible clocks wrap at the tagged integer ceiling. Short modular deltas
 across the wrap remain useful; do not treat either clock as a wall-clock date or
 an indefinitely increasing persisted counter.
 
+## Duration Literals Are Labels
+
+A number literal may carry a duration suffix: `2s` compiles to `2000`, and
+`ms`, `us`, and `ns` leave the number unchanged so the literal can name the
+unit its API takes. There is no duration type and the suffix is not checked
+against the callee — `wait: 50ns` is `wait: 50` and waits 50 *milliseconds*.
+Pick the suffix from the word's documented unit: `wait` and the timer events
+take milliseconds, `pulse.add` takes nanoseconds.
+
+Millisecond resolution is also the floor for delays: `wait` sleeps in
+1-millisecond steps. Nanosecond-scale timing exists only where dedicated
+hardware provides it — the [signal words](/reference/modules/signals/)
+capture and emit edges with 100-nanosecond quantization.
+
 ## Delay, Timer Event, Or Signal Hardware?
 
 - Use `wait` for a short, linear sequence.

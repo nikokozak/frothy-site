@@ -198,11 +198,29 @@ p is pt: 3, 4
 
 Runs fallback code after a catchable runtime error and yields the fallback value.
 
+If the body succeeds, its value is the result and the rescue never runs. If
+it fails, the value stack is restored to the start of the attempt, the
+rescue block runs, and its value is the result. Inside the rescue,
+`error.name` and `error.code` describe the caught error. Errors raised by
+called words are catchable in the caller; parse errors happen before
+execution and an interrupt is never catchable — Ctrl-C always wins.
+
 **Example**
 
 ```frothy
 1 + attempt [ 2 / 0 ] rescue [ 9 ]
 ```
+
+```frothy
+to read-or-default with sock [
+  attempt [ tcp.read: sock, 64 ] rescue [
+    print: error.name
+    bytes.from-text: ""
+  ]
+]
+```
+
+Deeper: [errors in the language reference](/reference/language/#errors-and-rescue).
 
 ---
 
@@ -237,11 +255,28 @@ attempt [ missing: ] rescue [ error.name ]
 
 Registers a GPIO or Wi-Fi event body from inside a definition.
 
+For GPIO the source is a pin and the edge is `rising`, `falling`, or
+`changes`, with an optional `debounce <ms>` that suppresses contact chatter
+from mechanical switches. The Wi-Fi sources are `wifi.disconnected` and
+`wifi.reconnected`, with no edge. The body runs at a safe point after the
+edge, not inside an interrupt handler, so it may freely print, read
+sensors, or call other words.
+
 **Example**
 
 ```frothy
 to arm-button [ on $boot_button falling [ led.toggle: ] ]
 ```
+
+```frothy
+to arm-button [
+  on $boot_button falling debounce 25 [
+    print: "pressed\n"
+  ]
+]
+```
+
+Deeper: [Events module](/reference/modules/events/).
 
 ---
 
@@ -250,11 +285,25 @@ to arm-button [ on $boot_button falling [ led.toggle: ] ]
 
 Registers a repeating timer event from inside a definition.
 
+The body runs at safe points between instructions, so it interleaves with
+foreground work instead of preempting it — and it waits while a native call
+such as `wait` is in progress. Output from an event body arrives as
+asynchronous `! ` lines at the prompt. The current profile allows one event
+body per definition: give each registration its own small word. Cancel with
+`cancel every <same millis>`.
+
 **Example**
 
 ```frothy
 to start-ticking [ every 1000 [ print: "tick" ] ]
 ```
+
+```frothy
+to heartbeat [ every 500 [ led.toggle: ] ]
+to arm-all [ heartbeat: start-ticking: ]
+```
+
+Deeper: [Events module](/reference/modules/events/).
 
 ---
 
@@ -263,11 +312,18 @@ to start-ticking [ every 1000 [ print: "tick" ] ]
 
 Registers a one-shot timer event from inside a definition.
 
+Like `every`, the body runs once at a safe point after the delay elapses;
+the registration then clears itself. `after` and `every` are distinct event
+sources even at the same millisecond value, and `cancel after <millis>`
+removes a pending one-shot before it fires.
+
 **Example**
 
 ```frothy
 to once [ after 500 [ led.off: ] ]
 ```
+
+Deeper: [Events module](/reference/modules/events/).
 
 ---
 
@@ -276,12 +332,21 @@ to once [ after 500 [ led.off: ] ]
 
 Cancels a GPIO, timer, or Wi-Fi event by its event source identity.
 
+Identity is the source, not the body: a GPIO cancellation uses the pin
+regardless of edge or debounce, while timer cancellations must name the
+same form (`every` or `after`) and the same millisecond value used to
+register. Use the `events` prompt command to list what is currently
+registered.
+
 **Example**
 
 ```frothy
 cancel every 1000
 cancel $boot_button
+cancel wifi.disconnected
 ```
+
+Deeper: [Events module](/reference/modules/events/).
 
 ## Values And Image
 
@@ -329,12 +394,32 @@ if false [ 1 ] else [ 2 ]
 
 Runs after restore when the top-level slot holds `Code`.
 
+`boot` is an ordinary top-level name with one special property: after the
+saved image is restored at power-on, if it holds `Code`, the device runs it
+before opening the prompt. It is the deploy story — bind it, `save`, and the
+board runs your program standalone from then on. Reopen peripheral handles
+inside it (handles never survive a reset), and remember a boot `forever`
+loop is still interruptible from the console with Ctrl-C.
+
 **Example**
 
 ```frothy
 boot is fn [ led.on: ]
 save
 ```
+
+```frothy
+boot is fn [
+  here led is pwm.open: $led_builtin, 1000
+  forever [
+    pwm.write: led, (map: (adc.read: $a0), 0, 4095, 0, 10000)
+    wait: 20ms
+  ]
+]
+save
+```
+
+Deeper: [the image, save, and boot](/reference/language/#the-image-save-and-boot).
 
 ---
 
@@ -356,11 +441,19 @@ one + 41
 
 Writes the current overlay image to persistent storage.
 
+Everything you have defined at the prompt — words, top-level values,
+records — lives in an overlay over the base image. `save` writes that
+overlay to flash so it survives power loss; nothing is persisted until you
+say so. What does not persist: live handles, registered events, and
+transient `Bytes`. Re-establish those in `boot`.
+
 **Example**
 
 ```frothy
 save
 ```
+
+Deeper: [the image, save, and boot](/reference/language/#the-image-save-and-boot).
 
 ---
 
@@ -820,11 +913,25 @@ led.blink: 3, 75
 
 Reads a raw ADC value from a pin.
 
+The result is a raw converter count, not a voltage: on the current ESP32
+profile the range is `0` through `4095` across roughly the 0–3.3 V input
+span, and readings are noisy by nature. Read real values from your circuit
+before depending on exact thresholds, and average several readings when
+stability matters.
+
 **Example**
 
 ```frothy
 adc.read: $a0
 ```
+
+```frothy
+to knob [
+  map: (adc.read: $a0), 0, 4095, 0, 100
+]
+```
+
+Deeper: [Read a Sensor](/tutorials/read-a-sensor/).
 
 ---
 
@@ -860,11 +967,30 @@ adc.percent: $a0
 
 Sleeps for a nonnegative number of milliseconds while still polling interrupts.
 
+`wait` sleeps in 1-millisecond steps and checks for Ctrl-C between steps, so
+a long wait is always interruptible. Registered event bodies do not run
+while a `wait` is in progress; they queue and run at the next safe point
+after it returns. Millisecond resolution is the floor — there is no
+nanosecond wait. A duration literal like `2s` compiles to `2000`; suffixes
+such as `ms` are labels on the number, so `wait: 50ns` waits 50
+*milliseconds* (see the [literal rules](/reference/language/#integers-and-arithmetic)).
+
 **Example**
 
 ```frothy
 wait: 75ms
 ```
+
+```frothy
+to slow-blink [
+  repeat 5 [
+    led.toggle:
+    wait: 2s
+  ]
+]
+```
+
+Deeper: [Timing module](/reference/modules/timing/).
 
 ---
 
@@ -873,11 +999,24 @@ wait: 75ms
 
 Reads milliseconds since boot, wrapped to the tagged integer range.
 
+On the 32-bit runtime the value wraps after about 12.4 days. A subtraction
+between two nearby readings stays correct across the wrap, so use `millis`
+for elapsed-time deltas, not as a wall clock or a forever-increasing counter.
+
 **Example**
 
 ```frothy
 millis:
 ```
+
+```frothy
+started is millis:
+wait: 25ms
+elapsed is 0
+set elapsed to (millis:) - started
+```
+
+Deeper: [Timing module](/reference/modules/timing/).
 
 ---
 
@@ -886,11 +1025,18 @@ millis:
 
 Reads microseconds since boot, wrapped to the tagged integer range.
 
+The wrap period is about 17.9 minutes on the 32-bit runtime, so `micros` is
+for short spans only — profiling a word, timing a sensor exchange. For
+sub-microsecond edge timing use the [signal words](/reference/modules/signals/),
+which capture and emit with 100-nanosecond hardware quantization.
+
 **Example**
 
 ```frothy
 micros:
 ```
+
+Deeper: [Timing module](/reference/modules/timing/).
 
 ---
 
@@ -1341,11 +1487,20 @@ i2c.write-reg16: bus, 104, 107, 0
 
 Opens a PWM channel on a pin at a frequency in Hz.
 
+PWM switches the pin on and off at `freq` cycles per second; what you
+control afterwards with `pwm.write` is the fraction of each cycle spent on.
+For LED dimming, 1000 Hz is comfortably above what the eye can see. The
+returned handle is live working state — it does not survive a reset, so
+reopen channels in `boot`.
+
 **Example**
 
 ```frothy
 led is pwm.open: $led_builtin, 1000
 ```
+
+Deeper: [PWM module](/reference/modules/pwm/), [Fade an
+LED](/tutorials/fade-an-led/).
 
 ---
 
@@ -1354,11 +1509,24 @@ led is pwm.open: $led_builtin, 1000
 
 Sets PWM duty in the inclusive range `0` to `10000`.
 
+Duty is parts-per-ten-thousand of each cycle spent on: `0` is fully off,
+`5000` is half, `10000` is fully on. The fixed scale is independent of the
+board's native PWM resolution — the platform maps it onto the hardware —
+so duty values stay portable across targets.
+
 **Example**
 
 ```frothy
-pwm.write: led, 512
+pwm.write: led, 5000
 ```
+
+```frothy
+to led.percent with handle, pct [
+  pwm.write: handle, (clamp: pct, 0, 100) * 100
+]
+```
+
+Deeper: [PWM module](/reference/modules/pwm/).
 
 ---
 
@@ -1588,11 +1756,24 @@ wifi.ready?:
 
 Fetches a URL and returns the response body up to the HTTP body cap.
 
+The call blocks until the response arrives or fails, and network failures
+raise catchable errors — wrap unattended fetches in `attempt`/`rescue`.
+The result is transient `Bytes`; convert or consume it in the same word.
+`wifi.connect` must have succeeded first.
+
 **Example**
 
 ```frothy
 http.get: "http://example.com/"
 ```
+
+```frothy
+to fetch-size with url [
+  attempt [ bytes.length: (http.get: url) ] rescue [ -1 ]
+]
+```
+
+Deeper: [Network module](/reference/modules/wifi/).
 
 ---
 
@@ -1667,11 +1848,28 @@ tcp.available: sock
 
 Arms the watchdog with a timeout in milliseconds.
 
+A watchdog is a hardware countdown that resets the chip if the program stops
+making progress: once armed, the program must call `watchdog.feed` within
+every timeout window or the board reboots. Use it for installations that
+must recover from a hang without a human present. The timeout is 1000
+through 60000 ms, and re-arming replaces the timeout and starts a new
+window.
+
 **Example**
 
 ```frothy
-watchdog.arm: 5000
+watchdog.arm: 5s
 ```
+
+```frothy
+watchdog.arm: 5s
+forever [
+  do-one-unit-of-work:
+  watchdog.feed:
+]
+```
+
+Deeper: [Power module](/reference/modules/power/).
 
 ---
 
@@ -1680,11 +1878,18 @@ watchdog.arm: 5000
 
 Feeds an already armed watchdog.
 
+Feeding restarts the timeout window. Feed after demonstrated progress — a
+completed reading, a finished frame — not unconditionally at the top of a
+loop that could keep spinning while the real work is stuck, which defeats
+the supervision. Feeding before `watchdog.arm` is an error.
+
 **Example**
 
 ```frothy
 watchdog.feed:
 ```
+
+Deeper: [Power module](/reference/modules/power/).
 
 ---
 
@@ -1693,11 +1898,29 @@ watchdog.feed:
 
 Enters deep sleep for a duration; the chip cold-boots on wake.
 
+Deep sleep powers down the CPU and RAM — only the low-power wake circuitry
+stays on, which is why a sleeping board can draw microamps instead of tens
+of milliamps. The cost is that nothing survives in memory: waking is a fresh
+start that restores the saved image and runs `boot` again. Save durable
+state and reopen peripheral handles in `boot`. Use it for battery projects
+that act briefly and sleep long; use `wait` when the program should simply
+pause and continue.
+
 **Example**
 
 ```frothy
-sleep.deep: 1000
+sleep.deep: 60000
 ```
+
+```frothy
+boot is fn [
+  log-reading: (adc.read: $a0)
+  sleep.deep: 3600000
+]
+save
+```
+
+Deeper: [Power module](/reference/modules/power/).
 
 ---
 
@@ -1706,11 +1929,21 @@ sleep.deep: 1000
 
 Configures GPIO wake for the next deep sleep.
 
+The configuration is pending state in RAM for the next `sleep.deep` call
+only — it is not a persistent handler, and because deep sleep cold-boots,
+you must call it again (typically in `boot`) before each sleep. The pin must
+support the target's deep-sleep wake mechanism, and `level` is the value
+(`0` or `1`) that wakes the chip. A timed sleep with a wake pin configured
+wakes on whichever happens first.
+
 **Example**
 
 ```frothy
 sleep.wake-on-gpio: $boot_button, 0
+sleep.deep: 3600000
 ```
+
+Deeper: [Power module](/reference/modules/power/).
 
 ## PAD
 

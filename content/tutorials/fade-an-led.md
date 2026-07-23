@@ -21,12 +21,13 @@ handle you pass back into later calls:
 led is pwm.open: $led_builtin, 1000
 ```
 
-Set the duty with `pwm.write`:
+Set the duty with `pwm.write`. Duty is parts-per-ten-thousand of each cycle
+spent on: `0` is off, `5000` is half, `10000` is fully on:
 
 ```frothy
 pwm.write: led, 0
-pwm.write: led, 256
-pwm.write: led, 512
+pwm.write: led, 2500
+pwm.write: led, 5000
 ```
 
 ## Fade In Software
@@ -36,7 +37,7 @@ Start with a simple upward fade:
 ```frothy
 to fade.up with handle, step, delay [
   here duty is 0;
-  while duty <= 1023 [
+  while duty <= 10000 [
     pwm.write: handle, duty;
     wait: delay;
     set duty to duty + step
@@ -48,7 +49,7 @@ Then the downward half:
 
 ```frothy
 to fade.down with handle, step, delay [
-  here duty is 1023;
+  here duty is 10000;
   while duty >= 0 [
     pwm.write: handle, duty;
     wait: delay;
@@ -60,8 +61,8 @@ to fade.down with handle, step, delay [
 Run both:
 
 ```frothy
-fade.up: led, 16, 8
-fade.down: led, 16, 8
+fade.up: led, 200, 8
+fade.down: led, 200, 8
 ```
 
 ## Breathe
@@ -71,9 +72,9 @@ Compose the two halves:
 ```frothy
 to breathe with handle, count [
   repeat count [
-    fade.up: handle, 16, 6;
+    fade.up: handle, 200, 6;
     wait: 120;
-    fade.down: handle, 16, 6;
+    fade.down: handle, 200, 6;
     wait: 240
   ]
 ]
