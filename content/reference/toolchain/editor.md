@@ -73,18 +73,22 @@ The [browser editor](https://app.frothy.dev/editor) uses WebSerial and runs Frot
 page. Use Chrome or Edge on desktop.
 
 - **Examples** — the picker in the header loads any of the bundled examples into the buffer. The same set is available in VS Code via `Frothy: Open Example`.
-- **Connect / Run** — Connect opens the WebSerial picker and visibly confirms the live profile. Run Form sends one selected complete form or the form around the cursor. Run File sends every complete form in order and stops at the first device error.
+- **Connect / Run** — Connect opens the WebSerial picker and visibly confirms the live profile. Once connected, the button opens a menu with **Browse Words** and **Disconnect**. Run Block sends one selected complete form or the form around the cursor; hovering the gutter shows a play affordance for the block a line belongs to. Run Project resolves local includes and runs every file, stopping at the first device error.
 - **Indent** — Tab and Shift-Tab indent inside the source editor instead of moving focus away.
-- **Browse Words** — asks the connected device for its current vocabulary, then runs `see` for the word you choose.
+- **Browse Words** — asks the connected device for its current vocabulary, grouped into board-defined and built-in words; choosing one shows its source in place. Device words also join autocomplete.
+- **Pin** — the pushpin in the editor's top corner (or right-clicking a line's gutter) saves one code-block as a one-click rerun button, for the edit-a-definition, rerun-the-driver loop.
 - **Interrupt** — sends a Ctrl-C to stop a running program (a `forever` loop), without disconnecting.
 - **Split** — toggles the MCU output between sitting below the editor and beside it; the choice is remembered.
-- **Autosaved locally** — edits are saved in this browser automatically. If storage fails, the editor says so and keeps Download `.fr` available.
-- **Open / Download** — Open `.fr` replaces the scratchpad and preserves its filename for the next download.
-- **Errors** — Run File stops at the first device error, and diagnostic detail stays grouped with the error.
+- **Autosaved locally** — edits are saved in this browser automatically. If storage fails, the editor says so and keeps Download available.
+- **Upload / Download** — the file navigator's upload button adds a `.fr` file to the project; Download packages the project back up.
+- **Errors** — Run Project stops at the first device error, and diagnostic detail stays grouped with the error.
 
 ## Recovery
 
-If Connect fails, close other applications using the serial port, press the
+If the board doesn't answer when you Connect, it is usually running a saved
+program (for example a `forever` boot routine): the editor offers **Interrupt
+and connect**, which sends a Ctrl-C and then connects normally. If Connect
+fails outright, close other applications using the serial port, press the
 board's **EN** button (or unplug and reconnect it), and try again. If a program
 runs away, use **Interrupt** or press Ctrl-C in a terminal session. If saved
 state is bad after reboot, use the CLI recovery commands from the [CLI reference](/reference/toolchain/cli/).
