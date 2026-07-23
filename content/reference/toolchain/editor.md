@@ -73,7 +73,7 @@ The [browser editor](https://app.frothy.dev/editor) uses WebSerial and runs Frot
 page. Use Chrome or Edge on desktop.
 
 - **Examples** — the picker in the header loads any of the bundled examples into the buffer. The same set is available in VS Code via `Frothy: Open Example`.
-- **Connect / Run** — Connect opens the WebSerial picker and visibly confirms the live profile. Once connected, the button opens a menu with **Browse Words** and **Disconnect**. Run Block sends one selected complete form or the form around the cursor; hovering the gutter shows a play affordance for the block a line belongs to. Run Project resolves local includes and runs every file, stopping at the first device error.
+- **Connect / Run** — Connect opens the WebSerial picker and visibly confirms the live profile. Once connected, the button opens a menu with **Browse Words** and **Disconnect**. Run Block sends one selected complete form or the form around the cursor; hovering the gutter shows a play affordance for the block a line belongs to. Run File runs the open file with its local `include` directives spliced in, stopping at the first device error; running `main.fr` clears the board's user definitions first, while any other file runs into the live session.
 - **Indent** — Tab and Shift-Tab indent inside the source editor instead of moving focus away.
 - **Browse Words** — asks the connected device for its current vocabulary, grouped into board-defined and built-in words; choosing one shows its source in place. Device words also join autocomplete.
 - **Pin** — the pushpin in the editor's top corner (or right-clicking a line's gutter) saves one code-block as a one-click rerun button, for the edit-a-definition, rerun-the-driver loop.
@@ -81,7 +81,7 @@ page. Use Chrome or Edge on desktop.
 - **Split** — toggles the MCU output between sitting below the editor and beside it; the choice is remembered.
 - **Autosaved locally** — edits are saved in this browser automatically. If storage fails, the editor says so and keeps Download available.
 - **Upload / Download** — the file navigator's upload button adds a `.fr` file to the project; Download packages the project back up.
-- **Errors** — Run Project stops at the first device error, and diagnostic detail stays grouped with the error.
+- **Errors** — Run File stops at the first device error, and diagnostic detail stays grouped with the error.
 
 ## Recovery
 

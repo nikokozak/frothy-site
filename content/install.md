@@ -37,8 +37,9 @@ again.
 
 Continue to the [browser editor](https://app.frothy.dev/editor), choose **Connect**, and select the
 same board. Put the cursor in a complete code-block and choose **Run Block**,
-or click the play marker in the gutter next to the line. **Run Project** runs
-every file of the project in order.
+or click the play marker in the gutter next to the line. **Run File** runs the
+open file from the top, splicing in any `include` directives; running
+`main.fr` starts the program fresh.
 
 Edits save locally in the browser. Use the file navigator's download button
 when you want a normal copy of the project.
