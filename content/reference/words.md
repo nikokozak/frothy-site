@@ -2850,3 +2850,19 @@ Internal native used by compiled `cancel` forms.
 ```frothy
 cancel every 1000
 ```
+
+---
+
+<a id="frothy-event-fire"></a>
+**`frothy.event-fire`** *(internal)* `(kind, source, edge) -> nil`
+
+Internal test support: queues a matching registered event binding as if its
+source fired. `kind` is `"every"`, `"after"`, or `"on"`; `source` is the
+milliseconds or pin number; `edge` is `"rising"` or `"falling"` for `"on"`
+and `nil` for timers.
+
+**Example**
+
+```frothy
+frothy.event-fire: "every", 1000, nil
+```

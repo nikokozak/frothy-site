@@ -45,14 +45,33 @@
     });
   }
 
-  function isSignature(node) {
-    var first = node.firstElementChild;
-    if (first && first.tagName === "A" && first.id && !textContent(first)) {
-      first = first.nextElementSibling;
-    }
+  function isEmptyAnchor(node) {
     return (
-      node.tagName === "P" &&
-      first &&
+      node &&
+      (node.tagName === "A" || node.tagName === "SPAN") &&
+      node.id &&
+      !textContent(node)
+    );
+  }
+
+  function leadingAnchors(node) {
+    var anchors = [];
+    var child = node.firstElementChild;
+    while (isEmptyAnchor(child)) {
+      anchors.push(child);
+      child = child.nextElementSibling;
+    }
+    return anchors;
+  }
+
+  function isSignature(node) {
+    if (node.tagName !== "P") return false;
+    var anchors = leadingAnchors(node);
+    var first = anchors.length
+      ? anchors[anchors.length - 1].nextElementSibling
+      : node.firstElementChild;
+    return (
+      !!first &&
       first.tagName === "STRONG" &&
       first.firstElementChild &&
       first.firstElementChild.tagName === "CODE"
@@ -87,21 +106,13 @@
       }
 
       if (isSignature(node)) {
-        var inlineAnchor =
-          node.firstElementChild &&
-          node.firstElementChild.tagName === "A" &&
-          node.firstElementChild.id &&
-          !textContent(node.firstElementChild)
-            ? node.firstElementChild
+        var anchors = leadingAnchors(node);
+        var explicitAnchor = anchors.length
+          ? anchors[anchors.length - 1]
+          : isEmptyAnchor(node.previousElementSibling)
+            ? node.previousElementSibling
             : null;
-        var explicitAnchor = inlineAnchor || node.previousElementSibling;
-        var explicitId =
-          explicitAnchor &&
-          explicitAnchor.tagName === "A" &&
-          explicitAnchor.id &&
-          !textContent(explicitAnchor)
-            ? explicitAnchor.id
-            : "";
+        var explicitId = explicitAnchor ? explicitAnchor.id : "";
 
         current = createNode("section", "ref-entry");
         current.id = explicitId || uniqueId(textContent(node.querySelector("strong code")), seenIds);
@@ -323,7 +334,23 @@
         ? visibleEntries.length + " of " + entries.length + " " + noun + "s"
         : pluralize(entries.length, noun);
       clear.disabled = !terms.length;
-      if (!active || !active.visible) select(visibleEntries[0] || null, false, false);
+
+      if (terms.length) {
+        var query = terms.join(" ");
+        var byName = function (test) {
+          return visibleEntries.find(function (meta) {
+            return test(normalize(meta.name));
+          });
+        };
+        var best =
+          byName(function (name) { return name === query; }) ||
+          byName(function (name) { return name.indexOf(query) === 0; }) ||
+          byName(function (name) { return name.indexOf(query) !== -1; }) ||
+          visibleEntries[0] || null;
+        if (best !== active) select(best, false, false);
+      } else if (!active || !active.visible) {
+        select(visibleEntries[0] || null, false, false);
+      }
     }
 
     function selectHash() {
