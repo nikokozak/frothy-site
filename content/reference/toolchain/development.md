@@ -22,8 +22,8 @@ Windows is not a supported local CLI build path yet.
 ## Build The CLI
 
 ```sh
-git clone https://github.com/nikokozak/FrothyRewrite
-cd FrothyRewrite
+git clone https://github.com/nikokozak/frothy
+cd frothy
 make cli
 frothy --help
 ```

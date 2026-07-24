@@ -522,6 +522,25 @@ status
 
 ---
 
+<a id="frothy-release"></a>
+**`frothy.release`** *(inspection)* `() -> Text`
+
+Returns the firmware release name baked into the running build (for
+example `"v0.1.11"`).
+
+The same value leads the `status` line as `release=...`, so tools can read
+it without evaluating code; `frothy.release` is the in-language form for
+scripts that want to check what they are running on. Available on
+text-capable profiles (every shipped board build).
+
+**Example**
+
+```frothy
+frothy.release
+```
+
+---
+
 <a id="events"></a>
 **`events`** *(inspection)* `events`
 
@@ -729,7 +748,14 @@ bus is i2c.open: 0, $sda, $scl, 400000
 <a id="gpio-mode"></a>
 **`gpio.mode`** *(gpio)* `(pin, mode) -> nil`
 
-Configures a GPIO pin direction with `1` for output and `0` for input.
+Configures a GPIO pin direction: `0` for input, `1` for output, `2` for
+input with the internal pull-up enabled.
+
+Mode `2` is the one for buttons wired to ground: the pull-up holds the pin
+high until the button pulls it low, so no external resistor is needed. A
+pin currently held by an open PWM channel reports `busy` instead of
+reconfiguring — changing the direction would silently detach the pin from
+its PWM signal. Close the channel with `pwm.close` first.
 
 **Example**
 
@@ -743,6 +769,11 @@ gpio.mode: $led_builtin, 1
 **`gpio.write`** *(gpio)* `(pin, level) -> nil`
 
 Writes a GPIO output level.
+
+A pin currently held by an open PWM channel reports `busy` instead of
+writing — a plain digital write would silently detach the pin from its
+PWM signal. Close the channel with `pwm.close` first. `gpio.read` stays
+unrestricted: sampling a pin does not disturb it.
 
 **Example**
 
@@ -1311,11 +1342,24 @@ uart.open: 1, $baud_1200
 
 Opens an auxiliary UART with platform default pins.
 
+An auxiliary UART is a serial port for talking to other devices — GPS
+modules, AT-command radios, another microcontroller — separate from the
+console UART Frothy itself lives on (which is never available here).
+`port` counts the auxiliary ports: the ESP32 DevKit V1 has two, `0` and
+`1`. The format is fixed 8N1 with no flow control, and `baud` is the plain
+rate — the `$baud_*` constants are just named integers for the common
+ones. This form leaves the pin choice to the chip's per-port defaults,
+which may not be routed anywhere useful on your board; when in doubt, use
+`uart.open-on` and pick the pins explicitly. The handle is volatile —
+reopen ports in `boot`.
+
 **Example**
 
 ```frothy
 aux is uart.open: 1, $baud_115200
 ```
+
+Deeper: [UART module](/reference/modules/uart/).
 
 ---
 
@@ -1324,11 +1368,19 @@ aux is uart.open: 1, $baud_115200
 
 Opens an auxiliary UART on caller-picked TX and RX pins.
 
+The reliable form of `uart.open`: the chip's pin matrix can route a UART
+to nearly any free GPIO, so pick pins that suit your wiring. TX is named
+from this board's point of view — connect it to the other device's RX,
+and vice versa, and share a ground. Pins already used by the console or
+another open UART are rejected rather than silently stolen.
+
 **Example**
 
 ```frothy
 aux is uart.open-on: 1, 17, 16, $baud_115200
 ```
+
+Deeper: [UART module](/reference/modules/uart/).
 
 ---
 
@@ -1350,11 +1402,28 @@ uart.write-byte: aux, 65
 
 Reads one byte from an auxiliary UART, or `-1` when none is ready.
 
+The read never blocks: `-1` means "nothing yet", not an error, so a
+polling loop stays live and interruptible. Received bytes queue in a
+driver buffer until read, so a periodic drain does not lose data between
+polls.
+
 **Example**
 
 ```frothy
 uart.read-byte: aux
 ```
+
+```frothy
+to drain [
+  forever [
+    here b is uart.read-byte: aux
+    when b >= 0 [ pad.emit-byte: b ]
+    when b < 0 [ wait: 5 ]
+  ]
+]
+```
+
+Deeper: [UART module](/reference/modules/uart/).
 
 ---
 
@@ -1389,11 +1458,23 @@ uart.close: aux
 
 Opens an I2C bus on a port with selected pins and frequency.
 
+I2C is a two-wire shared bus: one data line (SDA) and one clock line
+(SCL) carry traffic for every device wired to them, and each device
+answers to its own 7-bit address. That is why one `i2c.open` serves a
+whole chain of sensor breakouts. `freq` is the clock in Hz — `100000`
+(standard) works with everything; `400000` (fast mode) with most modern
+parts. The bus lines need pull-up resistors; nearly every breakout board
+ships with them soldered on, so this usually costs no thought. `$sda` and
+`$scl` name the board's conventional pins (GPIO 21 and 22 on the DevKit
+V1). The handle is volatile — reopen the bus in `boot`.
+
 **Example**
 
 ```frothy
 bus is i2c.open: 0, $sda, $scl, 400000
 ```
+
+Deeper: [I2C module](/reference/modules/i2c/).
 
 ---
 
@@ -1414,6 +1495,12 @@ i2c.write: bus, 104, "AT"
 **`i2c.read`** *(i2c)* `(bus, addr, count) -> Bytes`
 
 Reads `count` bytes from a 7-bit I2C address.
+
+The raw transaction, for devices that stream data rather than answer the
+register convention — `i2c.read-reg` and friends cover the common
+register-mapped chips more directly. The result is transient `Bytes`:
+pick it apart with `bytes.at` in the same evaluation, or `text.pack` it
+to keep it.
 
 **Example**
 
@@ -1441,11 +1528,26 @@ i2c.close: bus
 
 Reads one byte from a register at a 7-bit I2C address.
 
+Most I2C chips present themselves as a numbered array of registers — a
+datasheet's register map — and this word is the whole read protocol in
+one step: write the register number, restart, read the value back. It is
+usually all you need to talk to a sensor without a driver library. The
+example asks an MPU-6050 motion sensor (address `104`) for its `WHO_AM_I`
+register (`117`); the chip answers `104`, a standard aliveness check.
+
 **Example**
 
 ```frothy
 i2c.read-reg: bus, 104, 117
 ```
+
+```frothy
+to sensor-alive? [
+  (i2c.read-reg: bus, 104, 117) = 104
+]
+```
+
+Deeper: [I2C module](/reference/modules/i2c/).
 
 ---
 
@@ -1467,11 +1569,19 @@ i2c.read-reg16: bus, 104, 117
 
 Writes one byte to a register at a 7-bit I2C address.
 
+The write half of the register convention — configuration usually means
+writing a handful of registers from the datasheet. The example writes `0`
+to the MPU-6050's power-management register (`107`), which wakes the chip
+from its power-on sleep; most sensors need one or two writes like this
+before their readings mean anything.
+
 **Example**
 
 ```frothy
 i2c.write-reg: bus, 104, 107, 0
 ```
+
+Deeper: [I2C module](/reference/modules/i2c/).
 
 ---
 
@@ -1498,6 +1608,11 @@ control afterwards with `pwm.write` is the fraction of each cycle spent on.
 For LED dimming, 1000 Hz is comfortably above what the eye can see. The
 returned handle is live working state — it does not survive a reset, so
 reopen channels in `boot`.
+
+Opening is idempotent for an exact repeat: `pwm.open` on a pin that already
+has a channel at the *same* frequency returns the existing handle instead
+of an error, so a re-run definition just works. Asking for a *different*
+frequency on an open pin reports `busy` — close the channel first.
 
 **Example**
 
@@ -1553,6 +1668,11 @@ pwm.close: led
 **`text.length`** *(text)* `(text) -> Int`
 
 Returns the byte length of a text value.
+
+Frothy text is a sequence of bytes, and every text word measures and
+indexes in bytes — there is no separate character type. Plain ASCII is
+one byte per character; multi-byte UTF-8 characters count as their byte
+length.
 
 **Example**
 
@@ -1619,11 +1739,21 @@ text.from-int: 42
 
 Copies a text value into a transient bytes buffer.
 
+`Bytes` values are scratch space: they live in a small arena that is
+cleared when the line (or the outermost call) finishes evaluating, so a
+`Bytes` value cannot be kept in a top-level binding across lines — a
+stale one fails cleanly rather than reading garbage. Build, inspect, and
+send bytes within one evaluation; when a result must outlive the line,
+copy it out with `text.pack`. This transience is deliberate — buffers
+recycle themselves, so byte-shuffling never fragments the heap.
+
 **Example**
 
 ```frothy
 bytes.length: (bytes.from-text: "AT")
 ```
+
+Deeper: [Text, bytes, and pad](/reference/modules/text-bytes-pad/).
 
 ---
 
@@ -1710,11 +1840,23 @@ bytes.concat: bytes.from-text: "A", bytes.from-text: "T"
 
 Copies a bytes buffer into persistent text storage.
 
+The door out of bytes-transience: `Bytes` die when the line ends, but the
+`Text` this returns lives in the text pool and can sit in a binding like
+any other value. The usual shape is receive-then-pack — read from a
+socket, UART, or I2C device into transient bytes, then pack the part
+worth keeping.
+
 **Example**
 
 ```frothy
 text.pack: buf
 ```
+
+```frothy
+reply is text.pack: (tcp.read: sock, 64)
+```
+
+Deeper: [Text, bytes, and pad](/reference/modules/text-bytes-pad/).
 
 ---
 
@@ -1958,11 +2100,22 @@ Deeper: [Power module](/reference/modules/power/).
 
 Clears the transient pad buffer.
 
+The pad is one shared builder buffer (64 bytes on the shipped profiles)
+for assembling small messages a byte at a time. Unlike `Bytes` values, it
+survives between lines and calls — bytes accumulate until you clear it —
+which is what makes it useful for collecting input that arrives over many
+loop iterations. The workflow is `pad.reset` → `pad.emit-byte` as data
+arrives → `pad.pack` (keep as text) or `pad.type` (print). Reset before
+starting a new message; leftover bytes from the last one are the classic
+surprise.
+
 **Example**
 
 ```frothy
 pad.reset:
 ```
+
+Deeper: [Text, bytes, and pad](/reference/modules/text-bytes-pad/).
 
 ---
 
@@ -2024,11 +2177,24 @@ pad.peek-byte: 0
 
 Packs the transient pad bytes into a text value.
 
+The harvest step: whatever has accumulated in the pad becomes a durable
+`Text` value that can sit in a binding. Packing does not clear the pad —
+call `pad.reset` when you start the next message.
+
 **Example**
 
 ```frothy
 pad.pack:
 ```
+
+```frothy
+pad.reset:
+pad.emit-byte: 111
+pad.emit-byte: 107
+status is pad.pack:  -- "ok"
+```
+
+Deeper: [Text, bytes, and pad](/reference/modules/text-bytes-pad/).
 
 ---
 
@@ -2382,11 +2548,21 @@ console.info:
 
 Initializes the compiled BLE roles and waits for radio readiness.
 
+Everything Bluetooth starts here: the radio is off until `ble.on` powers
+it, and every other `ble.*` word fails before it. Which roles wake up is
+decided at flash time — *central* (scan for and connect to other devices)
+and *peripheral* (advertise and accept connections) are firmware options,
+not runtime choices. The radio costs real RAM while on, so projects that
+use BLE in bursts pair it with `ble.off`, which tears everything down and
+invalidates outstanding BLE handles.
+
 **Example**
 
 ```frothy
 ble.on:
 ```
+
+Deeper: [Bluetooth module](/reference/modules/bluetooth/).
 
 ---
 
@@ -2424,11 +2600,23 @@ ble.off:
 Starts an indefinite BLE scan with bounded interval/window timing, active and
 duplicate-report flags, and an RSSI floor.
 
+The radio listens for `window_ms` out of every `interval_ms` — the
+example's `100, 50` listens half the time, a reasonable
+power/thoroughness trade. `active` of `1` transmits scan requests so
+peers can send extra response data (costs power); `0` just listens.
+`repeats` of `0` reports each peer once, `1` reports every sighting —
+useful when you care about RSSI over time. `minimum_rssi` (dBm, e.g.
+`-90`) discards weaker signals. Sightings queue as reports; drain the
+queue with `ble.scan.next?` and read each report with the other
+`ble.scan.*` words.
+
 **Example**
 
 ```frothy
 ble.scan.start: 100, 50, 1, 0, -90
 ```
+
+Deeper: [Bluetooth module](/reference/modules/bluetooth/).
 
 ---
 
@@ -2450,11 +2638,27 @@ ble.scan.stop:
 
 Selects the next queued report and returns whether one was available.
 
+Scan results follow a cursor model: this word advances to the next queued
+report, and `ble.scan.rssi`, `ble.scan.peer`, `ble.scan.flags`, and
+`ble.scan.data` all read from the report currently selected. Loop until
+it returns false to drain the queue.
+
 **Example**
 
 ```frothy
 when ble.scan.next?: [ ble.scan.rssi: ]
 ```
+
+```frothy
+to drain-reports [
+  while ble.scan.next?: [
+    print: (ble.scan.rssi:)
+    print: "\n"
+  ]
+]
+```
+
+Deeper: [Bluetooth module](/reference/modules/bluetooth/).
 
 ---
 
@@ -2517,11 +2721,24 @@ ble.scan.data:
 Starts legacy advertising with raw Text or Bytes AD payloads and a connectable
 flag of 0 or 1.
 
+Advertising broadcasts a small payload every `interval_ms` for any nearby
+scanner to see — this is how a board announces itself before any
+connection exists. The payloads are raw BLE *AD structures*: each is a
+length byte, a type byte, then that many minus one payload bytes,
+concatenated. In the example, `"\x02\x01\x06"` is one structure (length
+2, type 1 = flags, value 6 = general discoverable) and `"\x07\x09Frothy"`
+is another (length 7, type 9 = complete local name, then the six name
+bytes) — sent in the scan response, which scanners only see when
+scanning actively. `connectable` of `1` lets a central connect (pick the
+link up with `ble.accept`); `0` is broadcast-only, the beacon pattern.
+
 **Example**
 
 ```frothy
 ble.advertise.start: "\x02\x01\x06", "\x07\x09Frothy", 100, 1
 ```
+
+Deeper: [Bluetooth module](/reference/modules/bluetooth/).
 
 ---
 
@@ -2543,11 +2760,20 @@ ble.advertise.stop:
 
 Connects to a peer returned by `ble.scan.peer`.
 
+The central-role move: scan first, take the peer bytes of the device you
+want (`ble.scan.peer`, one address-type byte plus six address bytes), and
+connect. The call blocks until the link is up or `timeout_ms` passes —
+failures raise catchable errors, so unattended connects belong in
+`attempt`/`rescue`. The returned connection handle is volatile like every
+handle, and `ble.off` invalidates it.
+
 **Example**
 
 ```frothy
 link is ble.connect: peer, 5000
 ```
+
+Deeper: [Bluetooth module](/reference/modules/bluetooth/).
 
 ---
 
@@ -2557,11 +2783,30 @@ link is ble.connect: peer, 5000
 Accepts one pending peripheral connection, or returns `nil` when none is
 waiting.
 
+The peripheral-role counterpart of `ble.connect`: after connectable
+advertising, a central's incoming connection parks as pending until this
+word claims it. It never blocks — `nil` means "no one yet" — so the
+usual shape is a periodic poll that stores the handle when a link
+arrives.
+
 **Example**
 
 ```frothy
 link is ble.accept:
 ```
+
+```frothy
+link is nil
+
+to watch-links [
+  every 500 [
+    here candidate is ble.accept:
+    when candidate [ set link to candidate ]
+  ]
+]
+```
+
+Deeper: [Bluetooth module](/reference/modules/bluetooth/).
 
 ---
 
