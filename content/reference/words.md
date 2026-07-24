@@ -952,9 +952,9 @@ stability matters.
 
 Only pins on the chip's ADC1 unit are accepted; other pins fail with a
 `bad value` error. ADC2 is not exposed because it shares hardware with the
-Wi-Fi radio. On the ESP32 DevKit V1 the ADC1 pins are GPIO 32, 33, 34, 35,
-36, and 39, and the board's `$a0` constant (GPIO 34) is always a safe
-choice.
+Wi-Fi radio. Which pins sit on ADC1 depends on your board (on the classic
+ESP32 DevKit V1, for example, GPIO 32–39); the board's `$a0` constant
+always names a safe analog pin, so prefer it over raw numbers.
 
 **Example**
 
@@ -1345,8 +1345,9 @@ Opens an auxiliary UART with platform default pins.
 An auxiliary UART is a serial port for talking to other devices — GPS
 modules, AT-command radios, another microcontroller — separate from the
 console UART Frothy itself lives on (which is never available here).
-`port` counts the auxiliary ports: the ESP32 DevKit V1 has two, `0` and
-`1`. The format is fixed 8N1 with no flow control, and `baud` is the plain
+`port` counts the auxiliary ports from `0`; how many a board has depends
+on its chip (the classic ESP32 DevKit V1, for example, has two). The
+format is fixed 8N1 with no flow control, and `baud` is the plain
 rate — the `$baud_*` constants are just named integers for the common
 ones. This form leaves the pin choice to the chip's per-port defaults,
 which may not be routed anywhere useful on your board; when in doubt, use
@@ -1465,8 +1466,9 @@ whole chain of sensor breakouts. `freq` is the clock in Hz — `100000`
 (standard) works with everything; `400000` (fast mode) with most modern
 parts. The bus lines need pull-up resistors; nearly every breakout board
 ships with them soldered on, so this usually costs no thought. `$sda` and
-`$scl` name the board's conventional pins (GPIO 21 and 22 on the DevKit
-V1). The handle is volatile — reopen the bus in `boot`.
+`$scl` always name your board's conventional I2C pins — use them instead
+of raw pin numbers and the code stays portable. The handle is volatile —
+reopen the bus in `boot`.
 
 **Example**
 

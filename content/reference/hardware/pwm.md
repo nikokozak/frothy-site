@@ -56,21 +56,25 @@ error.
 
 ## Which Pins Can PWM
 
-Any output-capable GPIO can carry PWM — the ESP32 routes its PWM peripheral
-through the pin matrix, so there is no special "PWM pin" set the way there
-is for analog input. Two limits still apply on the ESP32 DevKit V1:
+Any output-capable GPIO can carry PWM — the chip routes its PWM peripheral
+through the pin matrix, so there is no special "PWM pin" set the way analog
+input is tied to ADC1. Two limits apply on every board:
 
-- **Input-only pins can't.** GPIO 34, 35, 36, and 39 have no output driver;
-  opening PWM on them fails.
-- **GPIO 6–11 are wired to the SPI flash chip.** They count as output-capable,
-  so `pwm.open` accepts them — but driving them corrupts the firmware's own
-  flash bus and typically crashes the board. Never use them.
+- **Input-only pins can't.** A pin with no output driver rejects
+  `pwm.open`. Which pins those are is a property of your board — on the
+  classic ESP32 DevKit V1, for example, GPIO 34, 35, 36, and 39 are
+  input-only.
+- **Never drive the flash pins.** The pins wired to the module's SPI flash
+  chip count as output-capable, so `pwm.open` accepts them — but driving
+  them corrupts the firmware's own flash bus and typically crashes the
+  board. Check your board's pinout for which to avoid (on classic ESP32
+  modules, for example, GPIO 6–11).
 
 A pin already held by an open channel reports `busy` for a different
 frequency, and plain `gpio.write` / `gpio.mode` on it also report `busy`
 (a digital write would silently detach the pin from its PWM signal). An
 exact repeat of the same `pwm.open` returns the existing handle. Hardware
-channels are limited — four concurrent channels on the shipped builds — so
+channels are limited — four concurrent channels on current boards — so
 `pwm.open` beyond that returns an error until one is closed.
 
 ## Handle Lifetime
