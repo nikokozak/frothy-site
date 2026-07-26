@@ -85,9 +85,12 @@ save
 What is saved here is the overlay slot `cursor` plus the persistable record
 value it owns.
 
-At the prompt, `save` has two non-error response shapes:
+At the prompt, `save` has three non-error response shapes:
 
 - `ok` with no notice means the new overlay was made durable
+- `notice: saved; handle values stored as nil (100)` followed by its details
+  and `ok` means the overlay was made durable, with the named slots written as
+  `nil`
 - `notice: not saved (13)` followed by its details and `ok` means evaluation
   completed, but the durable write did not happen
 
@@ -95,26 +98,56 @@ At the prompt, `save` has two non-error response shapes:
 capacity or storage I/O fails. Those responses use an `error:` headline and do
 not end in `ok`.
 
-For example, a top-level live handle prevents a snapshot:
+### Live Handles and `save`
+
+A handle is a live connection to hardware. Nothing in a saved image can carry
+one: after a reboot the peripheral is closed and the number that named it means
+nothing. So `save` stores those slots as `nil` and says which ones:
+
+```text
+> save
+notice: saved; handle values stored as nil (100)
+detail: 'led' was stored as nil - recreate it in boot so a reboot brings it back
+ok
+>
+```
+
+Your running program is untouched—`led` still holds its open channel, the LED
+stays lit, and you keep working. Only the image says `nil` there. Put the
+opening step in `boot` and the next reboot brings the resource back:
+
+```frothy
+led is pwm.open: $led_builtin, 1000
+
+boot is fn [
+  set led to pwm.open: $led_builtin, 1000
+]
+
+save
+```
+
+A few cases still refuse rather than write `nil`, because `nil` there could
+lose something the device cannot recover: a live Bluetooth connection, a slot
+installed in library mode, and more handle-bound slots than the device can hold
+at once. Those keep the older response:
 
 ```text
 > save
 notice: not saved (13)
-detail: cannot save slot 'appuart' - bound to a live handle or buffer
+detail: cannot save slot 'link' - bound to a live handle or buffer
 ok
 >
 ```
 
 The live overlay remains usable and the previously saved overlay remains
 intact. Close the resource, rebind the named top-level slot to `nil` or another
-persistable value, and save again. Hardware needed after restore belongs in
-`boot`.
+persistable value, and save again.
 
-The notice presentation applies only when the complete prompt form is bare
-`save` or `save:`. When `save:` is evaluated as part of another word or
-expression, the same condition is `error: not saved (13)`. That failure can be
-caught by `attempt`/`rescue` and stops the rest of the current form. See the
-complete [error and notice contract](/errors/#code-13).
+Both notice shapes belong to the complete prompt form—bare `save` or `save:`.
+When `save:` is evaluated as part of another word or expression it never writes
+`nil`; an unpersistable slot is `error: not saved (13)`, which can be caught by
+`attempt`/`rescue` and stops the rest of the current form. See the complete
+[error and notice contract](/errors/#code-13).
 
 **`restore`** *(interactive base image)*
 
@@ -226,7 +259,8 @@ The important public constraints are stable:
 - overlay bindings are restored by symbol identity
 - persistable code, text, records, and cells payload are serialized as values,
   not raw pointers
-- native driver handles and live execution state do not persist
+- native driver handles and live execution state do not persist; a slot holding
+  one is saved as `nil`
 - incompatible snapshots must be rejected rather than half-restored
 
 That is why persisted code can call `gpio.write` after restore without storing

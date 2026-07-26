@@ -447,6 +447,11 @@ overlay to flash so it survives power loss; nothing is persisted until you
 say so. What does not persist: live handles, registered events, and
 transient `Bytes`. Re-establish those in `boot`.
 
+A slot holding a live handle is written as `nil` and named in the response;
+your running program keeps the handle, so saving never interrupts the
+hardware you are working on. Inside a larger form, `save:` refuses instead —
+see [image and persistence](/reference/device/image-and-persistence/).
+
 **Example**
 
 ```frothy

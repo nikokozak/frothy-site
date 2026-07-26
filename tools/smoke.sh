@@ -76,7 +76,10 @@ done
 grep -q 'data-reference-catalog' "$ERRORS_PAGE" || fail "errors page missing catalog shell"
 grep -q 'data-diagnostic-catalog' "$ERRORS_PAGE" || fail "errors page missing diagnostic hook"
 grep -Fq '13 — not saved' "$ERRORS_PAGE" || fail "errors page missing save status"
-grep -Fq 'only a nonfatal notice' "$ERRORS_PAGE" || fail "errors page loses notice semantics"
+grep -Eq "id=[\"']?notice-100[\"'> ]" "$ERRORS_PAGE" ||
+  fail "errors page missing notice-100 anchor"
+grep -Fq '100 — saved; handle values stored as nil' "$ERRORS_PAGE" ||
+  fail "errors page loses notice semantics"
 
 # Contact email must not appear as a harvestable plain-text address in the source.
 grep -q 'nkozak@nyu.edu' public/contact/index.html && fail "contact email is plain-text in source" || true

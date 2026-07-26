@@ -106,7 +106,9 @@ A peripheral or storage operation failed. Check power, wiring, media, and device
 <a id="code-13"></a>
 **`13 — not saved`** *(persistence)*
 
-Volatile state cannot be made durable. A rejected store is an error. An unpersistable overlay is only a nonfatal notice when the entire prompt form is bare `save` or `save:`; rebind the named slot and retry.
+Volatile state cannot be made durable. A rejected store is an error. Inside any larger form, `save:` raises this and stops the rest of that form; you can catch it with `attempt`/`rescue`.
+
+At the prompt, a bare `save` or `save:` stores slots holding handle values as nil and reports [notice 100](#notice-100) instead. It still refuses with this code when the value cannot be made nil safely: a live Bluetooth connection, a slot installed in library mode, or more handle-bound slots than the device can hold at once. Rebind the named slot and retry.
 
 ---
 
@@ -191,3 +193,14 @@ The Bluetooth peer disconnected. Reconnect before using peer-owned state.
 **`25 — busy`** *(resource)*
 
 A valid exclusive resource is already claimed. Reuse or close its existing handle, or select a different resource.
+
+---
+
+## Notice Codes
+
+A notice reports something worth saying about a form that succeeded. Notice codes start at 100 so they can never be confused with a status code; they never appear as an error and cannot be caught.
+
+<a id="notice-100"></a>
+**`100 — saved; handle values stored as nil`** *(persistence)*
+
+`save` at the prompt kept your program running and wrote everything the image can carry. The slots named in the detail line hold handles — live connections to hardware — and no saved image can carry those, so they were stored as `nil`. Open those resources in `boot` and a reboot brings them back.
