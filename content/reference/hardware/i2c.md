@@ -105,9 +105,9 @@ contract, or a larger transaction, compose it with raw `i2c.write` and
 
 ## Persistence Pattern
 
-Handles are volatile and make `save` fail while stored in a project slot. Keep
-the durable binding non-handle, open the bus at boot, and explicitly release it
-before saving:
+Handles are volatile: `save` writes a slot holding one as `nil` and names it,
+so the image never carries a bus that will not exist after a reboot. Keep the
+durable binding non-handle and open the bus from `boot`:
 
 ```frothy
 bus is false

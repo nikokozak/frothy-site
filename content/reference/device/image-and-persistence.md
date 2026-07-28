@@ -144,10 +144,12 @@ intact. Close the resource, rebind the named top-level slot to `nil` or another
 persistable value, and save again.
 
 Both notice shapes belong to the complete prompt form—bare `save` or `save:`.
-When `save:` is evaluated as part of another word or expression it never writes
-`nil`; an unpersistable slot is `error: not saved (13)`, which can be caught by
-`attempt`/`rescue` and stops the rest of the current form. See the complete
-[error and notice contract](/errors/#code-13).
+Inside another word or expression, `save:` does not save at all: it answers
+`error: prompt only (26)` and stops the rest of that form. Saving replaces the
+image the running program is executing from, so it belongs to the prompt; the
+same holds for `restore` and `dangerous.wipe`. The error is catchable with
+`attempt`/`rescue`. See the complete
+[error and notice contract](/errors/#code-26).
 
 **`restore`** *(interactive base image)*
 

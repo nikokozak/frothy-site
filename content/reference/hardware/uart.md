@@ -101,9 +101,10 @@ running form needs one printable data line from the human console. Use console
 routing only when you intentionally want the prompt and all console output to
 move to another UART.
 
-UART handles are volatile. Close them, replace top-level handle bindings, and
-reopen required ports from `boot` before using `save` and `restore`. If a
-top-level UART handle remains, a bare `save` or `save:` prompt form produces a
-nonfatal [`not saved (13)` notice](/errors/#code-13); the live session
-continues, but the durable image is not replaced. A save inside a larger form
-is an error instead.
+UART handles are volatile, so reopen required ports from `boot`. A top-level
+UART handle does not block a save: the prompt's `save` writes that slot as
+`nil`, names it in a [`saved; handle values stored as nil (100)`
+notice](/errors/#notice-100), and leaves your open port running. `save` inside
+a word or larger form does not save at all — it answers [`prompt only
+(26)`](/errors/#code-26), because saving replaces the image the running program
+is executing from.

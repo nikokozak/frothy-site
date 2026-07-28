@@ -90,10 +90,12 @@ library cannot invent a safe new Handle kind; adding a handle-bearing
 capability requires corresponding core and platform support.
 
 Bytes and Handles are volatile. Pack Bytes into Text for persistence. A Handle
-may live in a top-level slot during a session, but `save` rejects the overlay
-while it remains there. Neither belongs in cells or record fields. Close open
-resources and rebind top-level Handle names before `save`; reopen them from
-`boot` after restore.
+may live in a top-level slot during a session; `save` writes that slot as `nil`
+and names it, so the resource is absent after a reboot unless `boot` opens it
+again. Neither belongs in cells or record fields. Note that a native must not
+call the persistence entries while Frothy code is running — they answer
+[`prompt only (26)`](/errors/#code-26), because they replace the image the
+caller is executing from.
 
 The Concepts guide gives the complete reusable pattern in [Persist the Recipe,
 Not the Handle](/guide/10-snapshots-and-persistence/#persist-the-recipe-not-the-handle).

@@ -106,9 +106,11 @@ A peripheral or storage operation failed. Check power, wiring, media, and device
 <a id="code-13"></a>
 **`13 — not saved`** *(persistence)*
 
-Volatile state cannot be made durable. A rejected store is an error. Inside any larger form, `save:` raises this and stops the rest of that form; you can catch it with `attempt`/`rescue`.
+Volatile state cannot be made durable. A rejected store is an error.
 
 At the prompt, a bare `save` or `save:` stores slots holding handle values as nil and reports [notice 100](#notice-100) instead. It still refuses with this code when the value cannot be made nil safely: a live Bluetooth connection, a slot installed in library mode, or more handle-bound slots than the device can hold at once. Rebind the named slot and retry.
+
+Inside a program, `save:` does not reach this check at all — see [code 26](#code-26).
 
 ---
 
@@ -193,6 +195,13 @@ The Bluetooth peer disconnected. Reconnect before using peer-owned state.
 **`25 — busy`** *(resource)*
 
 A valid exclusive resource is already claimed. Reuse or close its existing handle, or select a different resource.
+
+---
+
+<a id="code-26"></a>
+**`26 — prompt only`** *(persistence)*
+
+This operation replaces the running program; issue it as its own complete prompt form. `save`, `restore`, and `dangerous.wipe` swap the image the running program is executing from, so they refuse while any word, event body, or `boot` routine is running. Catchable with `attempt`/`rescue`. Close the form first and run the word on its own.
 
 ---
 

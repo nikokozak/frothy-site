@@ -60,26 +60,28 @@ It does not include:
 
 Put hardware setup in `boot` if it must happen after restore.
 
-## When Save Is Not Durable
+## What Save Does With Live Handles
 
-Live `Handle` values cannot be serialized. If a top-level binding still owns
-one, a bare `save` reports a notice rather than pretending the image was
-written:
+Live `Handle` values cannot be serialized. A bare `save` writes those slots as
+`nil` and tells you which ones, instead of refusing:
 
 ```text
 > save
-notice: not saved (13)
-detail: cannot save slot 'appuart' - bound to a live handle or buffer
+notice: saved; handle values stored as nil (100)
+detail: 'appuart' was stored as nil - recreate it in boot so a reboot brings it back
 ok
 >
 ```
 
-This is not a fatal programming error. The current overlay and device session
-remain usable, so you can keep evaluating code. It is also not a successful
-save: the previous durable overlay remains unchanged, and that older overlay
-is what a later reboot or `restore` will load.
+The save happened. Your session is untouched — `appuart` still holds its open
+port and you keep working. Only the image says `nil` there, which is all it
+could ever say, so put the reopening step in `boot`.
 
-Release the resource and replace its top-level binding before trying again:
+A few cases still refuse outright, because `nil` would lose something the
+device cannot recover: a live Bluetooth connection, a slot installed in library
+mode, and more handle-bound slots than the device can hold at once. Those
+report `notice: not saved (13)`, leave the previous durable overlay unchanged,
+and ask you to release the resource and replace its binding first:
 
 ```frothy
 uart.close: appuart
@@ -88,9 +90,8 @@ save
 ```
 
 If the resource is needed after restore, reopen it from `boot` instead of
-persisting its native handle. See [Error and notice codes](/errors/#code-13)
-for the distinction between a standalone save notice and a save error inside a
-larger form.
+persisting its native handle. See [Error and notice codes](/errors/#code-26)
+for why a save inside a larger form is refused outright.
 
 ### Persist the Recipe, Not the Handle
 

@@ -92,27 +92,42 @@ recovery.
 
 ## Notices Are Not Errors
 
-A notice says that a requested side effect did not happen, but evaluation can
-continue. The current example is `save` when the overlay contains a live
-handle or buffer:
+A notice says something worth knowing about a form that completed. `save` uses
+two of them. A slot holding a live handle is written as `nil`, because no image
+can carry a handle, and the notice says which slots:
 
 ```text
 > save
-notice: not saved (13)
-detail: cannot save slot 'appuart' - bound to a live handle or buffer
+notice: saved; handle values stored as nil (100)
+detail: 'appuart' was stored as nil - recreate it in boot so a reboot brings it back
 ok
 >
 ```
 
-The `ok` means the form completed and the prompt or source batch may continue.
-It does not mean a new durable image was written. The live overlay remains
-usable, and the previous saved image remains the one restored after reboot.
+That save did happen. Your program keeps running with its handle open; only the
+image says `nil` there.
+
+The other shape reports a save that did not happen at all — a live Bluetooth
+connection, a library-mode slot, or more handle-bound slots than the device can
+hold at once:
+
+```text
+> save
+notice: not saved (13)
+detail: cannot save slot 'link' - bound to a live handle or buffer
+ok
+>
+```
+
+Here the `ok` means the form completed and the prompt or source batch may
+continue. It does not mean a new durable image was written: the live overlay
+remains usable, and the previous saved image is the one restored after reboot.
 
 The notice presentation applies only when the complete prompt form is bare
-`save` or `save:`. If `save:` is part of a word or larger expression, the same
-code 13 is an error instead. That lets the caller handle it with
-`attempt`/`rescue` and prevents later work in that form from silently
-continuing.
+`save` or `save:`. Inside a word or a larger expression, `save:` does not save
+at all: it answers `prompt only (26)` and stops the rest of that form. Saving
+replaces the image the running program is executing from, so it belongs to the
+prompt. The error is catchable with `attempt`/`rescue` like any other.
 
 ## Catch Runtime Errors
 

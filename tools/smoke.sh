@@ -70,7 +70,7 @@ done
 
 # Public host tooling links directly to stable error-code anchors.
 ERRORS_PAGE="public/errors/index.html"
-for ((code = 0; code <= 25; code++)); do
+for ((code = 0; code <= 26; code++)); do
   grep -Eq "id=[\"']?code-${code}[\"'> ]" "$ERRORS_PAGE" || fail "errors page missing code-${code} anchor"
 done
 grep -q 'data-reference-catalog' "$ERRORS_PAGE" || fail "errors page missing catalog shell"
