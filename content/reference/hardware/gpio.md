@@ -79,13 +79,14 @@ above-half? is adc.above?: $a0, 2047
 | --- | --- | --- |
 | [`adc.read`](/reference/words/#adc-read) | `Int` | Read the platform ADC value |
 | [`adc.above?`](/reference/words/#adc-above) | `Bool` | Compare one reading with a threshold |
-| [`adc.percent`](/reference/words/#adc-percent) | `Int` | Map the ESP32 0–4095 range to 0–100 |
+| [`adc.percent`](/reference/words/#adc-percent) | `Int` | Map the converter's full range to 0–100 |
 
-Analog reads accept only pins on the chip's ADC1 unit; any other pin fails
-with `bad value`. ADC2 is not exposed because it shares hardware with the
-Wi-Fi radio. Which pins sit on ADC1 depends on your board (on the classic
-ESP32 DevKit V1, for example, GPIO 32–39) — the board's `$a0` constant
-always names a safe analog pin.
+Analog reads accept only pins on the chip's first ADC unit; any other pin
+fails with `bad value`. A second unit, where the chip has one, is not exposed
+when it shares hardware with the radio — reads there fail or return noise
+whenever the radio is on. Which pins carry analog input depends on your board
+(on the classic ESP32 DevKit V1, for example, GPIO 32–39) — the board's `$a0`
+constant always names a safe analog pin.
 
 An unconnected analog pin floats. A stable application circuit needs the
 appropriate source impedance, reference, filtering, and calibration; the

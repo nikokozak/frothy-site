@@ -949,17 +949,18 @@ led.blink: 3, 75
 
 Reads a raw ADC value from a pin.
 
-The result is a raw converter count, not a voltage: on the current ESP32
-profile the range is `0` through `4095` across roughly the 0–3.3 V input
-span, and readings are noisy by nature. Read real values from your circuit
+The result is a raw converter count, not a voltage. The range is the
+converter's resolution — `0` through `4095` on every board shipped so far,
+across roughly the 0–3.3 V input span — and readings are noisy by nature. Read real values from your circuit
 before depending on exact thresholds, and average several readings when
 stability matters.
 
-Only pins on the chip's ADC1 unit are accepted; other pins fail with a
-`bad value` error. ADC2 is not exposed because it shares hardware with the
-Wi-Fi radio. Which pins sit on ADC1 depends on your board (on the classic
-ESP32 DevKit V1, for example, GPIO 32–39); the board's `$a0` constant
-always names a safe analog pin, so prefer it over raw numbers.
+Only pins on the chip's first ADC unit are accepted; other pins fail with a
+`bad value` error. A second unit, where the chip has one, is not exposed when
+it shares hardware with the radio. Which pins carry analog input depends on
+your board (on the classic ESP32 DevKit V1, for example, GPIO 32–39); the
+board's `$a0` constant always names a safe analog pin, so prefer it over raw
+numbers.
 
 **Example**
 

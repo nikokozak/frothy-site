@@ -57,8 +57,8 @@ error.
 ## Which Pins Can PWM
 
 Any output-capable GPIO can carry PWM — the chip routes its PWM peripheral
-through the pin matrix, so there is no special "PWM pin" set the way analog
-input is tied to ADC1. Two limits apply on every board:
+to the pin, so there is no special "PWM pin" set the way analog input is tied
+to particular converter pins. Two limits apply on every board:
 
 - **Input-only pins can't.** A pin with no output driver rejects
   `pwm.open`. Which pins those are is a property of your board — on the

@@ -124,6 +124,27 @@ cleanly rejected at restore under an incompatible profile — your port does not
 need to check this, but it must preserve the bytes faithfully so the kernel's
 check works. Preserve bytes exactly; do not reorder or pad the stream.
 
+**If your mount hands back a pointer into flash**, two predicates tell the
+kernel what that pointer is, and both must be right or it will copy image
+bytes it should borrow — or borrow bytes it should copy:
+
+- `fr_platform_persist_pointer_is_mounted(ptr, length)` — is this span inside
+  the image currently mounted?
+- `fr_platform_persist_code_pointer_is_direct(ptr, length)` — is it inside the
+  mounted image *or* the candidate one being validated? Saved code executes
+  straight out of the answer to this, which is what makes an image
+  flash-resident instead of a RAM copy.
+
+A port that copies images into RAM answers `false` to both and is done; the
+kernel then keeps its own copies. There is no third case to handle.
+
+**Invalidating the old mapping on commit is allowed.**
+`fr_platform_persist_mount_commit` may unmap or repoint whatever the previous
+mount handed out. The kernel guarantees no VM frame is executing from it: the
+words that replace the image refuse while an evaluation is running, and answer
+`prompt only (26)` instead. Your port does not need to defer, refcount, or
+keep the old mapping alive.
+
 ## The event contract
 
 Frothy's `every`, `after`, and pin-edge handlers are driven by a candidate

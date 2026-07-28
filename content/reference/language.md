@@ -14,7 +14,7 @@ the device installs that source into its current image, and you can inspect,
 replace, save, and run the result without rebuilding firmware.
 
 This is the whole language, from the first expression to the edges of the
-current ESP32 profile. Read it top to bottom once, then use the [word
+profile your board runs. Read it top to bottom once, then use the [word
 catalog](/reference/words/) when you only need a signature.
 
 ## The Thirty-Second Version
@@ -88,9 +88,11 @@ unit suffix on literals: a duration is a plain integer in the unit the word
 documents. Most timing words take milliseconds (`wait: 500`); words with a
 different unit carry it in their name, such as `pulse.duration-ns`.
 
-On the current 32-bit ESP32 profile, integers range from `-1073741824` through
-`1073741823`. An out-of-range literal or arithmetic result is an error; values
-do not silently wrap.
+Integers are whole numbers with a range set by the profile. On a 32-bit
+profile — which every shipped board uses today — that range is `-1073741824`
+through `1073741823`. An out-of-range literal or arithmetic result is an error;
+values do not silently wrap. `status` reports the running board's `int_min` and
+`int_max`.
 
 The arithmetic operators are `+`, `-`, `*`, `/`, and `%`.
 
@@ -144,7 +146,8 @@ Use parentheses when the grouping is not immediately obvious.
 
 ## Values
 
-The current ESP32 profile exposes these value families:
+A profile chooses which value families it can afford. The profile every
+shipped board runs exposes all of these:
 
 | Value | Example | Lifetime |
 | --- | --- | --- |
@@ -318,8 +321,8 @@ The parentheses in the second line deliberately keep the inner call inside
 Calls are checked against the word's arity. Too few or too many arguments are
 errors.
 
-Words may call themselves recursively. The ESP32 profile currently allows 24
-nested calls.
+Words may call themselves recursively. The call-depth limit is a profile
+setting; it is 24 nested calls on the shipped profile.
 
 ```frothy
 to fib with n [
@@ -505,8 +508,9 @@ set readings[1] to 22
 readings[0] + readings[1]       -- 33
 ```
 
-An out-of-bounds index is an error. The current ESP32 profile allows up to 32
-elements in one Cells value and 128 cell elements across the live image.
+An out-of-bounds index is an error. Both sizes are profile settings: the
+shipped profile allows up to 32 elements in one Cells value and 128 cell
+elements across the live image.
 
 Cells and their persistable contents are included by `save`. Transient `Bytes`
 and `Handle` values are rejected as cell contents.
@@ -533,8 +537,8 @@ point -> x                       -- 3
 set point -> y to 12
 ```
 
-Field names cannot contain dots. The current ESP32 profile permits 4 fields per
-shape. Record construction inside a word body is not currently supported;
+Field names cannot contain dots. The field count is a profile setting; the
+shipped profile permits 4 per shape. Record construction inside a word body is not currently supported;
 construct records at the top level and pass them into words.
 
 Record shapes and values are persistable. Transient `Bytes` and `Handle` values
