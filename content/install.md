@@ -36,10 +36,11 @@ again.
 ## 3. Start Writing
 
 Continue to the [browser editor](https://app.frothy.dev/editor), choose **Connect**, and select the
-same board. Put the cursor in a complete code-block and choose **Run Block**,
-or click the play marker in the gutter next to the line. **Run File** runs the
-open file from the top, splicing in any `include` directives; running
-`main.fr` starts the program fresh.
+same board. Put the cursor on a line and choose **Run Line**, or click the play
+marker in the gutter next to the line. A line inside a block runs on its own.
+The line that opens the block and the line that closes it run the whole block.
+**Run File** runs the open file from the top, splicing in any `include`
+directives; running `main.fr` starts the program fresh.
 
 Edits save locally in the browser. Use the file navigator's download button
 when you want a normal copy of the project.
