@@ -659,6 +659,34 @@ wipe-user
 
 ---
 
+<a id="close-handles"></a>
+**`close-handles`** *(hardware command)* `close-handles`
+
+Closes every open handle and keeps your program.
+
+When you interrupt a running program, the program stops but its handles
+stay open. The board keeps the pins, and the next program that wants one of
+them reports `busy`. `close-handles` releases all of them at the prompt, so
+you do not have to name each handle or reach for `wipe-user`, which also
+removes your definitions.
+
+Your words, your slot values, and your registered events are not changed. A
+slot that held a closed handle keeps the old value, and a program that uses
+it reports `bad handle`. Open the resource again to get a new handle.
+
+The response gives the number of handles it closed. If the board still holds
+a resource, the response names its kind on a following line.
+
+**Example**
+
+```text
+close-handles
+closed 2 handles
+still open: pwm
+```
+
+---
+
 <a id="print"></a>
 **`print`** *(io)* `(Text|Bytes) -> nil`
 
