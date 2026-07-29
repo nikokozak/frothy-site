@@ -81,7 +81,7 @@ page. Use Chrome or Edge on desktop.
 - **Split** — toggles the MCU output between sitting below the editor and beside it; the choice is remembered.
 - **Autosaved locally** — edits are saved in this browser automatically. If storage fails, the editor says so and keeps Download available.
 - **Upload / Download** — the file navigator's upload button adds a `.fr` file to the project; Download packages the project back up.
-- **Errors** — Run File stops at the first device error, and diagnostic detail stays grouped with the error.
+- **Errors** — Run File stops at the first device error, and diagnostic detail stays grouped with the error. When the device points at a token, the editor underlines that token in your code and puts the device's own sentence on hover; the mark clears on your next edit or run. A form the editor cannot finish reading is never sent: it names the line whose bracket is still open and marks that bracket.
 
 ## Recovery
 

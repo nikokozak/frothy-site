@@ -27,8 +27,8 @@ and the prompt shows you where:
 > gpio.hihg: 5
 error: not found (7)
 name: gpio.hihg
-gpio.hihg: 5
-^^^^^^^^^
+source: gpio.hihg: 5
+        ^^^^^^^^^
 >
 ```
 
@@ -37,17 +37,18 @@ broke the parse:
 
 ```text
 > to [ ]
-error: bad source (8)
+error: invalid (8)
 unexpected token
-to [ ]
-   ^
+source: to [ ]
+           ^
 >
 ```
 
-The caret is under the offending span, the `name:` line names the value the
-reader could not resolve, and the parenthesized number is the error code. After
-any of these, the prompt is still yours. An error never saves automatically;
-effects completed earlier in a multi-expression form may still be live.
+The `source:` line echoes your own line back, the caret sits under the
+offending span, the `name:` line names the value the reader could not resolve,
+and the parenthesized number is the error code. After any of these, the prompt
+is still yours. An error never saves automatically; effects completed earlier
+in a multi-expression form may still be live.
 
 ## Rejected Values
 
