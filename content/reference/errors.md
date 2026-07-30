@@ -92,7 +92,7 @@ Evaluation was deliberately interrupted and is not catchable. At the prompt this
 <a id="code-11"></a>
 **`11 — corrupt data`** *(device)*
 
-Persisted or incoming data failed validation. Restore, wipe, rebuild, or reacquire it instead of using a partial result.
+Persisted or incoming data failed validation: a bad magic number, a bad checksum, or a bad length. The data is damaged, so restore, wipe, rebuild, or reacquire it instead of using a partial result. An image the device refuses because another release wrote it is not damaged and reports `other release` instead.
 
 ---
 
@@ -202,6 +202,13 @@ A valid exclusive resource is already claimed. Reuse or close its existing handl
 **`26 — prompt only`** *(persistence)*
 
 This operation replaces the running program; issue it as its own complete prompt form. `save`, `restore`, and `dangerous.wipe` swap the image the running program is executing from, so they refuse while any word, event body, or `boot` routine is running. Catchable with `attempt`/`rescue`. Close the form first and run the word on its own.
+
+---
+
+<a id="code-27"></a>
+**`27 — other release`** *(persistence)*
+
+The saved image was written by a different Frothy release. The image is not damaged and your board is healthy: a release that adds or changes a word changes the shape of the image, and the device refuses an image it cannot read as its own. You see this at boot, when the device finds a saved image it cannot load, and from `restore`. Save again to write an image this release can read.
 
 ---
 

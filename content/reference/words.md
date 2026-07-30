@@ -659,30 +659,47 @@ wipe-user
 
 ---
 
+<a id="commands"></a>
+**`commands`** *(installation command)* `commands`
+
+Lists the command names you can type at the prompt, including itself.
+
+`words` lists the words in the image. The commands are not words: they are
+names the prompt reads before it evaluates the line. This lists those.
+
+**Example**
+
+```text
+commands
+status words events commands clear see apply run install-library install-user wipe-user mem
+```
+
+---
+
 <a id="close-handles"></a>
-**`close-handles`** *(hardware command)* `close-handles`
+**`close-handles`** *(hardware)* `close-handles -> Int`
 
-Closes every open handle and keeps your program.
+Closes every open handle and returns how many it closed.
 
-When you interrupt a running program, the program stops but its handles
-stay open. The board keeps the pins, and the next program that wants one of
-them reports `busy`. `close-handles` releases all of them at the prompt, so
-you do not have to name each handle or reach for `wipe-user`, which also
-removes your definitions.
+When you interrupt a running program, the program stops but its handles stay
+open. The board keeps the pins, and the next program that wants one of them
+reports `busy`. `close-handles` releases all of them, so you do not have to
+name each handle or reach for `wipe-user`, which also removes your
+definitions.
 
 Your words, your slot values, and your registered events are not changed. A
 slot that held a closed handle keeps the old value, and a program that uses
 it reports `bad handle`. Open the resource again to get a new handle.
 
-The response gives the number of handles it closed. If the board still holds
-a resource, the response names its kind on a following line.
+If the board still holds a resource, a notice names the kinds that are still
+open. Inside a larger form `close-handles:` refuses with `prompt only`: a
+program must not close the handles its own words are using.
 
 **Example**
 
-```text
+```frothy
 close-handles
-closed 2 handles
-still open: pwm
+2
 ```
 
 ---
