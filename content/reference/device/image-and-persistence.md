@@ -249,6 +249,20 @@ Typical recovery flow:
 4. Fix the bad slot, or run `dangerous.wipe`.
 ```
 
+## A Saved Image Belongs To One Release
+
+A saved image records the release that wrote it. A Frothy release that adds or
+changes a word changes the shape of the image, so a device refuses an image
+another release wrote. It reports `other release` at boot and from `restore`.
+
+Nothing is damaged when this happens. The board is healthy and the image is
+intact; this firmware cannot read it. Run `save` to write an image this release
+can read, or `wipe-user` to clear the saved state.
+
+The web flasher erases the whole board, so a board you flash from the browser
+never shows this. You see it when you flash by another route and leave the old
+saved data in place.
+
 ## Snapshot Format Boundary
 
 The public contract is the model above: base image, overlay image, pointer-safe
