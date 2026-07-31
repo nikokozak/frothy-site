@@ -131,6 +131,16 @@ The first successful connection is not a `wifi.reconnected` event. These forms
 describe a drop and recovery after the device has already obtained an address.
 See [Wi-Fi, HTTP & TCP](/reference/modules/wifi/) for connection behavior.
 
+## RP2040 Support
+
+The Nano RP2040 Connect and the XIAO RP2040 support timer and GPIO events.
+The Nano also supports Wi-Fi lifecycle events through its NINA radio.
+The XIAO RP2040 has no Wi-Fi radio.
+
+On both RP2040 boards, `save` disables interrupts during each flash erase and
+program step. A timer can run late during these steps. The device can miss GPIO
+edges during a flash step. Do not run `save` while each GPIO edge is critical.
+
 ## Persistence And Clearing
 
 Event registrations are part of the project overlay. `save` persists them,

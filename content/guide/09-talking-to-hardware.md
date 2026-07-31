@@ -15,15 +15,17 @@ Start with the small surface: `led.*`, `gpio.*`, `adc.read`, `wait`, and
 
 ## Board Identifiers
 
-Most examples use:
+Frothy supports these official board identifiers:
 
 ```text
 esp32_devkit_v1
+seeed_xiao_esp32s3
+seeed_xiao_esp32c6
+arduino_nano_rp2040_connect
+seeed_xiao_rp2040
 ```
 
-The other official identifiers are `seeed_xiao_esp32s3` and
-`seeed_xiao_esp32c6`. Choose the one matching the board selected in the
-flasher.
+Choose the identifier that matches the board.
 
 ## LED
 

@@ -441,11 +441,14 @@ one + 41
 
 Writes the current overlay image to persistent storage.
 
-Everything you have defined at the prompt — words, top-level values,
-records — lives in an overlay over the base image. `save` writes that
-overlay to flash so it survives power loss; nothing is persisted until you
-say so. What does not persist: live handles, registered events, and
-transient `Bytes`. Re-establish those in `boot`.
+Words, top-level values, records, and event registrations live in an overlay
+over the base image. `save` writes that overlay to flash, so it survives power
+loss. Nothing persists until you run `save`.
+
+Frothy reinstalls each event registration after startup or `restore`. A restored
+timer starts its interval again. Elapsed timer time and queued candidates do not
+persist. Live handles and transient `Bytes` also do not persist. Re-establish
+live handles in `boot`.
 
 A slot holding a live handle is written as `nil` and named in the response;
 your running program keeps the handle, so saving never interrupts the
