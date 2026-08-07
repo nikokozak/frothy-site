@@ -86,9 +86,20 @@ wifi.connect:
 wifi.ready?:
 ```
 
-`http.get` returns transient Bytes for a bounded one-shot response. TCP uses a
-live Handle for streaming. The [Wi-Fi, HTTP & TCP guide](/reference/modules/wifi/)
-covers reconnect events, limits, cleanup, and persistence.
+Use `http.get` and `http.post` for bounded one-shot responses. Both return
+transient Bytes. TCP uses live handles for client streams and listeners.
+
+To serve a page without an existing network, host one and open port 80:
+
+```frothy
+wifi.host: "frothy", ""
+wifi.ip:
+server is tcp.listen: 80
+```
+
+The bundled `examples/14-captive-portal.fr` example adds a debounced button
+that toggles the LED. The [Wi-Fi, HTTP & TCP guide](/reference/modules/wifi/)
+shows the complete serving loop and the browser-request rules.
 
 ## Bluetooth Low Energy
 

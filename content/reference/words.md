@@ -1932,7 +1932,7 @@ wifi.save: "ssid", "password"
 <a id="wifi-connect"></a>
 **`wifi.connect`** *(network)* `() -> nil`
 
-Connects Wi-Fi using stored credentials.
+Stops access-point hosting and connects Wi-Fi using stored credentials.
 
 **Example**
 
@@ -1942,10 +1942,28 @@ wifi.connect:
 
 ---
 
+<a id="wifi-host"></a>
+**`wifi.host`** *(network)* `(ssid, pass) -> nil`
+
+Starts or reconfigures a Wi-Fi access point with captive DNS.
+
+Captive DNS answers every lookup with the device's address. An empty password
+creates an open network. A nonempty password must contain 8 through 63 bytes.
+A password outside that range raises `bad value`. Hosting replaces station
+mode, and a later `wifi.connect` stops hosting.
+
+**Example**
+
+```frothy
+wifi.host: "frothy", ""
+```
+
+---
+
 <a id="wifi-ready"></a>
 **`wifi.ready?`** *(network)* `() -> Bool`
 
-Returns true when Wi-Fi is connected.
+Returns true when Wi-Fi is connected or hosting.
 
 **Example**
 
@@ -1955,15 +1973,32 @@ wifi.ready?:
 
 ---
 
+<a id="wifi-ip"></a>
+**`wifi.ip`** *(network)* `() -> Text`
+
+Returns the active interface's dotted-quad address.
+
+It returns the station address while connected and the access-point address
+while hosting. It raises `no network` when neither interface is active.
+
+**Example**
+
+```frothy
+wifi.ip:
+```
+
+---
+
 <a id="http-get"></a>
 **`http.get`** *(network)* `(url) -> Bytes`
 
-Fetches a URL and returns the response body up to the HTTP body cap.
+Fetches a plain HTTP URL and returns the complete response body.
 
 The call blocks until the response arrives or fails, and network failures
 raise catchable errors — wrap unattended fetches in `attempt`/`rescue`.
-The result is transient `Bytes`; convert or consume it in the same word.
-`wifi.connect` must have succeeded first.
+The response must fit `FR_HTTP_MAX_BODY`; an oversized response returns no
+partial result. The result is transient `Bytes`; consume or convert it in the
+same word. `wifi.connect` must have succeeded first.
 
 **Example**
 
@@ -1981,6 +2016,25 @@ Deeper: [Network module](/reference/modules/wifi/).
 
 ---
 
+<a id="http-post"></a>
+**`http.post`** *(network)* `(url, body) -> Bytes`
+
+Posts Text or Bytes to a plain HTTP URL and returns the complete response body.
+
+The request uses `Content-Type: text/plain`. Response limits, timeout, and
+errors are identical to `http.get`, including no partial result for an
+oversized response. The result is transient `Bytes`.
+
+**Example**
+
+```frothy
+http.post: "http://example.com/readings", "reading=42"
+```
+
+Deeper: [Network module](/reference/modules/wifi/).
+
+---
+
 <a id="tcp-open"></a>
 **`tcp.open`** *(network)* `(host, port) -> Handle`
 
@@ -1990,6 +2044,41 @@ Opens a TCP connection to a host and port.
 
 ```frothy
 sock is tcp.open: "example.com", 80
+```
+
+---
+
+<a id="tcp-listen"></a>
+**`tcp.listen`** *(network)* `(port) -> Handle`
+
+Opens the single TCP listener slot on a port from 1 through 65535.
+
+Repeating the same port returns the same handle. A different port returns
+`busy` while the listener is open. `tcp.close` and `close-handles` close the
+listener.
+
+**Example**
+
+```frothy
+server is tcp.listen: 80
+```
+
+---
+
+<a id="tcp-accept"></a>
+**`tcp.accept`** *(network)* `(server) -> Handle|nil`
+
+Accepts one pending TCP client without blocking.
+
+Returns `nil` when no client is waiting. Otherwise, the result is an ordinary
+TCP handle for `tcp.read`, `tcp.write`, `tcp.available`, and `tcp.close`.
+Poll it inside an `every` loop.
+
+**Example**
+
+```frothy
+to serve [ client is tcp.accept: server; if client [ tcp.close: client ] ]
+to start-serving [ every 150 [ serve: ] ]
 ```
 
 ---
@@ -2023,7 +2112,7 @@ tcp.write: sock, "ping"
 <a id="tcp-close"></a>
 **`tcp.close`** *(network)* `(sock) -> nil`
 
-Closes a TCP socket and releases its handle.
+Closes a TCP connection or listener and releases its handle.
 
 **Example**
 
