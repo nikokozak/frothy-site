@@ -32,8 +32,14 @@ From a Frothy source checkout, it builds and flashes that checkout instead.
 frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001
 ```
 
-Official board identifiers are `esp32_devkit_v1`, `seeed_xiao_esp32s3`, and
-`seeed_xiao_esp32c6`.
+Official board identifiers are:
+
+- `esp32_devkit_v1`
+- `seeed_xiao_esp32c3`
+- `seeed_xiao_esp32c6`
+- `seeed_xiao_esp32s3`
+- `seeed_xiao_rp2040`
+- `arduino_nano_rp2040_connect`
 
 **`frothy connect`** opens the simple serial REPL.
 

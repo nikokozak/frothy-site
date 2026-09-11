@@ -19,13 +19,20 @@ Frothy supports these official board identifiers:
 
 ```text
 esp32_devkit_v1
-seeed_xiao_esp32s3
+seeed_xiao_esp32c3
 seeed_xiao_esp32c6
-arduino_nano_rp2040_connect
+seeed_xiao_esp32s3
 seeed_xiao_rp2040
+arduino_nano_rp2040_connect
 ```
 
 Choose the identifier that matches the board.
+
+The XIAO ESP32C3 uses GPIO numbers and has no programmable LED.
+Its `$led_builtin` and `$led_active_level` constants are `nil`.
+Use an external LED for the LED examples and specify its GPIO pin.
+Attach the external antenna before Wi-Fi or BLE tests.
+Concurrent Wi-Fi access point and BLE connections remain unstable on this board.
 
 ## LED
 

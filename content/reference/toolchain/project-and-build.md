@@ -37,8 +37,14 @@ name = "blink"
 board = "esp32_devkit_v1"
 ```
 
-Official board identifiers are `esp32_devkit_v1`, `seeed_xiao_esp32s3`, and
-`seeed_xiao_esp32c6`.
+Official board identifiers are:
+
+- `esp32_devkit_v1`
+- `seeed_xiao_esp32c3`
+- `seeed_xiao_esp32c6`
+- `seeed_xiao_esp32s3`
+- `seeed_xiao_rp2040`
+- `arduino_nano_rp2040_connect`
 
 ## Build And Flash
 
@@ -57,7 +63,7 @@ name = "stage-lights"
 board = "esp32_devkit_v1"
 
 [deps]
-servo = { git = "https://github.com/nikokozak/frothy-servo", rev = "1efa9e4a661216183e012f4cf0df400d1f72006a" }
+servo = { git = "https://github.com/nikokozak/frothy-servo", rev = "a2e4c5fbe31105fbb2098be974a7bf0dbe1de37a" }
 blink = { path = "libs/blink" }
 ```
 
