@@ -836,19 +836,6 @@ gpio.write: $led_builtin, 1
 
 ---
 
-<a id="pin"></a>
-**`pin`** *(gpio alias)* `(pin, level) -> nil`
-
-Alias for `gpio.write`, retained for the shortest direct pin writes.
-
-**Example**
-
-```frothy
-pin: $led_builtin, 1
-```
-
----
-
 <a id="gpio-read"></a>
 **`gpio.read`** *(gpio)* `(pin) -> Int`
 

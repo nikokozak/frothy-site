@@ -52,8 +52,6 @@ gpio.low: 4
 gpio.input: 4
 ```
 
-[`pin`](/reference/words/#pin) is an alias for `gpio.write`.
-
 ## Built-In LED Helpers
 
 The LED helpers account for the board's active level:

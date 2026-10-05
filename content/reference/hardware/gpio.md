@@ -38,7 +38,6 @@ depend on the circuit, pull resistors, and selected pin.
 | --- | --- | --- |
 | [`gpio.mode`](/reference/words/#gpio-mode) | `nil` | Set mode `0` for input or `1` for output |
 | [`gpio.write`](/reference/words/#gpio-write) | `nil` | Write level `0` or `1` |
-| [`pin`](/reference/words/#pin) | `nil` | Alias for `gpio.write` |
 | [`gpio.read`](/reference/words/#gpio-read) | `Int` | Read digital level |
 | [`gpio.input`](/reference/words/#gpio-input) | `nil` | Configure input mode |
 | [`gpio.output`](/reference/words/#gpio-output) | `nil` | Configure output mode |
