@@ -47,6 +47,12 @@ Official board identifiers are:
 frothy connect
 ```
 
+`frothy connect` sends each pasted line at once and does not wait for the
+prompt. A board with a USB Serial/JTAG console (`seeed_xiao_esp32c3`,
+`seeed_xiao_esp32c6`, `seeed_xiao_esp32s3`) has no flow control. A long paste
+can lose bytes or whole lines with no error. Send a file with `frothy send`,
+which waits for the prompt after each line.
+
 **`frothy session`** opens the session transport. Add `--records` to emit the
 structured NDJSON path used by editor tooling.
 
