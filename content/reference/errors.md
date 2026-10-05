@@ -43,7 +43,7 @@ The kind is acceptable, but that particular value is invalid in this domain. Arg
 <a id="code-4"></a>
 **`4 — capacity exceeded`** *(runtime)*
 
-A fixed table, buffer, image, or other bounded store is full. Release or clear entries, or reduce what is being stored. A note line names the full store and its limit, and gives a remedy when one always works, for example `note: pending code is full (limit 687 bytes) -- a save that succeeds frees it`. A line longer than the device reads answers this code with `note: the line limit is <n> bytes`.
+A fixed table, buffer, image, or other bounded store is full. Release or clear entries, or reduce what is being stored. Many of these errors add a note line that names the full store and its limit, and gives a remedy when one always works, for example `note: pending code is full (limit 687 bytes) -- a save that succeeds frees it`. A line longer than the device reads answers this code with `note: the line limit is <n> bytes`.
 
 ---
 
@@ -208,7 +208,7 @@ This operation replaces the running program; issue it as its own complete prompt
 <a id="code-27"></a>
 **`27 — other release`** *(persistence)*
 
-The saved image has a different image format or profile hash than this firmware. The image is not damaged and your board is healthy: a release that changes the base words, the profile limits, the library natives or the image format cannot read the images of another release. You see this at boot, when the device finds a saved image it cannot load, and from `restore`. Save again to write an image this firmware can read.
+The saved image has a different image format or profile hash than this firmware. The image is not damaged and your board is healthy: the device reads an image only when both match its own (see [An Image From Another Release](/reference/device/image-and-persistence/#an-image-from-another-release)). You see this at boot, when the device finds a saved image it cannot load, and from `restore`. Save again to write an image this firmware can read.
 
 ---
 
@@ -234,4 +234,4 @@ The line was a bare word, such as `led.on`, so the prompt shows the word and run
 <a id="notice-103"></a>
 **`103 — base word replaced`** *(prompt)*
 
-A binding gave a new value to a name that held a base or library word, such as `wait is 5`. The binding stays. Before `save`, `clear` brings the old word back. After `save`, run `wipe-user` and restart the board; `wipe-user` also removes the rest of the saved program. The detail says to use another name to keep the word. Binding `boot` never gives this notice.
+A binding gave a new value to a name that held a base or library word, such as `wait is 5`. The binding stays. In the user tier, `clear` brings the old word back before `save`; after `save`, run `wipe-user` and restart the board, and note that `wipe-user` also removes the rest of the saved program. In library mode (after `install-library`) the binding is saved at once, and `clear` and `wipe-user` keep it: install the library again without it, then restart the board. The detail says to use another name to keep the word. Binding `boot` never gives this notice.

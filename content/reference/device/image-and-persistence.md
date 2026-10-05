@@ -256,11 +256,13 @@ that wrote it; `status` shows the hash as `profile_hash`. A device reads a
 saved image only when both match its own. When either differs, it reports
 `other release` at boot and from `restore`.
 
-The profile hash covers the limits of the profile, the base words with their
-slots and signatures, and the library natives built into the firmware. A
-release that changes one of them, or the image format, cannot read the images
-of the release before it. A release that keeps both reads them; the changelog
-says when a release changes the hash.
+The profile hash covers the limits and features of the profile, the slot,
+kind, value, arity and signature of each base word, the source of the base
+library, and the names and arities of the library natives built into the
+firmware. It
+does not cover the code inside a native or the names of base words. A release
+that keeps the hash and the image format reads the images of the release
+before it; the changelog says when a release changes either.
 
 Nothing is damaged when the device refuses an image. The board is healthy and
 the image is intact; this firmware cannot read it. Run `save` to write an image
