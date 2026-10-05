@@ -234,4 +234,4 @@ The line was a bare word, such as `led.on`, so the prompt shows the word and run
 <a id="notice-103"></a>
 **`103 — base word replaced`** *(prompt)*
 
-A binding gave a new value to a name that held a base or library word, such as `wait is 5`. The binding stays. Before `save`, `clear` brings the old word back; after `save`, only `wipe-user` does, and it also removes the rest of the saved program. The detail says to use another name to keep the word. Binding `boot` never gives this notice.
+A binding gave a new value to a name that held a base or library word, such as `wait is 5`. The binding stays. Before `save`, `clear` brings the old word back. After `save`, run `wipe-user` and restart the board; `wipe-user` also removes the rest of the saved program. The detail says to use another name to keep the word. Binding `boot` never gives this notice.

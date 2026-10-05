@@ -118,10 +118,16 @@ the next source form is sent. Notices alone leave the command with exit status
 zero; a true device or transport error still stops installation and returns a
 nonzero status.
 
+`frothy install` ends with `install-user`, so the board is back in the user
+tier and later definitions are user words.
+
 After a library changes, send your program again: `wipe-user`, then the
 program. A library that comes again can give its words new slots, and words
 that the board compiled before still call the old slots. Until a fix, such a
-word answers `wrong type (2)` or runs a different library word.
+word answers `wrong type (2)` or runs a different library word. If you typed
+`install-library` yourself, send `install-user` before `wipe-user`: in
+library mode, a definition after `wipe-user` can answer `corrupt data (11)`,
+and only `dangerous.wipe` recovers.
 
 ## Recovery Commands
 
