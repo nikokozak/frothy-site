@@ -94,7 +94,7 @@ Count marked cells with fewer than four marked neighbors:
 
 ```frothy
 to scan.accessible? with x, y [
-  ((scan.at: x, y) == 1) and ((scan.neighbors: x, y) < 4)
+  ((scan.at: x, y) = 1) and ((scan.neighbors: x, y) < 4)
 ]
 ```
 

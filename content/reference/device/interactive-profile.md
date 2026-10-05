@@ -83,28 +83,29 @@ see blink
 
 ## Structured Tooling Sessions
 
-**`.control`** *(control session)*
+**`frothy session --records`** *(tooling session)*
 
-Layer: `core`  
-Behavior: Switches the prompt into an exclusive structured control session for
-host tooling. Raw REPL is the default human surface; structured control is an
-explicit tool-owned mode.  
+Layer: host tool  
+Behavior: Tools use the same prompt as a person; the device has no separate
+control mode. `frothy session --records` sends source to the prompt and writes
+one NDJSON record for each event: a send, a response, a refused form, an
+interrupt.  
 Example:
 
 ```text
-The host tool opens the port, acquires the prompt, sends `.control`, and then uses framed control messages.
+frothy session --records
 ```
 
 **`extension-owned helper session`** *(editor path)*
 
-Layer: `core`  
-Behavior: The VS Code extension owns a helper child process which owns one
-control session at a time. There is no daemon and no concurrent shared port
-owner in the maintained Frothy editor path.
+Layer: host tool  
+Behavior: The VS Code extension starts one `frothy session --records` child
+process, and that process owns the serial port. There is no daemon and no
+second owner of the port in the maintained Frothy editor path.
 Example:
 
 ```text
-VS Code connect, send line, send file, interrupt, and simple inspection all ride on the helper-owned control session.
+VS Code connect, send line, send file, interrupt, and simple inspection all go through that one session.
 ```
 
 ## Capability Layers

@@ -21,7 +21,7 @@ Wrap the electrical detail in a name:
 
 ```frothy
 to boot.pressed? [
-  (gpio.read: $boot_button) == 0
+  (gpio.read: $boot_button) = 0
 ]
 ```
 

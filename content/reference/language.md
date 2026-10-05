@@ -730,8 +730,9 @@ mem
 - `see name` reconstructs a definition or describes a value.
 - `status` reports the current session and runtime profile.
 - `events` lists active event bindings.
-- `mem` reports heap, slots, objects, and event capacity. Use `mem heap`, `mem
-  slots`, `mem objects`, or `mem events` for one group.
+- `mem` reports heap, slots, pending code, objects, and event capacity. Use
+  `mem heap`, `mem slots`, `mem code`, `mem objects`, or `mem events` for one
+  group.
 - `clear` removes the live overlay and returns to the base image.
 
 Host tooling also uses `apply HEX`, `run HEX`, `install-library`,

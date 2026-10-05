@@ -249,15 +249,22 @@ Typical recovery flow:
 4. Fix the bad slot, or run `dangerous.wipe`.
 ```
 
-## A Saved Image Belongs To One Release
+## An Image From Another Release
 
-A saved image records the release that wrote it. A Frothy release that adds or
-changes a word changes the shape of the image, so a device refuses an image
-another release wrote. It reports `other release` at boot and from `restore`.
+A saved image records the image format and the profile hash of the firmware
+that wrote it; `status` shows the hash as `profile_hash`. A device reads a
+saved image only when both match its own. When either differs, it reports
+`other release` at boot and from `restore`.
 
-Nothing is damaged when this happens. The board is healthy and the image is
-intact; this firmware cannot read it. Run `save` to write an image this release
-can read, or `wipe-user` to clear the saved state.
+The profile hash covers the limits of the profile, the base words with their
+slots and signatures, and the library natives built into the firmware. A
+release that changes one of them, or the image format, cannot read the images
+of the release before it. A release that keeps both reads them; the changelog
+says when a release changes the hash.
+
+Nothing is damaged when the device refuses an image. The board is healthy and
+the image is intact; this firmware cannot read it. Run `save` to write an image
+this firmware can read, or `wipe-user` to clear the saved state.
 
 The web flasher erases the whole board, so a board you flash from the browser
 never shows this. You see it when you flash by another route and leave the old

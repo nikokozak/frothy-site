@@ -26,8 +26,8 @@ set bus to nil
 ```
 
 `104` is the decimal form of 7-bit address `0x68`; `117` is register `0x75`.
-Frothy integer literals are decimal, so convert hexadecimal datasheet values
-before entering them.
+Frothy also reads hexadecimal (`0x68`) and binary (`0b1101000`) literals, so
+you can type datasheet values as they are.
 
 ## Word Table
 

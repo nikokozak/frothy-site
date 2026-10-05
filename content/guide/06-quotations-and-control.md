@@ -44,7 +44,7 @@ make device behavior easier to scan.
 Use `when` for a one-sided action:
 
 ```frothy
-when (gpio.read: $boot_button) == 0 [
+when (gpio.read: $boot_button) = 0 [
   led.toggle:
 ]
 ```
@@ -52,7 +52,7 @@ when (gpio.read: $boot_button) == 0 [
 Use `unless` when the negative condition reads better:
 
 ```frothy
-unless (gpio.read: $boot_button) == 0 [
+unless (gpio.read: $boot_button) = 0 [
   led.off:
 ]
 ```
@@ -65,7 +65,7 @@ If an `if` has no `else` and the condition is false, it yields `nil`.
 
 ```frothy
 to waitForPress [
-  while (gpio.read: $boot_button) == 1 [
+  while (gpio.read: $boot_button) = 1 [
     wait: 20
   ]
 ]

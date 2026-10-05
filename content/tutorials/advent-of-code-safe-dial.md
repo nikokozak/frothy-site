@@ -64,7 +64,7 @@ One step applies the current turn:
 to dial.step [
   here turn is dial.turns[dial.index];
   set dial.position to dial.wrap: dial.position + turn;
-  when dial.position == 0 [
+  when dial.position = 0 [
     set dial.hits to dial.hits + 1
   ];
   set dial.index to dial.index + 1

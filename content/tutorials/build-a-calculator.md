@@ -68,7 +68,7 @@ calculator, make the guard explicit:
 
 ```frothy
 to calc.div with n [
-  if n == 0 [
+  if n = 0 [
     "division by zero"
   ] else [
     set calc.current to calc.current / n;

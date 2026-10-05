@@ -60,10 +60,18 @@ may include the canonical notice headline in an optional `notice` field.
 Editor integrations should render that as a warning, keep source progress
 moving, and reserve error state for a response whose `ok` field is false.
 
+A `compile_error` record reports source that `frothy` refused before it sent a
+line, for example a form longer than the device line (`line_bytes` in
+`status`). It has no `ok` field, and the session stays open.
+
 The human wire shapes and all stable numeric categories are listed under
 [Error and notice codes](/errors/).
 
-**`frothy send`** reads a source file and sends each complete form in order.
+**`frothy send`** reads a source file and sends each complete form in file
+order, with one exception: each `boot is` form moves after the forms around it,
+so a file can call words that it defines further down. A `boot` form never
+moves past a `save`, so the save stores it. `frothy send` checks every form
+against the device line before the first send.
 
 ```sh
 frothy send main.fr
@@ -109,6 +117,11 @@ and its `detail:` lines is printed to stderr without an `error:` prefix, then
 the next source form is sent. Notices alone leave the command with exit status
 zero; a true device or transport error still stops installation and returns a
 nonzero status.
+
+After a library changes, send your program again: `wipe-user`, then the
+program. A library that comes again can give its words new slots, and words
+that the board compiled before still call the old slots. Until a fix, such a
+word answers `wrong type (2)` or runs a different library word.
 
 ## Recovery Commands
 

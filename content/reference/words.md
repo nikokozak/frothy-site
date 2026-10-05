@@ -544,7 +544,7 @@ text-capable profiles (every shipped board build).
 **Example**
 
 ```frothy
-frothy.release
+frothy.release:
 ```
 
 ---
@@ -563,15 +563,18 @@ events
 ---
 
 <a id="mem"></a>
-**`mem`** *(inspection)* `mem [heap|slots|objects|events]`
+**`mem`** *(inspection)* `mem [heap|slots|code|objects|events]`
 
-Reports live capacity usage, optionally narrowed to one topic.
+Reports live capacity usage, optionally narrowed to one topic. `mem code`
+shows `code.pending.used` and `code.pending.total`: the bytes of user code
+that wait for the next `save`, and the room for them, without the base
+library.
 
 **Example**
 
 ```frothy
 mem
-mem objects
+mem code
 ```
 
 ---
