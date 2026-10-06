@@ -19,6 +19,7 @@ Frothy supports these official board identifiers:
 
 ```text
 esp32_devkit_v1
+nodemcu_esp32s
 seeed_xiao_esp32c3
 seeed_xiao_esp32c6
 seeed_xiao_esp32s3

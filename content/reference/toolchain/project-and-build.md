@@ -40,6 +40,7 @@ board = "esp32_devkit_v1"
 Official board identifiers are:
 
 - `esp32_devkit_v1`
+- `nodemcu_esp32s`
 - `seeed_xiao_esp32c3`
 - `seeed_xiao_esp32c6`
 - `seeed_xiao_esp32s3`
