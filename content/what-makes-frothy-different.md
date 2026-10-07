@@ -51,11 +51,12 @@ Frothy makes persistence part of the public interactive contract:
 
 The image is the state that matters, not a daemon cache or a host-side shadow runtime.
 
-A saved program lives in the board's flash, not its scratch RAM. That means the
-size of what you can build is bounded by flash — measured in megabytes on a
-typical board — rather than by the small pool of working memory. RAM only has to
-hold what you are actively editing, so you can keep real programs and libraries
-on the device and get them back exactly as you left them after a reboot.
+A saved program lives in the board's flash, and a restart brings it back. Fixed
+tables limit the size of a program, not the size of the flash. Up to 256 saved
+names fit beside the base words on an ESP32 board, and 192 on an RP2040 board.
+A word that you define or change after a `save` uses RAM until the next `save`,
+and there is room for 687 bytes of that code. `mem code` shows how much of the
+room is in use.
 
 ## Inspection Is Part Of Ordinary Work
 
