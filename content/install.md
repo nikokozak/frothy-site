@@ -11,7 +11,7 @@ the board directly over USB.
 
 ## What You Need
 
-- a supported ESP32 board and a USB data cable
+- a supported ESP32 or RP2040 board and a USB data cable
 - desktop Chrome, Edge, or Opera
 - macOS, Linux, or Windows
 
@@ -22,7 +22,21 @@ Open the [Frothy browser flasher](https://app.frothy.dev/flash), choose your boa
 the board resets.
 
 The flasher uses Web Serial. Your browser will ask which serial device it may
-use; choose the ESP32 you plugged in.
+use; choose the board you plugged in.
+
+### If No Port Appears
+
+If the browser lists no port, or not your board:
+
+- Use a USB cable that carries data. Some cables carry only power.
+- The ESP32 DevKit V1 and the NodeMCU ESP-32S have a USB chip (CP210x or
+  CH340). On some computers, that chip needs a driver from its maker.
+- Close other tabs and programs that use the serial port, such as a serial
+  monitor.
+
+If the flasher cannot connect to an ESP32 board, start the board in download
+mode. Hold the **BOOT** button, press and release the reset button, and then
+release **BOOT**. Then select **Flash Frothy** again.
 
 ## 2. Check Frothy
 
