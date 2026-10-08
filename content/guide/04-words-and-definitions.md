@@ -140,4 +140,4 @@ to blink.once with pin, delay [
 That keeps the code persistable and easy to inspect. The value you need is an
 argument, not hidden closure state.
 
-Next: [Locals, names, and state](/guide/05-perm-and-named/).
+Next: [Locals, names, and state](/guide/05-locals-names-and-state/).

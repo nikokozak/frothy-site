@@ -78,4 +78,4 @@ frothy send main.fr
 
 You do not need to flash for ordinary edits. Flashing is for installing or recovering firmware.
 
-Next: [Values and expressions](/guide/03-the-stack/).
+Next: [Values and expressions](/guide/03-values-and-expressions/).

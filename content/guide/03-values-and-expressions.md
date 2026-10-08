@@ -4,6 +4,7 @@ description: "Learn the values Frothy carries, how calls read, and how expressio
 weight: 3
 aliases:
   - /guide/02-values-names-and-rebinding/
+  - /guide/03-the-stack/
 icon: hash
 readTime: "5 min"
 ---

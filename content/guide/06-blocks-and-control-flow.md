@@ -4,6 +4,7 @@ description: "Use blocks to choose, repeat, loop forever, and react to events."
 weight: 6
 aliases:
   - /guide/04-control-flow-cells-and-records/
+  - /guide/06-quotations-and-control/
 icon: repeat-2
 readTime: "8 min"
 ---

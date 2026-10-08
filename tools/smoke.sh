@@ -28,7 +28,7 @@ for route in \
   public/errors/index.html \
   public/guide/index.html \
   public/guide/concepts/index.html \
-  public/guide/01-what-is-froth/index.html \
+  public/guide/01-what-frothy-is/index.html \
   public/guide/12-ffi-and-c/index.html \
   public/tutorials/index.html \
   public/tutorials/blink-an-led/index.html \
@@ -99,6 +99,10 @@ grep -q 'prefers-color-scheme' public/index.html && fail "homepage defaults to s
 
 # 4. old-URL aliases resolve for renamed or moved pages
 test -f public/what-makes-froth-different/index.html || fail "missing alias for old how-its-different URL"
+for old in 01-what-is-froth 03-the-stack 05-perm-and-named 06-quotations-and-control; do
+  test -f "public/guide/$old/index.html" || fail "missing alias for old guide URL: $old"
+done
+test ! -e public/js/froth-highlight.js || fail "old highlighter name is still published"
 test -f public/reference/interactive-profile/index.html || fail "missing alias for old interactive-profile URL"
 test -f public/reference/image-and-persistence/index.html || fail "missing alias for old image-and-persistence URL"
 test -f public/reference/cli/index.html || fail "missing alias for old CLI URL"
@@ -155,9 +159,9 @@ grep -Eq 'data-guide-cards.*reference/language/.*guide/concepts/.*reference/modu
 test "$(grep -o '<a class=ref-card ' public/reference/index.html | wc -l | tr -d ' ')" -eq 2 || fail "reference index contains more than two catalogs"
 
 # 7. Concepts introduces the major language/runtime ideas; Modules owns depth.
-grep -Fq 'record Point' public/guide/05-perm-and-named/index.html || fail "concepts missing records"
+grep -Fq 'record Point' public/guide/05-locals-names-and-state/index.html || fail "concepts missing records"
 grep -Fq 'attempt' public/guide/07-error-handling/index.html || fail "concepts missing attempt/rescue"
-grep -Fq 'wifi.disconnected' public/guide/06-quotations-and-control/index.html || fail "concepts missing Wi-Fi events"
+grep -Fq 'wifi.disconnected' public/guide/06-blocks-and-control-flow/index.html || fail "concepts missing Wi-Fi events"
 grep -Fq 'pad.emit-byte' public/guide/08-strings-and-io/index.html || fail "concepts missing PAD"
 grep -Fq 'id=read-a-console-line-as-data' public/guide/08-strings-and-io/index.html || fail "concepts missing console data input"
 grep -Fq 'console.read-line' public/reference/modules/console/index.html || fail "console module missing data input"

@@ -2,6 +2,8 @@
 title: "05. Locals, Names, and State"
 description: "Lexical locals, explicit mutation, top-level Cells, and small records."
 weight: 5
+aliases:
+  - /guide/05-perm-and-named/
 icon: boxes
 readTime: "7 min"
 ---
@@ -124,4 +126,4 @@ The current form is longer only when the data flow was unnamed. Once the
 values mean something, names win. A reader does not need to simulate the stack
 to know what is being reused.
 
-Next: [Blocks and control flow](/guide/06-quotations-and-control/).
+Next: [Blocks and control flow](/guide/06-blocks-and-control-flow/).

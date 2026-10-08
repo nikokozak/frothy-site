@@ -2,7 +2,7 @@
    Ported from the design prototype's tokenizer. Emits tk-* spans:
    tk-kw keyword · tk-def defined-name (after `to`) · tk-call name: · tk-ref @ref
    tk-n number/CONST · tk-s string · tk-c \ comment · tk-p punctuation · tk-w other.
-   Exposes window.highlightFrothHTML(src) -> HTML string, and applies it on load to
+   Exposes window.highlightFrothyHTML(src) -> HTML string, and applies it on load to
    <pre><code class="language-frothy"> (and the legacy language-froth) blocks. */
 (function () {
   var KW = new Set([
@@ -20,7 +20,7 @@
   var isWord = function (c) { return /[A-Za-z0-9_.?+\-*/=<>!%@]/.test(c); };
   var isWs = function (c) { return /\s/.test(c); };
 
-  function highlightFrothHTML(src) {
+  function highlightFrothyHTML(src) {
     var out = "", i = 0, prev = null;
     while (i < src.length) {
       var c = src[i];
@@ -71,13 +71,13 @@
     return out;
   }
 
-  window.highlightFrothHTML = highlightFrothHTML;
+  window.highlightFrothyHTML = highlightFrothyHTML;
 
   function paint() {
     document
       .querySelectorAll("pre code.language-frothy, pre code.language-froth")
       .forEach(function (node) {
-        node.innerHTML = highlightFrothHTML(node.textContent || "");
+        node.innerHTML = highlightFrothyHTML(node.textContent || "");
       });
   }
   if (document.readyState === "loading") {

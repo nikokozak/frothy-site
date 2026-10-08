@@ -2,6 +2,8 @@
 title: "01. What Frothy Is"
 description: "The core mental model: stable slots, lexical code, and a live image."
 weight: 1
+aliases:
+  - /guide/01-what-is-froth/
 icon: lightbulb
 readTime: "4 min"
 ---

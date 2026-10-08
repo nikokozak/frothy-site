@@ -3,9 +3,9 @@
    - playground tab switching
    - install tab switching
    - nav "scrolled" border state
-   Reuses window.highlightFrothHTML from froth-highlight.js. */
+   Reuses window.highlightFrothyHTML from frothy-highlight.js. */
 (function () {
-  var hl = window.highlightFrothHTML || function (s) {
+  var hl = window.highlightFrothyHTML || function (s) {
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   };
 
