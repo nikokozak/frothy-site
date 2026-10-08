@@ -1,0 +1,21 @@
+{{- /* /llms-full.txt for AI models. One file with the pages that a model needs to write Frothy code. */ -}}
+# Frothy: full text for AI models
+
+> Frothy is a small language that runs on ESP32 and RP2040 boards. You send code to the board over USB serial while it runs. Frothy is not Forth.
+
+This file matches Frothy {{ site.Params.frothyRelease }}. It holds the agent guide, the limits, the boards, the language reference, the word catalog, the error codes and the module pages. The site index is at {{ "llms.txt" | absURL }}.
+{{ $pages := slice }}
+{{- range (slice "/reference/agent-guide" "/reference/limits" "/reference/boards" "/reference/language" "/reference/words" "/reference/errors") -}}
+{{- with site.GetPage . }}{{ $pages = $pages | append . }}{{ end -}}
+{{- end -}}
+{{- range (site.GetPage "/reference/hardware").RegularPages.ByWeight }}{{ $pages = $pages | append . }}{{ end -}}
+{{- range $pages }}
+
+---
+
+Source: {{ .Permalink }}
+
+# {{ .Title }}
+
+{{ .RawContent | replaceRE `<a id="[^"]*"></a>\n?` "" | strings.TrimSpace }}
+{{ end }}

@@ -1,0 +1,50 @@
+{{- /* /llms.txt for AI models. The header is written by hand. The link lists come from page front matter. */ -}}
+# Frothy
+
+> Frothy is a small language that runs on ESP32 and RP2040 boards. You send code to the board over USB serial while it runs, and you can define a word again while a program uses it. Frothy is not Forth.
+
+Frothy has its own syntax. Forth, Arduino C or MicroPython code does not load. Read the agent guide first. This index matches Frothy {{ site.Params.frothyRelease }}.
+
+The rules in short:
+
+- Define a word with `to name with a, b [ ... ]`. Call it with `name: a, b`. Call a word with no arguments with `name:`.
+- Compare integers with `=` and `<>`, not `==` or `!=`. Start a comment with `--`.
+- Numbers are integers. There are no floats and no bit operators.
+- Inside `[ ... ]`, a line break or a `;` ends an expression.
+
+## Start here
+
+{{ range (slice "/reference/agent-guide" "/reference/language" "/reference/words" "/reference/limits" "/reference/boards" "/reference/errors") -}}
+{{ with site.GetPage . -}}
+- [{{ .Title }}]({{ .Permalink }}){{ with .Description }}: {{ . }}{{ end }}
+{{ end -}}
+{{ end }}
+## Modules
+
+{{ range (site.GetPage "/reference/hardware").RegularPages.ByWeight -}}
+- [{{ .Title }}]({{ .Permalink }}){{ with .Description }}: {{ . }}{{ end }}
+{{ end }}
+## Device and tools
+
+{{ range (site.GetPage "/reference/device").RegularPages.ByWeight -}}
+- [{{ .Title }}]({{ .Permalink }}){{ with .Description }}: {{ . }}{{ end }}
+{{ end -}}
+{{ range (site.GetPage "/reference/toolchain").RegularPages.ByWeight -}}
+- [{{ .Title }}]({{ .Permalink }}){{ with .Description }}: {{ . }}{{ end }}
+{{ end -}}
+{{ with site.GetPage "/install" }}- [{{ .Title }}]({{ .Permalink }}){{ with .Description }}: {{ . }}{{ end }}
+{{ end }}
+## Tutorials
+
+{{ range (site.GetPage "/tutorials").RegularPages.ByWeight -}}
+- [{{ .Title }}]({{ .Permalink }}){{ with .Description }}: {{ . }}{{ end }}
+{{ end }}
+## Optional
+
+{{ range (slice "/reference/coming-from-arduino" "/what-makes-frothy-different") -}}
+{{ with site.GetPage . -}}
+- [{{ .Title }}]({{ .Permalink }}){{ with .Description }}: {{ . }}{{ end }}
+{{ end -}}
+{{ end -}}
+- [Full text for AI models]({{ "llms-full.txt" | absURL }}): The agent guide, the limits, the boards, the language reference, the word catalog, the error codes and the module pages in one file.
+- [Source code](https://github.com/nikokozak/frothy): The runtime, the CLI and the board definitions.

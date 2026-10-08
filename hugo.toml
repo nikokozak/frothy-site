@@ -10,8 +10,20 @@ disableKinds = ["taxonomy", "term"]
     target = "static"
     excludeFiles = ["test/**"]
 
+[outputFormats]
+  [outputFormats.llms]
+    mediaType = "text/plain"
+    baseName = "llms"
+    isPlainText = true
+    notAlternative = true
+  [outputFormats.llmsfull]
+    mediaType = "text/plain"
+    baseName = "llms-full"
+    isPlainText = true
+    notAlternative = true
+
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  home = ["HTML", "RSS", "JSON", "llms", "llmsfull"]
 
 [markup]
   [markup.goldmark]
@@ -24,3 +36,4 @@ disableKinds = ["taxonomy", "term"]
 
 [params]
   description = "A live lexical language for programmable devices."
+  frothyRelease = "v0.1.22"

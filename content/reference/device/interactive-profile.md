@@ -1,7 +1,7 @@
 ---
 title: "Interactive Profile"
 weight: 1
-description: "REPL behavior, multiline input, interrupts, inspection, and the control-session path."
+description: "Prompt behavior, multiline forms, interrupts, safe boot, inspection, and the tool session."
 aliases:
   - /reference/interactive-profile/
 icon: terminal

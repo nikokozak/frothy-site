@@ -173,4 +173,20 @@ for module in board gpio timing events math-and-random text-bytes-pad i2c uart p
   grep -Fq "reference/modules/${module}/" public/reference/modules/index.html || fail "modules index missing ${module}"
 done
 
+# 8. Files for AI models: an index, one full text, and the guide they point to.
+for f in public/llms.txt public/llms-full.txt public/robots.txt public/agent-guide/index.html; do
+  test -f "$f" || fail "missing $f"
+done
+grep -Fq 'Frothy is not Forth' public/llms.txt || fail "llms.txt missing its first rule"
+grep -Fq 'Source: https://frothy.dev/agent-guide/' public/llms-full.txt || fail "llms-full.txt missing the agent guide"
+grep -q '<a id=' public/llms-full.txt && fail "llms-full.txt keeps HTML anchors" || true
+RELEASE="$(sed -n 's/^ *frothyRelease = "\(.*\)"/\1/p' hugo.toml)"
+test -n "$RELEASE" || fail "hugo.toml has no frothyRelease"
+grep -Fq "This guide matches Frothy $RELEASE." content/reference/agent-guide.md || fail "agent guide release differs from frothyRelease $RELEASE"
+for url in $(grep -o 'https://frothy.dev/[^)]*' public/llms.txt); do
+  path="public/${url#https://frothy.dev/}"
+  test -f "$path" || test -f "${path%/}/index.html" || fail "llms.txt link has no page: $url"
+done
+grep -q 'lucide@latest' public/index.html && fail "lucide is not pinned" || true
+
 echo "smoke: OK"
