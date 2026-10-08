@@ -15,7 +15,7 @@
           <div class="fm-meta">
             <span>{{ partial "mascot" 14 }} redefine while it runs</span>
             <span>{{ partial "mascot" 14 }} read back everything</span>
-            <span>{{ partial "mascot" 14 }} runs on ESP32s</span>
+            <span>{{ partial "mascot" 14 }} runs on ESP32 and RP2040</span>
           </div>
         </div>
         <div class="fm-hero-demo">
@@ -73,12 +73,12 @@
           <div class="icard-top"><span class="icard-ic">{{ partial "icon" "refresh-cw" }}</span><span class="icard-kw">Live</span></div>
           <h3 class="icard-h">Change it<br>while it runs.</h3>
           <p class="icard-b">Redefine a word and every place that uses it picks up the new version on the spot. No build step, no re-upload — the device never stops to listen.</p>
-<pre class="icard-code"><code class="language-frothy">to blink with n [
+<pre class="icard-code"><code class="language-frothy">to blink-led with n [
   repeat n [
     led.toggle:; wait: 90
   ]
 ]
-blink: 3</code></pre>
+blink-led: 3</code></pre>
           <p class="icard-note">…then change <code>90</code> to <code>30</code> and run again. Instantly faster.</p>
         </article>
         <article class="icard trans">
@@ -117,7 +117,7 @@ to blink with pin, count, delay [ ... ]</code></pre>
           <div class="fm-term-bar"><span class="dots"><i></i><i></i><i></i></span><span class="ti">frothy connect</span></div>
 <pre class="fm-term-body"><code class="language-frothy">frothy> words                       -- ask what it knows
 led.on  led.off  led.toggle  blink
-adc.read  ms  millis  boot  ...
+adc.read  wait  millis  boot  ...
 ok
 frothy> see led.toggle              -- read any word's source
 to led.toggle [ gpio.toggle: $led_builtin ]
@@ -165,14 +165,14 @@ ok</code></pre>
 ]
 
 scale: 80, 255</code></pre>
-<pre class="fm-play-pre" data-play-code-pane="1" hidden><code class="language-frothy">to blink with pin, count, delay [
+<pre class="fm-play-pre" data-play-code-pane="1" hidden><code class="language-frothy">to blink-pin with pin, count, delay [
   repeat count [
     gpio.high: pin; wait: delay;
     gpio.low: pin;  wait: delay
   ]
 ]
 
-blink: $led_builtin, 5, 200</code></pre>
+blink-pin: $led_builtin, 5, 200</code></pre>
 <pre class="fm-play-pre" data-play-code-pane="2" hidden><code class="language-frothy">to watch.light [
   here level is adc.read: $a0;
   if level > 2000 [
@@ -210,10 +210,10 @@ save              -- snapshot the overlay to flash
 
 blink.rate is 40  -- try a faster rate, live...
 restore           -- ...snap back to the saved 200</code></pre>
-<pre class="fm-play-pre" data-play-code-pane="7" hidden><code class="language-frothy">boot is fn [
-  on wifi.disconnected [ wifi.connect: ];
-  on wifi.reconnected  [ led.blink: 1, 40 ]
-]
+<pre class="fm-play-pre" data-play-code-pane="7" hidden><code class="language-frothy">to on-drop [ on wifi.disconnected [ wifi.connect: ] ]
+to on-back [ on wifi.reconnected [ led.blink: 1, 40 ] ]
+
+boot is fn [ on-drop:; on-back: ]
 
 save</code></pre>
 <pre class="fm-play-pre" data-play-code-pane="8" hidden><code class="language-frothy">boot is fn [
@@ -230,7 +230,7 @@ save</code></pre>
               <p><code>here</code> binds a value that's local to the block, so <code>bounded</code> exists only inside <code>scale</code>. A block hands back its last line — here, the scaled number.</p>
             </div>
             <div class="fm-play-note" data-play-note-pane="1" hidden>
-              <p>The hello-world of hardware — and it already ships in the base image. <code>repeat</code> runs the block a fixed number of times, <code>wait:</code> waits, <code>$led_builtin</code> is the onboard LED.</p>
+              <p>This example blinks an LED. The base image has the same word, named <code>blink</code>. <code>repeat</code> runs the block a fixed number of times, <code>wait:</code> waits, and <code>$led_builtin</code> is the pin of the built-in LED. Where it is <code>nil</code>, use the pin of your own LED.</p>
               <p>Arguments follow the colon, comma-separated: a pin, a count, a delay.</p>
             </div>
             <div class="fm-play-note" data-play-note-pane="2" hidden>
@@ -254,8 +254,7 @@ save</code></pre>
               <p><code>restore</code> snaps the live overlay back to the last save — a cheap undo for a session that wandered. <code>dangerous.wipe</code> erases the saved overlay entirely, back to the bare base. Save a state worth keeping; restore to recover; wipe to start clean.</p>
             </div>
             <div class="fm-play-note" data-play-note-pane="7" hidden>
-              <p><code>on wifi.disconnected</code> and <code>on wifi.reconnected</code> are events like any other. The device watches its own link, calls <code>wifi.connect:</code> to bring it back, and blinks once when it's online again.</p>
-              <p>Network resilience that usually takes a state machine — in two lines you can read.</p>
+              <p><code>on wifi.disconnected</code> and <code>on wifi.reconnected</code> are events like any other. The device watches its own link, calls <code>wifi.connect:</code> to bring it back, and blinks once when it's online again. One word holds one event body, so each event gets its own small word, and <code>boot</code> calls both.</p>
             </div>
             <div class="fm-play-note" data-play-note-pane="8" hidden>
               <p><code>watchdog.arm: 8000</code> means "reset the board if I go quiet for 8 seconds." A timer feeds it every 2&nbsp;s while things are healthy.</p>
@@ -277,12 +276,12 @@ save</code></pre>
         <div class="fm-mach-card">
           <img src="{{ "images/board.png" | relURL }}" alt="An ESP32 development board on a workbench">
           <div class="fm-mach-body">
-            <h3 class="fm-mach-h">Start with an ESP32.</h3>
+            <h3 class="fm-mach-h">Start with an ESP32 or RP2040 board.</h3>
             <p class="fm-mach-d">Frothy is early, but the basic loop is already useful: flash a board, keep it powered, ask pins what they read, and redefine small words until the circuit starts making sense.</p>
             <div class="fm-specs">
               <span>{{ partial "icon" "usb" }} USB serial</span>
               <span>{{ partial "icon" "lightbulb" }} LED first</span>
-              <span>{{ partial "icon" "cpu" }} ESP32 path</span>
+              <span>{{ partial "icon" "cpu" }} ESP32 and RP2040</span>
             </div>
           </div>
         </div>
@@ -291,7 +290,7 @@ save</code></pre>
           <h3 class="fm-mach-h">Change one fact at a time.</h3>
           <p class="fm-mach-d">The hard part of a physical build is the messy middle — the wiring is half-right, the timing is off, and you're not sure what the sensor even returns. Frothy is good there. Leave the board powered and change it a word at a time.</p>
           <ol class="fm-missions">
-            <li>{{ partial "mascot" 15 }}<span class="n">01</span> Flash an ESP32 and open the prompt</li>
+            <li>{{ partial "mascot" 15 }}<span class="n">01</span> Flash a board and open the prompt</li>
             <li>{{ partial "mascot" 15 }}<span class="n">02</span> Ask a pin what it reads, right now</li>
             <li>{{ partial "mascot" 15 }}<span class="n">03</span> Redefine a word; watch behavior change</li>
             <li>{{ partial "mascot" 15 }}<span class="n">04</span> <code>save</code> what works, and keep going</li>
@@ -328,23 +327,21 @@ save</code></pre>
       <div class="fm-install-grid">
         <div>
           <span class="eyebrow">{{ partial "icon" "download" }} Get started</span>
-          <h2 class="sec-title" style="margin-top:14px">From source to a live <span class="flo">board</span>.</h2>
-          <p>There's no package to install yet — you build the <code>frothy</code> CLI from source. It needs Go, and for an ESP32 a one-time toolchain fetch that takes the better part of twenty minutes. After that, flashing and connecting are quick.</p>
+          <h2 class="sec-title" style="margin-top:14px">From a board to a live <span class="flo">prompt</span>.</h2>
+          <p>You install nothing on your computer. The <a href="https://app.frothy.dev/flash">browser flasher</a> puts Frothy on the board, and the <a href="https://app.frothy.dev/editor">browser editor</a> talks to the board over USB.</p>
           <ul class="fm-checks">
-            <li><span class="ck">{{ partial "icon" "check" }}</span> macOS and Linux — Windows isn't supported yet</li>
-            <li><span class="ck">{{ partial "icon" "check" }}</span> ESP32 development boards are the public happy path for now</li>
-            <li><span class="ck">{{ partial "icon" "check" }}</span> Go 1.19+ and a C compiler; the ESP-IDF toolchain installs itself</li>
+            <li><span class="ck">{{ partial "icon" "check" }}</span><span>Desktop Chrome, Edge, or Opera on macOS, Linux, or Windows. Safari and Firefox do not support Web Serial.</span></li>
+            <li><span class="ck">{{ partial "icon" "check" }}</span><span>An ESP32 or RP2040 board and a USB data cable. <a href="{{ "boards/" | relURL }}">See the boards.</a></span></li>
+            <li><span class="ck">{{ partial "icon" "check" }}</span><span>A terminal is optional: Homebrew installs the <a href="{{ "install/#vs-code-and-the-cli" | relURL }}">Frothy CLI</a>.</span></li>
           </ul>
         </div>
         <div class="fm-install-card">
-          <div class="fm-install-tabs"><span class="fm-install-tab cur">build from source</span></div>
-<pre class="fm-install-code"><span class="d">$ </span>git clone https://github.com/nikokozak/frothyrewrite
-<span class="d">$ </span>cd frothyrewrite
-<span class="d">$ </span>make cli            <span class="cmt"># builds the `frothy` CLI</span>
-<span class="d">$ </span>frothy bootstrap    <span class="cmt"># one-time: fetch the ESP-IDF toolchain</span>
-<span class="d">$ </span>frothy flash esp32_devkit_v1 --port /dev/cu.usbserial-0001
-<span class="d">$ </span>frothy connect
-          <div class="fm-install-foot"><span>source only · pre-alpha</span></div>
+          <div class="fm-install-tabs"><span class="fm-install-tab cur">terminal (optional)</span></div>
+<pre class="fm-install-code"><span class="d">$ </span>brew install nikokozak/frothy/frothy
+<span class="d">$ </span>frothy doctor        <span class="cmt"># check the board</span>
+<span class="d">$ </span>frothy flash esp32_devkit_v1
+<span class="d">$ </span>frothy connect       <span class="cmt"># open the prompt</span></pre>
+          <div class="fm-install-foot"><span>browser first · pre-alpha</span></div>
         </div>
       </div>
     </div>

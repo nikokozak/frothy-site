@@ -59,8 +59,8 @@
   if (!editor) return;
 
   var SRC = [
-    "gpio.output: LED_BUILTIN", "", "to blink with n [", "  repeat n [",
-    "    led.on:", "    wait: 250", "    led.off:", "    wait: 250", "  ]", "]", "", "blink: 5"
+    "gpio.output: $led_builtin", "", "to blink-led with n [", "  repeat n [",
+    "    led.on:", "    wait: 250", "    led.off:", "    wait: 250", "  ]", "]", "", "blink-led: 5"
   ].join("\n");
   var BLINK_COUNT = 5, BLINK_MS = 230;
 

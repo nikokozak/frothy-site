@@ -5,7 +5,7 @@ description: "Learn the live lexical language for programmable devices."
 
 **Frothy is a small live language for programmable devices.**
 
-It is early, rough, and changing quickly. The useful thing is already there: you can flash an ESP32, open a prompt, define words, inspect what the board knows, and save your work back onto the device.
+It is early, rough, and changing quickly. The useful thing is already there: you can flash an ESP32 or RP2040 board, open a prompt, define words, inspect what the board knows, and save your work back onto the device.
 
 If you are new here, treat Frothy less like a finished product and more like a small instrument on the bench. It can do real things, but it still asks for patience.
 
@@ -37,14 +37,14 @@ to pulse with pin, delay [
   gpio.low: pin
 ]
 
-to blink with pin [
+to blink-pin with pin [
   repeat 3 [
     pulse: pin, 75;
     wait: 75
   ]
 ]
 
-blink: $led_builtin
+blink-pin: $led_builtin
 save
 ```
 
@@ -52,7 +52,7 @@ If none of this made sense: **Frothy feels a bit like p5.js, but the canvas is a
 
 ## What You Can Do Now
 
-- flash an ESP32 from the browser without a local toolchain
+- flash a board from the browser without a local toolchain
 - check that the board is running Frothy
 - connect to a live prompt
 - send `.fr` files from a terminal or VS Code
@@ -60,9 +60,8 @@ If none of this made sense: **Frothy feels a bit like p5.js, but the canvas is a
 - save and restore device state
 - write small C/native extensions when a project really needs one
 
-The current happy path is one of the three boards in the flasher: ESP32 DevKit
-V1, Seeed Studio XIAO ESP32S3, or Seeed Studio XIAO ESP32C6. Command examples
-use `esp32_devkit_v1`; choose the matching identifier for your board.
+Frothy runs on the seven boards in the flasher; see [Boards](/boards/). Command
+examples use `esp32_devkit_v1`. Use the identifier of your own board.
 
 ## Start Here
 
