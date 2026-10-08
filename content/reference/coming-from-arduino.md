@@ -12,6 +12,11 @@ Frothy runs on ESP32 and RP2040 boards. This page maps the parts of an Arduino
 sketch to Frothy. It also shows the largest difference: you change a word while
 the board runs it.
 
+You program the board in the [browser editor](https://app.frothy.dev/editor), not
+in the Arduino IDE. Install Frothy on the board once with the
+[browser flasher](https://app.frothy.dev/flash). Then the editor connects to the
+board over USB, and it sends your code to the board while the board runs.
+
 ## Boards
 
 These boards have official Frothy firmware:
@@ -44,9 +49,9 @@ void loop() {
 }
 ```
 
-Frothy has no `setup` and no `loop`. You define words at the prompt, and the
-board runs each line when you press Enter. Here an event calls `tick` every
-500 ms:
+Frothy has no `setup` and no `loop`. You send code to the board while it runs,
+with **Run Line** in the editor or Enter at a prompt. A definition takes effect
+at once, and a call runs at once. Here an event calls `tick` every 500 ms:
 
 ```frothy
 to tick [ led.toggle: ]
