@@ -2,73 +2,60 @@
 aliases:
   - /what-makes-froth-different/
 title: "How Frothy Is Different"
-description: "Why Frothy treats a programmable device as a live, inspectable system."
+description: "What Frothy does well, what it does not do yet, and the design choices behind it."
 ---
 
-Frothy sits near languages such as uLisp, small Forth systems, MicroPython, Lua ports, and board monitor shells. It is meant for the same broad territory: small programs that you can change while a device is connected.
+Frothy is a small language that runs on the board. You send code to the board
+while it runs. A definition takes effect at once, and a call runs at once. When
+you define a word again, the next call uses the new word. You do not build
+firmware or upload it again, and the board does not restart.
 
-Its design makes a different set of tradeoffs. Frothy treats the running image as the place where the program lives, keeps the language surface small, and makes inspection part of ordinary work.
+## The Board Keeps And Shows Your Program
 
-## No Stack-Centric Public Model
+`save` writes your words to the flash of the board. After a restart, the board
+loads them, and it runs a word named `boot` if you define one. The board does
+not need the computer that wrote the words.
 
-Many compact interactive languages lean on a visible stack, a Lisp evaluator, or a host-shaped scripting model. Frothy uses names, calls, lexical locals, and ordinary values as the public model.
+The board can also show you what it has. `words` lists the names, and `see`
+prints the code of a word:
 
-The user-facing center is:
+```text
+see led.toggle
+base source code
+to led.toggle [ gpio.toggle: $led_builtin ]
+```
 
-- stable named slots
-- lexical locals
-- `Code` as an ordinary value
-- explicit places and mutations
+## Choose Frothy When
 
-That keeps the language inspectable and persistable without translating every concept through stack effects or a larger general-purpose runtime.
+- you want to try a board, a sensor or an idea one line at a time;
+- you want the board to keep its program and to show it to you again;
+- you teach, and you want each line to act on the hardware at once.
 
-## Stable Slot Identity Is The Real Top Level
+## Choose Another Tool When
 
-At top level, a name refers to a stable slot identity. Rebinding changes the slot's current value, not the slot itself.
+- you need floating-point numbers, SPI, UDP, MQTT or HTTPS;
+- you need a ready-made library for a display or another complex part;
+- your program is large: an ESP32 board holds 256 of your names, an RP2040
+  board holds 192, and [Limits](/limits/) lists the other sizes;
+- you need a prompt over Wi-Fi or Bluetooth, or a prompt with a password;
+- your board is not one of the [supported boards](/boards/).
 
-That choice keeps live redefinition coherent because existing callers continue to resolve through the same slot. Recovery also stays concrete: the base image can rebuild the same slot set instead of depending on hidden host state.
+[Coming from Arduino](/coming-from-arduino/) shows how the parts of a sketch
+map to Frothy.
 
-## Hardware Is Explicit
+## Design Choices
 
-Frothy does not pretend that every board has the same pins or peripherals. The examples on this site use the current ESP32 development-board path. If a program uses GPIO, ADC, I2C, UART, or PWM, that dependency should be visible in the code and in the setup notes.
-
-That is less magical, but kinder to beginners. A missing wire, wrong pin, or unsupported peripheral should look like a hardware question, not a language mystery.
-
-## `Code` Is Lexical And Non-Capturing
-
-Frothy `Code` values use lexical name resolution and do not capture outer locals.
-
-The tradeoff is intentional. It keeps the image, persistence, and inspection story small enough to reason about on a device.
-
-## Persistence Is Explicit And Recoverable
-
-Frothy makes persistence part of the public interactive contract:
-
-- `save` snapshots the overlay image
-- `restore` rebuilds that overlay image
-- wipe commands clear persisted state when you need a harder reset
-- safe boot exists to recover from bad saved state
-
-The image is the state that matters, not a daemon cache or a host-side shadow runtime.
-
-A saved program lives in the board's flash, and a restart brings it back. Fixed
-tables limit the size of a program, not the size of the flash. Up to 256 saved
-names fit beside the base words on an ESP32 board, and 192 on an RP2040 board.
-A word that you define or change after a `save` uses RAM until the next `save`,
-and there is room for 687 bytes of that code. `mem code` shows how much of the
-room is in use.
-
-## Inspection Is Part Of Ordinary Work
-
-Frothy treats `words`, `see`, `status`, and memory/status commands as part of the normal prompt surface. That matters when the device image is authoritative: you need to be able to ask what is present and what a name resolves to.
-
-## Device-First, Tool-Thin
-
-Frothy is embedded-device-first. Host tools make connected work faster, but they are not the product center.
-
-That also shows up in the control surface:
-
-- raw REPL by default
-- richer sessions for tooling
-- no daemon required to preserve state
-- editor tooling built as a thin client over the device-owned image
+- **Stable names.** A top-level name always refers to the same slot. When you
+  define a word again, its callers use the new code at their next call.
+- **No captured locals.** Code reads its own parameters and locals, and the
+  top-level names. An event body cannot read the locals of the word that
+  registered it.
+- **Fixed memory.** Each table has a fixed size. When a table is full, the board
+  stops the form with error 4 and names the table.
+- **The prompt owns `save`, `restore` and `dangerous.wipe`.** A running word
+  cannot call them, so a program cannot replace itself.
+- **Safe boot on ESP32 boards.** For 600 ms after start, Ctrl-C or the BOOT
+  button skips the saved program. On an RP2040 board, Ctrl-C stops a `boot`
+  that does not end.
+- **The serial prompt comes first.** Any serial terminal can use a Frothy board.
+  The browser editor, the CLI and the VS Code extension use the same prompt.
