@@ -77,7 +77,7 @@ session.
 Now define a repeated blink:
 
 ```frothy
-to blink with pin [
+to blink-pin with pin [
   repeat 3 [
     pulse: pin, 120
   ]
@@ -87,10 +87,10 @@ to blink with pin [
 Run it:
 
 ```frothy
-blink: $led_builtin
+blink-pin: $led_builtin
 ```
 
-The important part is not the blink. The important part is that `blink` lives
+The important part is not the blink. The important part is that `blink-pin` lives
 in the current device image. You can inspect it and change it without reflashing
 the board.
 
@@ -99,7 +99,7 @@ the board.
 Change the timing:
 
 ```frothy
-to blink with pin [
+to blink-pin with pin [
   repeat 5 [
     pulse: pin, 50
   ]
@@ -109,16 +109,16 @@ to blink with pin [
 Call the same name again:
 
 ```frothy
-blink: $led_builtin
+blink-pin: $led_builtin
 ```
 
-The top-level slot named `blink` stayed stable. Its current value changed. Any
+The top-level slot named `blink-pin` stayed stable. Its current value changed. Any
 later call resolves through that same slot and sees the new behavior.
 
 Inspect it:
 
 ```frothy
-see blink
+see blink-pin
 words
 ```
 
@@ -133,12 +133,14 @@ word:
 ```frothy
 to boot [
   gpio.mode: $led_builtin, 1;
-  blink: $led_builtin
+  blink-pin: $led_builtin
 ]
 ```
 
-Keep `boot` short. Hardware setup and one obvious entry point are fine. A large
-uninterruptible program is harder to recover from.
+Use `boot` for work that must happen at start: open handles, set pin modes,
+and register events. An event keeps the prompt available while it runs. A
+`forever` loop in `boot` keeps the prompt closed until you press Ctrl-C. Use an
+event, not a loop in `boot`, when you can.
 
 ## Save Or Reset
 

@@ -235,15 +235,26 @@ image back.
 
 ## Safe Boot
 
-If saved `boot` code prevents the prompt from becoming usable, power-cycle or
-reset the board and press `Ctrl-C` during the safe-boot window. Then run:
+If a saved `boot` keeps the prompt closed, start the board without it.
+
+On an ESP32 board, reset the board. It prints
+`boot: Ctrl-C or BOOT skips saved code`. Press Ctrl-C or the BOOT button in the
+next 600 ms. The board prints `safe boot` and opens the prompt without your
+saved program. An RP2040 board has no such window: connect, and press Ctrl-C
+while `boot` runs.
+
+Then repair the program. `restore` loads the saved program and does not run
+`boot`. Define `boot` again, and save:
 
 ```frothy
-dangerous.wipe
+restore
+see boot
+to boot [ led.on: ]
+save
 ```
 
-That returns the device to the boot-rebuilt base image. It is intentionally
-named `dangerous.wipe` because it removes saved overlay state, not just the
-current line of work.
+To remove the saved program instead, run `dangerous.wipe`. It returns the board
+to the base image. Its name says `dangerous` because it removes the saved
+program, not only the current line of work.
 
 Next: [Text and I/O](/guide/08-strings-and-io/).

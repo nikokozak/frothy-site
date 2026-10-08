@@ -9,10 +9,10 @@ tags: [text, bytes, pad, data]
 
 Frothy has three byte-oriented tools with deliberately different lifetimes:
 
-| Kind | Best for | Lifetime in the ESP32 plain profile |
+| Kind | Best for | Lifetime |
 | --- | --- | --- |
 | `Text` | durable strings and copied I/O results | object value; persistable |
-| `Bytes` | live I/O and temporary binary transforms | current evaluation or loop iteration |
+| `Bytes` | live I/O and temporary binary transforms | current evaluation or loop pass |
 | PAD | one tiny hand-built scratch sequence | one shared 64-byte buffer until reset |
 
 Choose the shortest lifetime that fits, and cross into Text explicitly with
@@ -48,8 +48,10 @@ to fetch-size with url [
 | [`text.pack`](/reference/words/#text-pack) | `Text` | Copy Bytes into Text storage |
 
 Text is immutable and indexed by byte, not Unicode character. Source literals
-support `\n`, `\r`, `\t`, `\"`, and `\\`. In the ESP32 plain profile, one Text
-value is limited to 4096 bytes and the text pool holds 8192 bytes in total.
+support `\n`, `\r`, `\t`, `\"`, `\\`, and `\xHH` for one byte in hexadecimal. One
+Text value holds at most 4,096 bytes, and all live Text together holds 4,096
+bytes. Text shares the object table with Cells and records: 128 entries on
+ESP32 boards and 96 on RP2040 boards.
 
 ```frothy
 greeting is text.concat: "hello, ", "Frothy"
@@ -57,8 +59,11 @@ text.at: greeting, 0
 text.equals?: greeting, "hello, Frothy"
 ```
 
-Creating unique Text consumes the bounded text pool. Reuse stable values and
-use transient Bytes for working I/O rather than packing every intermediate.
+Each new Text value uses an object entry and room in the Text pool until the
+next `save`, `clear`, or restart, also when the program does not keep it. Reuse
+stable values. In a long loop, build changing text in the PAD.
+[Coming from Arduino](/coming-from-arduino/#numbers) has a word that prints a
+number this way.
 
 ## Bytes
 
@@ -73,9 +78,19 @@ use transient Bytes for working I/O rather than packing every intermediate.
 | [`bytes.concat`](/reference/words/#bytes-concat) | `Bytes` | Join two transient buffers |
 | [`console.read-line`](/reference/words/#console-read-line) | `Bytes` | Read one printable console line as data |
 
-The ESP32 plain runtime provides eight Bytes entries backed by a 4096-byte
-arena. A buffer is reset at the end of the outer prompt evaluation, after boot,
-and at loop back-edges. Do not carry one across iterations.
+Eight Bytes values can be in use at one time, with 4,096 bytes of data in
+total. The runtime frees every Bytes value at the end of each prompt evaluation
+and after each pass of `repeat`, `while`, and `forever`. Inside an event body,
+it frees them only when the body ends. A freed Bytes value gives
+`not saved: bytes stale (13)` when you use it again, so do not carry a Bytes
+value from one pass to the next.
+
+**Known limit.** After a restart, a board can make 1,024 Bytes values. After
+that, each word that returns Bytes fails with `capacity exceeded (4)` and the
+note `Bytes table is full (limit 8)`. `save`, `clear`, and `wipe-user` also
+reset the count. A loop that makes one Bytes value in each pass stops after
+1,024 passes. In a long loop, read one register with `i2c.read-reg`, or build
+bytes in the PAD.
 
 Bytes cannot be written to top-level slots, Cells, or record fields, and cannot
 be saved. Consume them immediately, keep them in a `here` local during one

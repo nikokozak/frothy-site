@@ -30,13 +30,30 @@ show-button:
 ```
 
 The common ESP32 boot button is active-low: pressed reads as `0`. Other inputs
-depend on the circuit, pull resistors, and selected pin.
+depend on the circuit, pull resistors, and selected pin. The RP2040 boards have
+no `$boot_button`, and some boards have no built-in LED; see [Boards](/boards/).
+
+## Pull-Up Inputs
+
+Mode `2` makes a pin an input with its internal pull-up resistor on. Use it for
+a button that connects the pin to ground, with no other resistor. The pin reads
+`1` when the button is up and `0` when you push it:
+
+```frothy
+to button.pressed? with pin [
+  gpio.mode: pin, 2
+  (gpio.read: pin) = 0
+]
+```
+
+The modes `0`, `1`, and `2` work on ESP32 and RP2040 boards. Another mode gives
+`bad value (3)`.
 
 ## Digital Word Table
 
 | Word | Result | Use |
 | --- | --- | --- |
-| [`gpio.mode`](/reference/words/#gpio-mode) | `nil` | Set mode `0` for input or `1` for output |
+| [`gpio.mode`](/reference/words/#gpio-mode) | `nil` | Set mode `0` for input, `1` for output, or `2` for input with the internal pull-up |
 | [`gpio.write`](/reference/words/#gpio-write) | `nil` | Write level `0` or `1` |
 | [`gpio.read`](/reference/words/#gpio-read) | `Int` | Read digital level |
 | [`gpio.input`](/reference/words/#gpio-input) | `nil` | Configure input mode |

@@ -30,7 +30,8 @@ clusters or locale-sensitive characters.
 ## Transient Bytes
 
 I/O words such as `http.get`, `tcp.read`, `i2c.read`, and BLE reads return
-`Bytes`. Consume them during the current evaluation or loop iteration:
+`Bytes`. Use them in the current evaluation or loop pass. After a restart, a
+board can make 1,024 Bytes values; see [Limits](/limits/#text-and-bytes-in-a-loop):
 
 ```frothy
 to fetch-size with url [

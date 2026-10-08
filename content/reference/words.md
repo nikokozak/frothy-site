@@ -396,10 +396,12 @@ Runs after restore when the top-level slot holds `Code`.
 
 `boot` is an ordinary top-level name with one special property: after the
 saved image is restored at power-on, if it holds `Code`, the device runs it
-before opening the prompt. It is the deploy story — bind it, `save`, and the
-board runs your program standalone from then on. Reopen peripheral handles
-inside it (handles never survive a reset), and remember a boot `forever`
-loop is still interruptible from the console with Ctrl-C.
+before it opens the prompt. Bind it and `save`, and the board runs it after
+each reset. Handles do not survive a reset, so open them in `boot`.
+Use `boot` for work that must happen at start: open handles, set pin modes,
+and register events. An event keeps the prompt available while it runs. A
+`forever` loop in `boot` keeps the prompt closed until you press Ctrl-C. Use an
+event, not a loop in `boot`, when you can.
 
 **Example**
 
@@ -409,13 +411,11 @@ save
 ```
 
 ```frothy
-boot is fn [
-  here led is pwm.open: $led_builtin, 1000
-  forever [
-    pwm.write: led, (map: (adc.read: $a0), 0, 4095, 0, 10000)
-    wait: 20
-  ]
+to arm-button [
+  on $boot_button falling debounce 25 [ led.toggle: ]
 ]
+
+boot is fn [ arm-button: ]
 save
 ```
 
@@ -582,14 +582,14 @@ mem code
 <a id="clear"></a>
 **`clear`** *(inspection)* `clear`
 
-Removes the live overlay and returns to the base image without deleting the
-saved overlay.
+Removes every change since the last `save`: the saved words and values come
+back, and the saved image does not change. `clear` also closes the open handles
+and cancels all events. Without a saved program, only the base words stay.
 
 **Example**
 
 ```frothy
 clear
-restore
 ```
 
 ---
@@ -1306,7 +1306,7 @@ random.percent?: 25
 <a id="baud-9600"></a>
 **`$baud_9600`** *(uart constant)* `Int`
 
-Names the UART baud-rate code for 9600 baud.
+Names the baud rate 9600. Its value is the integer `9600`.
 
 **Example**
 
@@ -1319,7 +1319,7 @@ uart.open: 1, $baud_9600
 <a id="baud-19200"></a>
 **`$baud_19200`** *(uart constant)* `Int`
 
-Names the UART baud-rate code for 19200 baud.
+Names the baud rate 19200. Its value is the integer `19200`.
 
 **Example**
 
@@ -1332,7 +1332,7 @@ uart.open: 1, $baud_19200
 <a id="baud-38400"></a>
 **`$baud_38400`** *(uart constant)* `Int`
 
-Names the UART baud-rate code for 38400 baud.
+Names the baud rate 38400. Its value is the integer `38400`.
 
 **Example**
 
@@ -1345,7 +1345,7 @@ uart.open: 1, $baud_38400
 <a id="baud-57600"></a>
 **`$baud_57600`** *(uart constant)* `Int`
 
-Names the UART baud-rate code for 57600 baud.
+Names the baud rate 57600. Its value is the integer `57600`.
 
 **Example**
 
@@ -1358,7 +1358,7 @@ uart.open: 1, $baud_57600
 <a id="baud-115200"></a>
 **`$baud_115200`** *(uart constant)* `Int`
 
-Names the UART baud-rate code for 115200 baud.
+Names the baud rate 115200. Its value is the integer `115200`.
 
 **Example**
 
@@ -1371,7 +1371,7 @@ uart.open: 1, $baud_115200
 <a id="baud-1200"></a>
 **`$baud_1200`** *(uart constant)* `Int`
 
-Names the UART baud rate 1200.
+Names the baud rate 1200. Its value is the integer `1200`.
 
 **Example**
 
@@ -1785,13 +1785,13 @@ text.from-int: 42
 
 Copies a text value into a transient bytes buffer.
 
-`Bytes` values are scratch space: they live in a small arena that is
-cleared when the line (or the outermost call) finishes evaluating, so a
-`Bytes` value cannot be kept in a top-level binding across lines — a
-stale one fails cleanly rather than reading garbage. Build, inspect, and
-send bytes within one evaluation; when a result must outlive the line,
-copy it out with `text.pack`. This transience is deliberate — buffers
-recycle themselves, so byte-shuffling never fragments the heap.
+`Bytes` values are scratch space in a small arena. The runtime frees them
+when the line or the outermost call ends, so a `Bytes` value cannot stay in a
+top-level binding. A stale value gives `not saved: bytes stale (13)` and never
+reads other data. Build, inspect, and send bytes in one evaluation. When a
+result must stay after the line, copy it with `text.pack`. After a restart, a
+board can make 1,024 Bytes values; see
+[Text, Bytes & PAD](/reference/modules/text-bytes-pad/#bytes).
 
 **Example**
 

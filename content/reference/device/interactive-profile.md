@@ -25,19 +25,17 @@ Example:
 1 + 1
 ```
 
-**`multiline input`** *(interactive profile)*
+**`multiline forms`** *(interactive profile)*
 
 Layer: `core`  
-Behavior: Keeps accumulating input while delimiters remain open. Incomplete
-input includes unclosed `(`, `[`, or string literals.  
+Behavior: The board reads one line at a time, and one line holds one form. The
+editor, `frothy send`, and `frothy connect` send a form with line breaks as one
+line, so a block can span lines. In another serial terminal, write the whole
+form on one line, and separate its expressions with `;`.  
 Example:
 
 ```frothy
-to blink with pin [
-  gpio.high: pin;
-  wait: 75;
-  gpio.low: pin
-]
+to pulse with pin [ gpio.high: pin; wait: 75; gpio.low: pin ]
 ```
 
 ## Interrupts and Recovery
@@ -45,24 +43,24 @@ to blink with pin [
 **`Ctrl-C`** *(interactive profile)*
 
 Layer: `core`  
-Behavior: Interrupts the current running evaluation or pending multiline input
-and returns the prompt to a usable state. The maintained evaluator checks for
-interrupts at safe points.  
+Behavior: Interrupts the running evaluation and returns the prompt to a usable
+state. The evaluator checks for interrupts at safe points.  
 Example:
 
 ```text
-Press Ctrl-C during a loop or during multiline entry.
+Press Ctrl-C during a loop.
 ```
 
 **`safe boot`** *(interactive profile)*
 
 Layer: `core`  
-Behavior: Lets you skip restore and `boot` during startup so you can recover
-from bad saved state, inspect the image, and repair or wipe it.  
+Behavior: On an ESP32 board, Ctrl-C or the BOOT button in the 600 ms after
+start skips restore and `boot`, so a bad saved program cannot keep the prompt
+closed. An RP2040 board has no such window; Ctrl-C stops a `boot` that runs.  
 Example:
 
 ```text
-Press Ctrl-C during the safe-boot window, then inspect `boot` and run `dangerous.wipe` if needed.
+Press Ctrl-C in the safe-boot window. Then run `restore` and `see boot`, or run `dangerous.wipe`.
 ```
 
 ## Inspection Commands

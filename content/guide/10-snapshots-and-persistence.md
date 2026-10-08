@@ -181,8 +181,8 @@ fails, the runtime is expected to remain usable in a base state.
 
 ## `boot`
 
-If the top-level name `boot` holds `Code` after restore, the runtime executes
-it before entering the prompt.
+If the top-level name `boot` holds `Code` after restore, the runtime runs it
+before it opens the prompt.
 
 ```frothy
 to boot [
@@ -193,8 +193,10 @@ to boot [
 save
 ```
 
-Keep `boot` boring. Initialize hardware and start the smallest necessary
-behavior. Do not hide a whole uninterruptible program behind it.
+Use `boot` for work that must happen at start: open handles, set pin modes,
+and register events. An event keeps the prompt available while it runs. A
+`forever` loop in `boot` keeps the prompt closed until you press Ctrl-C. Use an
+event, not a loop in `boot`, when you can.
 
 ## Wipe
 

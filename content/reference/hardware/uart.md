@@ -43,7 +43,8 @@ set aux to nil
 
 ## Baud Constants
 
-Use one of the named baud values:
+Each constant is the baud rate as an integer. You can also give another
+integer, for example `uart.open: 1, 4800`.
 
 | Constant | Baud |
 | --- | ---: |

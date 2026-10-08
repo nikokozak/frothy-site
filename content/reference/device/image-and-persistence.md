@@ -232,21 +232,22 @@ small startup step.
 **`safe boot`** *(recovery surface)*
 
 Layer: `core`  
-Behavior: Lets you interrupt startup before restore and `boot` finish, so bad
-saved state does not trap the device in a broken loop.  
+Behavior: On an ESP32 board, Ctrl-C or the BOOT button in the 600 ms after
+start skips restore and `boot`, so a bad saved program cannot keep the prompt
+closed. An RP2040 board has no such window; Ctrl-C stops a `boot` that runs.  
 Example:
 
 ```text
-Press Ctrl-C during the safe-boot window, then inspect `boot` or wipe the overlay.
+Press Ctrl-C in the safe-boot window. Then run `restore` and `see boot`, or run `dangerous.wipe`.
 ```
 
 Typical recovery flow:
 
 ```text
-1. Connect to the device.
-2. Press Ctrl-C during the safe-boot window.
-3. Run `see boot`.
-4. Fix the bad slot, or run `dangerous.wipe`.
+1. Connect to the board, and reset it.
+2. Press Ctrl-C in the safe-boot window. On RP2040, press it while `boot` runs.
+3. Run `restore`, and then `see boot`.
+4. Define `boot` again and `save`, or run `dangerous.wipe`.
 ```
 
 ## An Image From Another Release

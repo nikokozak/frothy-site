@@ -203,9 +203,8 @@ print: "first\nsecond\n"
 packet is "\x02\x01\x06"
 ```
 
-Text cannot contain a literal source newline. Use `\n`. The current ESP32
-profile allows an individual text value up to 4096 bytes and an 8192-byte text
-pool across the live image.
+Text cannot contain a literal source newline. Use `\n`. One Text value holds
+at most 4,096 bytes, and all live Text together holds 4,096 bytes.
 
 Use [Text, Bytes & PAD](/reference/modules/text-bytes-pad/) for conversion and
 transient-buffer rules.
@@ -660,7 +659,7 @@ bytes.length: (http.get: "http://example.com/")
 
 Bytes cannot be installed in top-level names, Cells, or record fields. A
 `here` local can hold them during one word call. Copy bytes into persistent
-Text when the content must survive the current evaluation or loop iteration:
+Text when the content must survive the current evaluation or loop pass:
 
 ```frothy
 reply-text is text.pack: (http.get: "http://example.com/")
@@ -709,8 +708,8 @@ boot is fn [
 save
 ```
 
-Safe boot lets a human interrupt restore/startup and recover a bad saved
-program. The [image and persistence reference](/reference/device/image-and-persistence/)
+On an ESP32 board, safe boot starts the board without a bad saved program. On
+an RP2040 board, Ctrl-C stops a `boot` that does not end. The [image and persistence reference](/reference/device/image-and-persistence/)
 covers the full lifecycle.
 
 ## The Prompt Is Part Of The Language Experience

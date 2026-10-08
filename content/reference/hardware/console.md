@@ -45,8 +45,8 @@ console.uart: 17, 16, 115200
 ```
 
 After `console.uart` succeeds, the next reply and all later input/output use the
-selected route. Reconnect your terminal to those pins at that literal baud
-rate. The baud argument is the number itself, not a `$baud_*` UART code.
+selected route. Reconnect your terminal to those pins at that baud rate. The
+baud argument is an integer: `115200` and `$baud_115200` are the same value.
 
 | Word | Result | Use |
 | --- | --- | --- |
