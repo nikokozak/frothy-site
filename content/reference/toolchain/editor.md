@@ -18,11 +18,12 @@ The VS Code extension is a convenience layer over `frothy session`. It sends sou
 In VS Code, open Extensions, search for **Frothy**, and install the extension
 published by **NikolaiKozak**. It updates through VS Code.
 
-For extension development, build and install the current VSIX directly:
+For extension development, build the VSIX and install it directly. Replace
+`VERSION` with the version in the file name that `make vsix` prints:
 
 ```sh
 make vsix
-code --install-extension editors/vscode/frothy-0.4.0.vsix
+code --install-extension editors/vscode/frothy-VERSION.vsix
 ```
 
 The extension handles `.fr` and `.frothy` files and requires the `frothy` CLI

@@ -78,11 +78,12 @@ frothy send main.fr
 ## VS Code Development
 
 Ordinary users can install **Frothy** from the VS Code Marketplace. To test a
-local extension build instead:
+local extension build instead, replace `VERSION` with the version in the file
+name that `make vsix` prints:
 
 ```sh
 make vsix
-code --install-extension editors/vscode/frothy-0.4.0.vsix
+code --install-extension editors/vscode/frothy-VERSION.vsix
 ```
 
 Set `frothy.binaryPath` when the extension cannot find your locally built CLI.
