@@ -11,7 +11,7 @@ the board directly over USB.
 
 ## What You Need
 
-- a supported ESP32 or RP2040 board and a USB data cable
+- a [supported board](/boards/) and a USB data cable
 - desktop Chrome, Edge, or Opera
 - macOS, Linux, or Windows
 
@@ -23,6 +23,9 @@ the board resets.
 
 The flasher uses Web Serial. Your browser will ask which serial device it may
 use; choose the board you plugged in.
+
+For an RP2040 board, the button is **Download Frothy UF2**.
+[RP2040 Boards](/boards/#rp2040-boards) shows the two steps after the download.
 
 ### If No Port Appears
 

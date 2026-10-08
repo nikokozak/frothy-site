@@ -26,9 +26,10 @@ These boards have official Frothy firmware:
 - Seeed Studio XIAO RP2040
 - Arduino Nano RP2040 Connect
 
-Frothy has no firmware for the Arduino UNO, Nano, Nano Every, Nano 33 IoT or UNO
-R4. Their chips are not ESP32 or RP2040 chips. The Arduino Nano ESP32 has an
-ESP32-S3 chip, but it has no official Frothy firmware yet.
+Frothy has no firmware for the Arduino UNO, UNO R4, Nano, Nano Every, Nano 33
+IoT or Nano R4. Their chips are not ESP32 or RP2040 chips. The Arduino Nano
+ESP32 has an ESP32-S3 chip, but it has no official Frothy firmware yet.
+[Boards](/boards/) shows how each board connects.
 
 The pins of these boards use 3.3 V. Do not connect a 5 V signal to a pin.
 

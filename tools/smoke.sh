@@ -64,6 +64,7 @@ for route in \
   public/reference/ffi/index.html \
   public/what-makes-frothy-different/index.html \
   public/limits/index.html \
+  public/boards/index.html \
   public/contact/index.html
 do
   test -f "$route" || fail "missing route: $route"
