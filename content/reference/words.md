@@ -1803,13 +1803,11 @@ text.from-int: 42
 
 Copies a text value into a new Bytes value.
 
-`Bytes` values are scratch space in a small arena. The runtime frees them
-when the line or the outermost call ends, so a `Bytes` value cannot stay in a
-top-level binding. A stale value gives `not saved: bytes stale (13)` and never
-reads other data. Build, inspect, and send bytes in one evaluation. When a
-result must stay after the line, copy it with `text.pack`. After a restart, a
-board can make 1,024 Bytes values; see
-[Text, Bytes & PAD](/reference/modules/text-bytes-pad/#bytes).
+`Bytes` values are scratch space in a small arena. The board frees them at the
+end of each loop pass, event body and prompt form. So a `Bytes` value cannot
+stay in a top-level binding. Build, inspect, and send bytes in one evaluation.
+When a result must stay after the line, copy it with `text.pack`, or keep it in
+a buffer; see [Text, Bytes & PAD](/reference/modules/text-bytes-pad/#bytes).
 
 **Example**
 

@@ -16,17 +16,17 @@ its size:
 
 ```text
 error: capacity exceeded (4)
-note: pending code is full (limit 687 bytes) -- a save that succeeds frees it
+note: pending code is full (limit 4178 bytes) -- a save that succeeds frees it
 ```
 
 The numbers on this page are for Frothy v0.1.22. All ESP32 boards have the same
-limits, and the two RP2040 boards have the same limits. `mem` shows how much of
-each table is in use.
+limits, except the code area of the XIAO ESP32C3. The two RP2040 boards have the
+same limits. `mem` shows how much of each table is in use.
 
 | What | ESP32 boards | RP2040 boards |
 | --- | --- | --- |
 | Names that you define, saved or not | 256 | 192 |
-| Compiled code that waits for `save` | 687 bytes | 687 bytes |
+| Compiled code and parameter names that wait for `save` | 4,178 bytes (1,114 on the XIAO ESP32C3) | 4,178 bytes |
 | One line | 511 bytes | 511 bytes |
 | Parse nodes in one form | 64 | 64 |
 | Object table entries (Text, Cells, records, buffers) | 128 | 96 |
@@ -37,10 +37,9 @@ each table is in use.
 | Open handles | 16 | 12 |
 | Event bindings | 16 | 16 |
 | Bytes values in use | 8 | 8 |
-| New Bytes values after a restart | 1,024 | 1,024 |
 | PAD | 64 bytes | 64 bytes |
 | Parameters in one word | 8 | 8 |
-| Locals in one word | 16 | 16 |
+| Locals in one word, with one for each loop level | 16 | 16 |
 | Expressions in one block | 24 | 24 |
 | Levels of parentheses | 15 | 15 |
 | Nested calls | 24 | 24 |
@@ -53,11 +52,13 @@ each table is in use.
 
 ## Code That Waits For `save`
 
-Each definition adds its compiled code to an area of 687 bytes. The code stays
-there until `save` moves it into the saved image. When you define a word again,
-the board adds the new code, and the old code also stays until `save`.
+Each definition adds its compiled code and its parameter names to an area of
+4,178 bytes, or 1,114 bytes on the XIAO ESP32C3. The code stays there until
+`save` moves it into the saved image. When you define a word again, the board
+adds the new code, and the old code also stays until `save`.
 
-This word uses 47 bytes. Define it 15 times, and the 15th definition fails:
+This word uses 51 bytes. On most boards, 81 definitions of it fit, and the 82nd
+fails. On the XIAO ESP32C3, the 22nd definition fails:
 
 ```frothy
 to pulse with pin [ gpio.write: pin, 1; gpio.write: pin, 0; gpio.write: pin, 1; gpio.write: pin, 0 ]
@@ -100,14 +101,14 @@ note: object table is full (limit 128)
 ```
 
 To print numbers in a loop, use `print:` or `print.value:`. They make no Text
-value.
+value. To keep a value that changes, such as the latest reply, use a
+[buffer](/reference/language/#buffers).
 
-After a restart, a board can make 1,024 Bytes values. After that, each word
-that returns Bytes fails with `note: Bytes table is full (limit 8)`, also when
-no Bytes value is in use. `save`, `clear`, `wipe-user` and a restart reset the
-count. The words that return Bytes include `i2c.read`, `console.read-line`,
-`http.get` and `bytes.from-int`.
+Bytes values do not fill a table in a loop. Each pass of `repeat`, `while` and
+`forever` frees the Bytes values that the pass made. So a loop that calls
+`i2c.read` or `http.get` can run for as long as you want. At one time, 8 Bytes
+values with 4,096 bytes of data in total can be in use.
 
-A loop that calls `i2c.read` ten times each second stops after about 100
-seconds. To read a sensor register in a loop, use `i2c.read-reg` or
-`i2c.read-reg16`. They return an integer, not Bytes.
+Each loop level uses one of the 16 locals of its word. A word with 16 locals
+and a loop answers `capacity exceeded (4)` with the note
+`space for locals in one form is full (limit 16)`.
