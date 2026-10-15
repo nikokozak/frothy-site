@@ -110,6 +110,8 @@ Volatile state cannot be made durable. A rejected store is an error.
 
 At the prompt, a bare `save` or `save:` stores slots holding handle values as nil and reports [notice 100](#notice-100) instead. It still refuses with this code when the value cannot be made nil safely: a live Bluetooth connection, a slot installed in library mode, or more handle-bound slots than the device can hold at once. Rebind the named slot and retry.
 
+`set` of a local to a Bytes value also answers this code, because the next loop pass can free the value. Make the value with `here` in the loop body.
+
 Inside a program, `save:` does not reach this check at all — see [code 26](#code-26).
 
 ---
@@ -208,7 +210,7 @@ This operation replaces the running program; issue it as its own complete prompt
 <a id="code-27"></a>
 **`27 — other release`** *(persistence)*
 
-The saved image has a different image format or profile hash than this firmware. The image is not damaged and your board is healthy: the device reads an image only when both match its own (see [An Image From Another Release](/reference/device/image-and-persistence/#an-image-from-another-release)). You see this at boot, when the device finds a saved image it cannot load, and from `restore`. Save again to write an image this firmware can read.
+The saved image has a different image format or profile hash than this firmware. The device reads an image only when both match its own (see [An Image From Another Release](/reference/device/image-and-persistence/#an-image-from-another-release)). You see this at boot, when the device finds a saved image it cannot load, and from `restore`. Send your source again, then type `save`. A `save` before you send your source writes an empty program over the old image.
 
 ---
 
