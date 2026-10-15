@@ -302,7 +302,7 @@ Arguments are comma-separated. Parenthesize a nested call when it makes the
 argument boundary explicit.
 
 ```frothy
-print: (text.from-int: 42)
+print: (abs: -42)
 total is add: 1, (add: 2, 3)
 ```
 
@@ -472,7 +472,7 @@ an error. Add `as name` for a zero-based loop index.
 repeat 3 [ print: "tick\n" ]
 
 repeat 3 as i [
-  print: (text.from-int: i)
+  print: i
   print: "\n"
 ]
 ```

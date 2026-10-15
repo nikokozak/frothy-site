@@ -711,14 +711,32 @@ close-handles
 ---
 
 <a id="print"></a>
-**`print`** *(io)* `(Text|Bytes) -> nil`
+**`print`** *(io)* `(Int|Text|Bytes|Buffer) -> nil`
 
-Writes raw text or bytes to the console output.
+Writes an integer, Text, Bytes or a buffer to the console output. It adds no
+line end.
 
 **Example**
 
 ```frothy
 print: "hello"
+print: 42
+```
+
+---
+
+<a id="print-value"></a>
+**`print.value`** *(io)* `(label, value) -> nil`
+
+Writes the label, a colon, the integer value and a line end in one write, so
+an event cannot print inside the line. The label is Text of 1 to 48 bytes: a
+letter or `_` first, then letters, digits, `_`, `.` or `-`. The word makes no
+Text or Bytes value, so a loop can call it for as long as it runs.
+
+**Example**
+
+```frothy
+print.value: "temp", 21
 ```
 
 ## GPIO, ADC, And LED

@@ -52,9 +52,9 @@ Inspect edges programmatically only after completion:
 ```frothy
 when trace.complete?: capture [
   repeat (trace.count: capture) as i [
-    print: (text.from-int: trace.channel: capture, i)
+    print: (trace.channel: capture, i)
     print: ":"
-    print: (text.from-int: trace.delta-ns: capture, i)
+    print: (trace.delta-ns: capture, i)
     print: "\n"
   ]
 ]

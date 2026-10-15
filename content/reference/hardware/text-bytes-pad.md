@@ -61,9 +61,8 @@ text.equals?: greeting, "hello, Frothy"
 
 Each new Text value uses an object entry and room in the Text pool until the
 next `save`, `clear`, or restart, also when the program does not keep it. Reuse
-stable values. In a long loop, build changing text in the PAD.
-[Coming from Arduino](/coming-from-arduino/#numbers) has a word that prints a
-number this way.
+stable values. In a long loop, print a number with `print:` or `print.value:`.
+They make no Text value.
 
 ## Bytes
 
