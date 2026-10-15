@@ -2,21 +2,27 @@
 title: "Text, Bytes & PAD"
 weight: 6
 url: /reference/modules/text-bytes-pad/
-description: "Choose persistent Text, evaluation-scoped Bytes, or the single 64-byte PAD scratch buffer."
+description: "Choose Text for fixed strings, Bytes for working bytes, a buffer for a value that changes, or the 64-byte PAD."
 icon: binary
 tags: [text, bytes, pad, data]
 ---
 
-Frothy has three byte-oriented tools with deliberately different lifetimes:
+Frothy has four byte tools with different lifetimes:
 
 | Kind | Best for | Lifetime |
 | --- | --- | --- |
-| `Text` | durable strings and copied I/O results | object value; persistable |
+| `Text` | fixed strings and copied I/O results | object value; persistable |
 | `Bytes` | live I/O and temporary binary transforms | current evaluation or loop pass |
-| PAD | one tiny hand-built scratch sequence | one shared 64-byte buffer until reset |
+| buffer | a value that changes many times | fixed capacity; persistable |
+| PAD | one tiny hand-built scratch sequence | one shared 64-byte area until reset |
 
-Choose the shortest lifetime that fits, and cross into Text explicitly with
-`text.pack` or `pad.pack` when data must persist.
+Each new Text value stays until the next `save`, `clear` or restart. So choose
+by what the value does:
+
+- a fixed string: Text;
+- working bytes in one evaluation or loop pass: Bytes;
+- a value that changes many times, such as the latest reply: a buffer;
+- a number to show: `print:` or `print.value:`, which make no value.
 
 ## Copy An HTTP Body Into Text
 
@@ -36,6 +42,23 @@ to fetch-size with url [
 ]
 ```
 
+## Keep The Latest HTTP Body In A Buffer
+
+A program that fetches a reply again and again keeps it in a buffer. Each
+`text.pack` makes a new Text value, but `buffer.set` writes into the same
+storage:
+
+```frothy
+reply is buffer: 512
+
+to fetch with url [
+  buffer.set: reply, (http.get: url)
+]
+```
+
+A body longer than 512 bytes answers `capacity exceeded (4)`, and `reply` keeps
+the body before it.
+
 ## Text
 
 | Word | Result | Use |
@@ -50,8 +73,8 @@ to fetch-size with url [
 Text is immutable and indexed by byte, not Unicode character. Source literals
 support `\n`, `\r`, `\t`, `\"`, `\\`, and `\xHH` for one byte in hexadecimal. One
 Text value holds at most 4,096 bytes, and all live Text together holds 4,096
-bytes. Text shares the object table with Cells and records: 128 entries on
-ESP32 boards and 96 on RP2040 boards.
+bytes. Text shares the object table with Cells, records and buffers: 128
+entries on ESP32 boards and 96 on RP2040 boards.
 
 ```frothy
 greeting is text.concat: "hello, ", "Frothy"
@@ -71,10 +94,10 @@ They make no Text value.
 | [`bytes.from-text`](/reference/words/#bytes-from-text) | `Bytes` | Copy Text into the transient arena |
 | [`bytes.from-byte`](/reference/words/#bytes-from-byte) | `Bytes` | Create one byte from `0..255` |
 | [`bytes.from-int`](/reference/words/#bytes-from-int) | `Bytes` | Decimal integer as ASCII bytes |
-| [`bytes.length`](/reference/words/#bytes-length) | `Int` | Buffer length |
+| [`bytes.length`](/reference/words/#bytes-length) | `Int` | Byte count |
 | [`bytes.at`](/reference/words/#bytes-at) | `Int` | Byte at an index |
 | [`bytes.equals?`](/reference/words/#bytes-equals) | `Bool` | Byte-for-byte equality |
-| [`bytes.concat`](/reference/words/#bytes-concat) | `Bytes` | Join two transient buffers |
+| [`bytes.concat`](/reference/words/#bytes-concat) | `Bytes` | Join two Bytes values |
 | [`console.read-line`](/reference/words/#console-read-line) | `Bytes` | Read one printable console line as data |
 
 Eight Bytes values can be in use at one time, with 4,096 bytes of data in
@@ -107,12 +130,28 @@ frame-text is make-frame:
 ```
 
 Words such as `print`, `i2c.write`, `tcp.write`, and BLE write operations accept
-Text or Bytes directly. `console.read-line`, `i2c.read`, `tcp.read`, `http.get`,
+Text, Bytes or a buffer directly. `console.read-line`, `i2c.read`, `tcp.read`, `http.get`,
 and BLE read operations return Bytes.
+
+## Buffers
+
+| Word | Result | Use |
+| --- | --- | --- |
+| [`buffer.set`](/reference/words/#buffer-set) | `nil` | Replace the contents |
+| [`buffer.append`](/reference/words/#buffer-append) | `nil` | Add bytes after the contents |
+| [`buffer.length`](/reference/words/#buffer-length) | `Int` | Byte count |
+| [`buffer.capacity`](/reference/words/#buffer-capacity) | `Int` | Most bytes it can hold |
+| [`buffer.at`](/reference/words/#buffer-at) | `Int` | Byte at an index |
+| [`buffer.equals?`](/reference/words/#buffer-equals) | `Bool` | Byte-for-byte equality |
+
+`name is buffer: N` makes a buffer at the top level. Its capacity comes from the
+Text pool, so Text values and buffers together hold at most 4,096 bytes.
+`mem objects` shows the buffers in the row `objects.buffers.used`.
+[Buffers](/reference/language/#buffers) gives the rules.
 
 ## PAD
 
-PAD is one global scratch buffer. It is useful when bytes are assembled one at
+PAD is one global scratch area. It is useful when bytes are assembled one at
 a time without allocating a Bytes entry:
 
 ```frothy

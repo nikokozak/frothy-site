@@ -29,8 +29,8 @@ each table is in use.
 | Compiled code that waits for `save` | 687 bytes | 687 bytes |
 | One line | 511 bytes | 511 bytes |
 | Parse nodes in one form | 64 | 64 |
-| Object table entries (Text, Cells, records) | 128 | 96 |
-| Text in use | 4,096 bytes | 4,096 bytes |
+| Object table entries (Text, Cells, records, buffers) | 128 | 96 |
+| Text and buffers in use | 4,096 bytes | 4,096 bytes |
 | Cells in use | 128 | 128 |
 | Elements in one Cells value | 32 | 32 |
 | Fields in one record | 4 | 4 |
@@ -96,7 +96,7 @@ repeat 200 as i [ text.from-int: i ]
 
 ```text
 error: capacity exceeded (4)
-note: object table (cells, text and records) is full (limit 128)
+note: object table is full (limit 128)
 ```
 
 To print numbers in a loop, use `print:` or `print.value:`. They make no Text

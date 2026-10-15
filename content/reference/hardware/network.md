@@ -41,13 +41,13 @@ platform connection budget and remains interruptible with Ctrl-C.
 | [`wifi.ready?`](/reference/words/#wifi-ready) | `Bool` | Test station or access-point readiness |
 | [`wifi.ip`](/reference/words/#wifi-ip) | `Text` | Get the active interface address |
 | [`http.get`](/reference/words/#http-get) | `Bytes` | Fetch one successful response body |
-| [`http.post`](/reference/words/#http-post) | `Bytes` | Post Text or Bytes and return the response body |
+| [`http.post`](/reference/words/#http-post) | `Bytes` | Post Text, Bytes or a buffer and return the response body |
 | [`tcp.open`](/reference/words/#tcp-open) | `Handle` | Open a host and port |
 | [`tcp.listen`](/reference/words/#tcp-listen) | `Handle` | Open the single listener slot |
 | [`tcp.accept`](/reference/words/#tcp-accept) | `Handle|nil` | Accept one waiting client without blocking |
 | [`tcp.available`](/reference/words/#tcp-available) | `Int` | Count immediately readable bytes |
 | [`tcp.read`](/reference/words/#tcp-read) | `Bytes` | Read up to a requested count |
-| [`tcp.write`](/reference/words/#tcp-write) | `nil` | Send Text or Bytes |
+| [`tcp.write`](/reference/words/#tcp-write) | `nil` | Send Text, Bytes or a buffer |
 | [`tcp.close`](/reference/words/#tcp-close) | `nil` | Close and release a connection or listener handle |
 
 ## Wi-Fi State And Events
@@ -122,7 +122,9 @@ toggles the LED. Open it from the browser editor's **Examples** list or with
 
 `http.get` and `http.post` use plain `http://` URLs. Each word requires a 2xx
 response and returns the complete body as transient Bytes. `http.post` accepts
-Text or Bytes and sends it with `Content-Type: text/plain`.
+Text, Bytes or a buffer and sends it with `Content-Type: text/plain`. To keep
+the latest body, see
+[Keep The Latest HTTP Body In A Buffer](/reference/modules/text-bytes-pad/#keep-the-latest-http-body-in-a-buffer).
 
 The current `FR_HTTP_MAX_BODY` response cap is 4096 bytes. Both words use the
 same timeout and network-error behavior. An oversized response returns an
@@ -160,7 +162,7 @@ set socket to nil
 Bytes result can be printed or processed immediately. A zero ready count means
 an immediate read would have no data; it is not itself an end-of-stream signal.
 
-Ports must be in `1..65535`. `tcp.write` sends every byte of its Text or Bytes
+Ports must be in `1..65535`. `tcp.write` sends every byte of its Text, Bytes or buffer
 input or reports an error.
 
 ## TCP Capacity And Cleanup

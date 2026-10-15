@@ -134,7 +134,7 @@ at once. Those keep the older response:
 ```text
 > save
 notice: not saved (13)
-detail: cannot save slot 'link' - bound to a live handle or buffer
+detail: cannot save slot 'link' - bound to a live handle or a Bytes value
 ok
 >
 ```
@@ -150,6 +150,23 @@ image the running program is executing from, so it belongs to the prompt; the
 same holds for `restore` and `dangerous.wipe`. The error is catchable with
 `attempt`/`rescue`. See the complete
 [error and notice contract](/errors/#code-26).
+
+### Buffers and `save`
+
+`save` keeps the contents of a [buffer](/reference/language/#buffers), and the
+board has them again after a restart. A buffer from library mode goes back to
+its contents in the library image at each `save`, `restore` and `wipe-user`. A
+buffer that both the library and your program hold does the same, as does a
+library Cells value.
+
+A buffer keeps its capacity in the Text pool also when it is empty. When no
+name holds a buffer, `save`, `clear`, `restore` or a restart frees it. A
+running program cannot make, resize or free a buffer; only a top-level
+definition makes one.
+
+Flash keeps the older saved image until a later save writes over it. So saved
+contents can stay in flash after you change them. `dangerous.wipe` removes
+them.
 
 **`restore`** *(interactive base image)*
 
