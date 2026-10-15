@@ -19,7 +19,7 @@ error: capacity exceeded (4)
 note: pending code is full (limit 4178 bytes) -- a save that succeeds frees it
 ```
 
-The numbers on this page are for Frothy v0.1.22. All ESP32 boards have the same
+The numbers on this page are for Frothy v0.1.23. All ESP32 boards have the same
 limits, except the code area of the XIAO ESP32C3. The two RP2040 boards have the
 same limits. `mem` shows how much of each table is in use.
 

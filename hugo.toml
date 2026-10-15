@@ -36,4 +36,4 @@ disableKinds = ["taxonomy", "term"]
 
 [params]
   description = "A live lexical language for programmable devices."
-  frothyRelease = "v0.1.22"
+  frothyRelease = "v0.1.23"

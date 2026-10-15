@@ -24,7 +24,7 @@ to blink-twice with pin, delay [
 blink-twice: $led_builtin, 100
 ```
 
-This guide matches Frothy v0.1.22. The [language reference](/reference/language/)
+This guide matches Frothy v0.1.23. The [language reference](/reference/language/)
 and the [word catalog](/reference/words/) give the rest, and
 [llms-full.txt](/llms-full.txt) holds them in one file.
 
@@ -98,7 +98,7 @@ and the [word catalog](/reference/words/) give the rest, and
 | `HIGH`, `LOW` | `1`, `0` |
 | `OUTPUT`, `INPUT`, `INPUT_PULLUP` | modes `1`, `0` and `2` of `gpio.mode` |
 | `Serial.println(x)` | `print.value: "x", x`, or `print: x` and then `print: "\n"` |
-| `i2c.scan`, `spi.*` | nothing in v0.1.22 |
+| `i2c.scan`, `spi.*` | nothing in v0.1.23 |
 | `neopixel.show` | nothing; on ESP32 boards, the `pulse.*` words build a waveform |
 | `break`, `return`, `for`, `case` | `while`, `repeat`, `forever`, `if` |
 | `: name ... ;`, `DUP`, `SWAP` | Frothy has no data stack |
