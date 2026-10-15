@@ -132,7 +132,7 @@ A library can change while a program is on the board. A library word keeps
 its slot when the library comes again, so code that the board compiled before
 still calls it. When the new library has no word with that name, a call answers
 `wrong type (2)`. The board keeps the name as reserved until no saved code
-calls it. After a library change, send your program again, and then `save`.
+calls it. After a library change, send your program again. Then type `save`.
 
 If you type `install-library` yourself, send `install-user` when the library
 is in. In library mode, each definition saves at once.

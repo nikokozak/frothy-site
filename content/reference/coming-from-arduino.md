@@ -98,7 +98,7 @@ with no arguments still needs the colon: `millis:`.
 | `millis()` | `millis:` | |
 | `Serial.print("hi")` | `print: "hi"` | |
 | `Serial.print(x)` | `print: x` | `x` is an integer |
-| `Serial.println("hi")` | `print: "hi\n"` | `print:` adds no line end |
+| `Serial.println("hi")` | `print: "hi\n"` | outside an event body, `print:` adds no line end |
 | `LED_BUILTIN` | `$led_builtin` | `nil` without an LED |
 | `A0` | `$a0` | |
 | `a == b`, `a != b` | `a = b`, `a <> b` | |
@@ -112,8 +112,9 @@ comes back as `nil` after a restart, so open the channel again in `boot`.
 Frothy has integers only. `3.14` is an error. To see a number at the prompt,
 type it or a name that holds it.
 
-`print:` writes an integer with no line end. `print.value:` writes a label,
-a colon, an integer and a line end, for example `light:512`. Neither word
+Outside an event body, `print:` writes an integer with no line end.
+`print.value:` writes a label, a colon, an integer and a line end, for example
+`light:512`. Neither word
 makes a Text value, so a loop can print for as long as it runs:
 
 ```frothy

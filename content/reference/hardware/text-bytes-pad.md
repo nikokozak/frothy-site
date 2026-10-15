@@ -16,13 +16,9 @@ Frothy has four byte tools with different lifetimes:
 | buffer | a value that changes many times | fixed capacity; persistable |
 | PAD | one tiny hand-built scratch sequence | one shared 64-byte area until reset |
 
-Each new Text value stays until the next `save`, `clear` or restart. So choose
-by what the value does:
-
-- a fixed string: Text;
-- working bytes in one evaluation or loop pass: Bytes;
-- a value that changes many times, such as the latest reply: a buffer;
-- a number to show: `print:` or `print.value:`, which make no value.
+Each new Text value stays until the next `save`, `clear` or restart. Keep a
+value that changes in a buffer. Show a number with `print:` or `print.value:`;
+they make no Text value.
 
 ## Copy An HTTP Body Into Text
 
@@ -44,9 +40,9 @@ to fetch-size with url [
 
 ## Keep The Latest HTTP Body In A Buffer
 
-A program that fetches a reply again and again keeps it in a buffer. Each
-`text.pack` makes a new Text value, but `buffer.set` writes into the same
-storage:
+A program that fetches a reply again and again keeps it in a buffer.
+`text.pack` makes a new Text value when no equal Text value exists.
+`buffer.set` writes into the same storage:
 
 ```frothy
 reply is buffer: 512
@@ -72,9 +68,10 @@ the body before it.
 
 Text is immutable and indexed by byte, not Unicode character. Source literals
 support `\n`, `\r`, `\t`, `\"`, `\\`, and `\xHH` for one byte in hexadecimal. One
-Text value holds at most 4,096 bytes, and all live Text together holds 4,096
-bytes. Text shares the object table with Cells, records and buffers: 128
-entries on ESP32 boards and 96 on RP2040 boards.
+Text value holds at most 4,096 bytes. The Text values made since the last
+`save` and the capacities of all buffers share a RAM pool of 4,096 bytes. Text
+shares the object table with Cells, records and buffers: 128 entries on ESP32
+boards and 96 on RP2040 boards.
 
 ```frothy
 greeting is text.concat: "hello, ", "Frothy"
@@ -107,8 +104,8 @@ end, and the prompt frees all Bytes values after each form. So a loop can make
 Bytes values for as long as it runs.
 
 A Bytes value cannot stay from one pass to the next. `set` of a local refuses a
-Bytes value with `not saved (13)`, because the next pass can free the value
-while the local still names it. Make the value with `here` in the loop body.
+Bytes value with `not saved (13)`. The next pass can free the value while the
+local still names it. Make the value with `here` in the loop body.
 
 Bytes cannot be written to top-level slots, Cells, or record fields, and cannot
 be saved. Consume them immediately, keep them in a `here` local during one
@@ -140,9 +137,9 @@ and BLE read operations return Bytes.
 | [`buffer.at`](/reference/words/#buffer-at) | `Int` | Byte at an index |
 | [`buffer.equals?`](/reference/words/#buffer-equals) | `Bool` | Byte-for-byte equality |
 
-`name is buffer: N` makes a buffer at the top level. Its capacity comes from the
-Text pool, so Text values and buffers together hold at most 4,096 bytes.
-`mem objects` shows the buffers in the row `objects.buffers.used`.
+`name is buffer: N` makes a buffer at the top level. Its capacity uses the RAM
+Text pool. `mem objects` shows the total capacity of the buffers in the row
+`objects.buffers.used`.
 [Buffers](/reference/language/#buffers) gives the rules.
 
 ## PAD

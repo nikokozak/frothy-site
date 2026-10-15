@@ -30,7 +30,7 @@ same limits. `mem` shows how much of each table is in use.
 | One line | 511 bytes | 511 bytes |
 | Parse nodes in one form | 64 | 64 |
 | Object table entries (Text, Cells, records, buffers) | 128 | 96 |
-| Text and buffers in use | 4,096 bytes | 4,096 bytes |
+| New Text and the capacities of buffers (RAM Text pool) | 4,096 bytes | 4,096 bytes |
 | Cells in use | 128 | 128 |
 | Elements in one Cells value | 32 | 32 |
 | Fields in one record | 4 | 4 |
@@ -46,7 +46,8 @@ same limits. `mem` shows how much of each table is in use.
 | Bytes in one name | 48 | 48 |
 | Integers | -1,073,741,824 to 1,073,741,823 | the same |
 
-`save` does not free a name. `clear` removes the names that you did not save.
+`save` does not free a name that you defined. It frees a reserved name when no
+saved code calls it. `clear` removes the names that you did not save.
 `wipe-user` removes all of your names and your saved program. The
 [network words](/reference/modules/wifi/) have their own limits.
 

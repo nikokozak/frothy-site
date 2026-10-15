@@ -73,7 +73,7 @@ definitions. `Frothy: Restore Overlay` reloads that saved state.
 The [browser editor](https://app.frothy.dev/editor) uses WebSerial and runs Frothy straight from the
 page. Use Chrome or Edge on desktop.
 
-- **Examples** — the picker in the header loads any of the bundled examples into the buffer. The same set is available in VS Code via `Frothy: Open Example`.
+- **Examples** — the picker in the header loads any of the bundled examples into the editor. The same set is available in VS Code via `Frothy: Open Example`.
 - **Connect / Run** — Connect opens the WebSerial picker and visibly confirms the live profile. Once connected, the button opens a menu with **Browse Words** and **Disconnect**. Run Line sends the selection, or the code at the cursor: a line inside a block runs on its own, and the line that opens the block or closes it runs the whole block. A block inside a block repeats the rule. Hovering the gutter shows a play marker and highlights the exact code that button would send. Run File runs the open file with its local `include` directives spliced in, stopping at the first device error; running `main.fr` clears the board's user definitions first, while any other file runs into the live session.
 - **Indent** — Tab and Shift-Tab indent inside the source editor instead of moving focus away.
 - **Browse Words** — asks the connected device for its current vocabulary, grouped into board-defined and built-in words; choosing one shows its source in place. Device words also join autocomplete.
