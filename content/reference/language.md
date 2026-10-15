@@ -405,6 +405,8 @@ to demo [
 
 The local declared inside the `if` block stops existing at its closing `]`.
 The current profile allows 8 parameters and 16 locals in one parsed definition.
+Each loop level uses one of the 16 locals. `set` of a local refuses a Bytes
+value with `not saved (13)`; make the value with `here` in the loop body.
 
 ## Blocks And Expression Separation
 

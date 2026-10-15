@@ -43,7 +43,7 @@ The kind is acceptable, but that particular value is invalid in this domain. Arg
 <a id="code-4"></a>
 **`4 — capacity exceeded`** *(runtime)*
 
-A fixed table, buffer, image, or other bounded store is full. Release or clear entries, or reduce what is being stored. Many of these errors add a note line that names the full store and its limit, and gives a remedy when one always works, for example `note: pending code is full (limit 687 bytes) -- a save that succeeds frees it`. A line longer than the device reads answers this code with `note: the line limit is <n> bytes`. A value that does not fit a buffer answers it with `note: buffer is full (limit <n> bytes)`, and the buffer does not change. [Limits](/limits/) lists each table and its size.
+A fixed table, buffer, image, or other bounded store is full. Release or clear entries, or reduce what is being stored. Many of these errors add a note line that names the full store and its limit. The note also gives a remedy when one always works, for example `note: pending code is full (limit 4178 bytes) -- a save that succeeds frees it`. A line longer than the device reads answers this code with `note: the line limit is <n> bytes`. A value that does not fit a buffer answers it with `note: buffer is full (limit <n> bytes)`, and the buffer does not change. [Limits](/limits/) lists each table and its size.
 
 ---
 

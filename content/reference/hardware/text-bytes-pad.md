@@ -101,18 +101,14 @@ They make no Text value.
 | [`console.read-line`](/reference/words/#console-read-line) | `Bytes` | Read one printable console line as data |
 
 Eight Bytes values can be in use at one time, with 4,096 bytes of data in
-total. The runtime frees every Bytes value at the end of each prompt evaluation
-and after each pass of `repeat`, `while`, and `forever`. Inside an event body,
-it frees them only when the body ends. A freed Bytes value gives
-`not saved: bytes stale (13)` when you use it again, so do not carry a Bytes
-value from one pass to the next.
+total. Each pass of `repeat`, `while`, and `forever` frees the Bytes values that
+the pass made. An event body and a failed `attempt` body free theirs when they
+end, and the prompt frees all Bytes values after each form. So a loop can make
+Bytes values for as long as it runs.
 
-**Known limit.** After a restart, a board can make 1,024 Bytes values. After
-that, each word that returns Bytes fails with `capacity exceeded (4)` and the
-note `Bytes table is full (limit 8)`. `save`, `clear`, and `wipe-user` also
-reset the count. A loop that makes one Bytes value in each pass stops after
-1,024 passes. In a long loop, read one register with `i2c.read-reg`, or build
-bytes in the PAD.
+A Bytes value cannot stay from one pass to the next. `set` of a local refuses a
+Bytes value with `not saved (13)`, because the next pass can free the value
+while the local still names it. Make the value with `here` in the loop body.
 
 Bytes cannot be written to top-level slots, Cells, or record fields, and cannot
 be saved. Consume them immediately, keep them in a `here` local during one

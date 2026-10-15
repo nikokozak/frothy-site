@@ -156,8 +156,9 @@ A label has 1 to 48 bytes: a letter or `_` first, then letters, digits, `_`,
 
 ## Limits
 
-An ESP32 board holds 256 of your names, and an RP2040 board holds 192. About 687
-bytes of compiled code can wait for `save`. One form must fit in a 511-byte line
-and in 64 parse nodes. A new Text value stays until the next `save`, `clear` or
-restart, and a board can make 1,024 Bytes values after a restart.
-[Limits](/limits/) lists every size.
+An ESP32 board holds 256 of your names, and an RP2040 board holds 192. About
+4,178 bytes of compiled code and parameter names can wait for `save`, or 1,114
+bytes on the XIAO ESP32C3. One form must fit in a 511-byte line and in 64 parse
+nodes. A new Text value stays until the next `save`, `clear` or restart, so keep
+a value that changes in a buffer. Each loop pass frees the Bytes values that it
+made. [Limits](/limits/) lists every size.
