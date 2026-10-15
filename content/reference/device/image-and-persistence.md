@@ -267,6 +267,10 @@ Typical recovery flow:
 4. Define `boot` again and `save`, or run `dangerous.wipe`.
 ```
 
+In safe boot, the board does not load the saved program. So a `save` writes
+only the words that you define after the start. Run `restore` before `save` to
+keep the saved program.
+
 ## An Image From Another Release
 
 A saved image records the image format and the profile hash of the firmware
@@ -282,13 +286,29 @@ does not cover the code inside a native or the names of base words. A release
 that keeps the hash and the image format reads the images of the release
 before it; the changelog says when a release changes either.
 
-Nothing is damaged when the device refuses an image. The board is healthy and
-the image is intact; this firmware cannot read it. Run `save` to write an image
-this firmware can read, or `wipe-user` to clear the saved state.
+The device does not load such an image, and the image stays on the board until
+a `save` or a wipe. To go on, send your source again, then type `save`. A
+`save` before you send your source writes an empty program over the old image.
 
-The web flasher erases the whole board, so a board you flash from the browser
-never shows this. You see it when you flash by another route and leave the old
-saved data in place.
+The web flasher erases an ESP32 board, so that board starts empty. A UF2 copy
+to an RP2040 board, `frothy flash` and other flash tools keep the old image.
+
+### Update From v0.1.22
+
+v0.1.23 changes the saved image and the profile hash of every board, and it
+has no migration. Do these steps in this order:
+
+1. Before you update, keep your source: the editor project or your `.fr` files.
+   `see` is not a full backup.
+2. Flash v0.1.23.
+3. Install your libraries again, and send your program again.
+4. Set again the state that your program needs, for example cell contents,
+   records, and the `wifi.save` credentials after a browser flash.
+5. Type `save`.
+
+If you updated without your source, do not type `save` or a wipe command.
+Unless the browser flasher erased an ESP32 board, the old image stays on the
+board, and v0.1.22 firmware can read it again.
 
 ## Snapshot Format Boundary
 

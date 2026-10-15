@@ -507,7 +507,10 @@ words
 <a id="see"></a>
 **`see`** *(inspection)* `see name`
 
-Renders the source form for a binding.
+Renders the source form for a binding. After `save` and a restart or
+`restore`, `see` shows the parameter names of a word, but not its local names,
+comments or layout. A local shows as `local0`, `local1` and so on, and `and` and
+`or` show as nested `if` forms. So keep your `.fr` source.
 
 **Example**
 
