@@ -116,7 +116,7 @@ swap an active-slot marker), never in the middle of streaming.
   / `fr_platform_persist_unmount()` — the mount lifecycle for a restore that
   may or may not accept the image.
 - `fr_platform_persist_read(bytes, cap, &out_length, image_index)` — the
-  copying variant, when the caller needs its own buffer.
+  copying variant, when the caller needs its own byte array.
 - `fr_platform_persist_clear()` — wipe all committed images.
 
 The image envelope carries the profile hash. A save taken under one profile is
@@ -162,7 +162,7 @@ There are three distinct roles here — keep them straight:
   which `binding_index` and `generation` to stamp on that source.
 - **`fr_platform_event_drain(out_events, out_cap, out_count, overflow_delta)`**
   is the hook that empties your queue. The kernel calls it (from its own
-  `fr_event_drain`) with a buffer of capacity `out_cap`; copy up to `out_cap`
+  `fr_event_drain`) with an output array of capacity `out_cap`; copy up to `out_cap`
   queued candidates into `out_events`, set `*out_count`, and report via
   `*overflow_delta` how many candidates you had to drop since the last drain
   (queue full). This is the seam between your ISR queue and the kernel.

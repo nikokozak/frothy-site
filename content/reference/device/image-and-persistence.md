@@ -287,11 +287,11 @@ that keeps the hash and the image format reads the images of the release
 before it; the changelog says when a release changes either.
 
 The device does not load such an image, and the image stays on the board until
-a `save` or a wipe. To go on, send your source again, then type `save`. A
+a `save` or a wipe. To go on, send your source again. Then type `save`. A
 `save` before you send your source writes an empty program over the old image.
 
 The web flasher erases an ESP32 board, so that board starts empty. A UF2 copy
-to an RP2040 board, `frothy flash` and other flash tools keep the old image.
+to an RP2040 board and `frothy flash` keep the old image.
 
 ### Update From v0.1.22
 
@@ -301,13 +301,14 @@ has no migration. Do these steps in this order:
 1. Before you update, keep your source: the editor project or your `.fr` files.
    `see` is not a full backup.
 2. Flash v0.1.23.
-3. Install your libraries again, and send your program again.
-4. Set again the state that your program needs, for example cell contents,
+3. Install your libraries again.
+4. Send your program again.
+5. Set again the state that your program needs, for example cell contents,
    records, and the `wifi.save` credentials after a browser flash.
-5. Type `save`.
+6. Type `save`.
 
-If you updated without your source, do not type `save` or a wipe command.
-Unless the browser flasher erased an ESP32 board, the old image stays on the
+If you updated without your source, do not type `save`. Do not use a wipe
+command. When the flash did not erase the old image, the image stays on the
 board, and v0.1.22 firmware can read it again.
 
 ## Snapshot Format Boundary

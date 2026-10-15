@@ -205,7 +205,8 @@ packet is "\x02\x01\x06"
 ```
 
 Text cannot contain a literal source newline. Use `\n`. One Text value holds
-at most 4,096 bytes, and all live Text and buffers together hold 4,096 bytes.
+at most 4,096 bytes. The Text values made since the last `save` and the
+capacities of all buffers share a RAM pool of 4,096 bytes.
 
 Use [Text, Bytes & PAD](/reference/modules/text-bytes-pad/) for conversion and
 the lifetime of Bytes.
@@ -406,7 +407,7 @@ to demo [
 The local declared inside the `if` block stops existing at its closing `]`.
 The current profile allows 8 parameters and 16 locals in one parsed definition.
 Each loop level uses one of the 16 locals. `set` of a local refuses a Bytes
-value with `not saved (13)`; make the value with `here` in the loop body.
+value with `not saved (13)`. Make the value with `here` in the loop body.
 
 ## Blocks And Expression Separation
 
@@ -530,15 +531,9 @@ print: reply                    -- status: ok!
 buffer.length: reply            -- 11
 ```
 
-A buffer takes its capacity from the Text pool when you define it, and it
-takes no new storage after that. So a loop or an event body can change it for
-as long as it runs:
-
-```frothy
-status is buffer: 32
-repeat 10000 as i [ buffer.set: status, i ]
-print: status                   -- 9999
-```
+A buffer takes its capacity from the Text pool when you define it. It takes no
+new storage after that, so a loop or an event body can change it for as long as
+it runs.
 
 `buffer.set` and `buffer.append` take an integer, Text, Bytes or a buffer. A
 value that does not fit answers `capacity exceeded (4)` with the note
@@ -704,8 +699,9 @@ Text when the content must survive the current evaluation or loop pass:
 reply-text is text.pack: (http.get: "http://example.com/")
 ```
 
-Each `text.pack` makes a new Text value. For bytes that change many times, keep
-them in a [buffer](#buffers) instead.
+`text.pack` reuses an equal Text value. It makes a new Text value only when no
+equal Text value exists. Keep bytes that change many times in a
+[buffer](#buffers).
 
 A `Handle` refers to an open platform resource such as I2C, UART, PWM, TCP,
 trace, pulse, or BLE state.

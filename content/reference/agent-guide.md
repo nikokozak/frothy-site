@@ -54,8 +54,8 @@ and the [word catalog](/reference/words/) give the rest, and
    `clamp:`, `map:`, `mod:`, `sqrt:` and `sign:`.
 8. **Text.** Write Text in double quotes. The escapes are `\n`, `\r`, `\t`, `\"`,
    `\\` and `\xHH`. `+` does not join Text: write `text.concat: "a", "b"`.
-   `print:` takes an integer, Text, Bytes or a buffer, and it adds no line
-   end.
+   `print:` takes an integer, Text, Bytes or a buffer. Outside an event body,
+   it adds no line end.
 9. **Names.** `count is 0` binds a top-level name, and
    `set count to count + 1` changes it. `set` does not make a name. Inside a
    block, `v is 1` or `here v is 1` makes a local. A parameter cannot change.
@@ -112,9 +112,9 @@ table is, and `events` prints the event bindings.
 
 ## Print A Number
 
-`print:` writes an integer with no line end. `print.value:` writes a label, a
-colon, an integer and a line end in one write, so an event cannot print inside
-the line. Neither word makes a Text or Bytes value, so both are safe in a long
+Outside an event body, `print:` writes an integer with no line end.
+`print.value:` writes a label, a colon, an integer and a line end in one write,
+so an event cannot print inside the line. Neither word makes a Text or Bytes value, so both are safe in a long
 loop:
 
 ```frothy
@@ -159,6 +159,6 @@ A label has 1 to 48 bytes: a letter or `_` first, then letters, digits, `_`,
 An ESP32 board holds 256 of your names, and an RP2040 board holds 192. About
 4,178 bytes of compiled code and parameter names can wait for `save`, or 1,114
 bytes on the XIAO ESP32C3. One form must fit in a 511-byte line and in 64 parse
-nodes. A new Text value stays until the next `save`, `clear` or restart, so keep
-a value that changes in a buffer. Each loop pass frees the Bytes values that it
+nodes. A new Text value stays until the next `save`, `clear` or restart. Keep a
+value that changes in a buffer. Each loop pass frees the Bytes values that it
 made. [Limits](/limits/) lists every size.

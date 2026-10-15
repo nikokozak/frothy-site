@@ -716,8 +716,9 @@ close-handles
 <a id="print"></a>
 **`print`** *(io)* `(Int|Text|Bytes|Buffer) -> nil`
 
-Writes an integer, Text, Bytes or a buffer to the console output. It adds no
-line end.
+Writes an integer, Text, Bytes or a buffer to the console output. Outside an
+event body, it adds no line end. An event body writes complete lines that start
+with `! `.
 
 **Example**
 
@@ -1806,11 +1807,11 @@ text.from-int: 42
 
 Copies a text value into a new Bytes value.
 
-`Bytes` values are scratch space in a small arena. The board frees them at the
-end of each loop pass, event body and prompt form. So a `Bytes` value cannot
-stay in a top-level binding. Build, inspect, and send bytes in one evaluation.
-When a result must stay after the line, copy it with `text.pack`, or keep it in
-a buffer; see [Text, Bytes & PAD](/reference/modules/text-bytes-pad/#bytes).
+`Bytes` values use a small transient arena. A Bytes value cannot stay in a
+top-level binding. Use each value during its evaluation or loop pass. Copy a
+result with `text.pack` when it must stay. For a result that changes, use a
+buffer. [Text, Bytes & PAD](/reference/modules/text-bytes-pad/#bytes) gives the
+lifetime rules.
 
 **Example**
 
@@ -1895,7 +1896,7 @@ Joins two Bytes values into a new Bytes value.
 **Example**
 
 ```frothy
-bytes.concat: bytes.from-text: "A", bytes.from-text: "T"
+bytes.concat: (bytes.from-text: "A"), bytes.from-text: "T"
 ```
 
 ---
@@ -1903,7 +1904,8 @@ bytes.concat: bytes.from-text: "A", bytes.from-text: "T"
 <a id="text-pack"></a>
 **`text.pack`** *(text)* `(bytes) -> Text`
 
-Copies a Bytes value into a new Text value.
+Copies a Bytes value into Text. Frothy reuses an equal Text value when one
+exists.
 
 The door out of bytes-transience: `Bytes` die when the line ends, but the
 `Text` this returns lives in the text pool and can sit in a binding like
@@ -1911,13 +1913,12 @@ any other value. The usual shape is receive-then-pack — read from a
 socket, UART, or I2C device into transient bytes, then pack the part
 worth keeping.
 
-Each call makes a new Text value. For bytes that change many times, use a
-buffer and `buffer.set`.
+Use a buffer and `buffer.set` for bytes that change many times.
 
 **Example**
 
 ```frothy
-reply is text.pack: (tcp.read: sock, 64)
+reply is text.pack: (bytes.from-text: "ready")
 ```
 
 Deeper: [Text, bytes, and pad](/reference/modules/text-bytes-pad/).
