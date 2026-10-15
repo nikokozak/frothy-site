@@ -97,6 +97,7 @@ with no arguments still needs the colon: `millis:`.
 | `delay(ms)` | `wait: ms` | |
 | `millis()` | `millis:` | |
 | `Serial.print("hi")` | `print: "hi"` | |
+| `Serial.print(x)` | `print: x` | `x` is an integer |
 | `Serial.println("hi")` | `print: "hi\n"` | `print:` adds no line end |
 | `LED_BUILTIN` | `$led_builtin` | `nil` without an LED |
 | `A0` | `$a0` | |
@@ -111,25 +112,14 @@ comes back as `nil` after a restart, so open the channel again in `boot`.
 Frothy has integers only. `3.14` is an error. To see a number at the prompt,
 type it or a name that holds it.
 
-`print:` takes text, not an integer. A word that runs in a loop can print a
-number with this word. It resets and reuses the fixed 64-byte PAD for each
-number, so a long loop does not fill memory:
+`print:` writes an integer with no line end. `print.value:` writes a label,
+a colon, an integer and a line end, for example `light:512`. Neither word
+makes a Text value, so a loop can print for as long as it runs:
 
 ```frothy
-to print-int with n [
-  here v is n
-  pad.reset:
-  when v < 0 [
-    pad.emit-byte: 45
-    set v to 0 - v
-  ]
-  here div is 1
-  while v / div >= 10 [ set div to div * 10 ]
-  while div > 0 [
-    pad.emit-byte: 48 + v / div % 10
-    set div to div / 10
-  ]
-  pad.type:
+repeat 20 [
+  print.value: "light", (adc.read: $a0)
+  wait: 200
 ]
 ```
 

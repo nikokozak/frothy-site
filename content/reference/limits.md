@@ -99,9 +99,8 @@ error: capacity exceeded (4)
 note: object table (cells, text and records) is full (limit 128)
 ```
 
-To print numbers in a loop, use the `print-int` word from
-[Coming from Arduino](/coming-from-arduino/#numbers). It uses the PAD, not the
-object table.
+To print numbers in a loop, use `print:` or `print.value:`. They make no Text
+value.
 
 After a restart, a board can make 1,024 Bytes values. After that, each word
 that returns Bytes fails with `note: Bytes table is full (limit 8)`, also when

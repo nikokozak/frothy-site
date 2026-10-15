@@ -38,7 +38,7 @@ and the [word catalog](/reference/words/) give the rest, and
    does not call it. At the prompt, a word with no colon gives notice 102.
 3. **A call takes every argument after its colon.** Put a call in parentheses
    when more arguments follow it: `max: (abs: -5), 3`. A call that is the last
-   argument needs no parentheses: `print: text.from-int: 42`.
+   argument needs no parentheses: `print: abs: -42`.
 4. **Compare integers with `=` and `<>`.** The other comparisons are `<`, `>`,
    `<=` and `>=`. `==` and `!=` give `invalid (8)`. Comparisons do not chain:
    write `1 < x and x < 3`. Compare Text with `text.equals?`. Test `nil` or a
@@ -54,7 +54,8 @@ and the [word catalog](/reference/words/) give the rest, and
    `clamp:`, `map:`, `mod:`, `sqrt:` and `sign:`.
 8. **Text.** Write Text in double quotes. The escapes are `\n`, `\r`, `\t`, `\"`,
    `\\` and `\xHH`. `+` does not join Text: write `text.concat: "a", "b"`.
-   `print:` takes Text or Bytes, not an integer, and it adds no line end.
+   `print:` takes an integer, Text, Bytes or a buffer, and it adds no line
+   end.
 9. **Names.** `count is 0` binds a top-level name, and
    `set count to count + 1` changes it. `set` does not make a name. Inside a
    block, `v is 1` or `here v is 1` makes a local. A parameter cannot change.
@@ -96,8 +97,7 @@ and the [word catalog](/reference/words/) give the rest, and
 | `analogRead`, `analogWrite` | `adc.read`, then `pwm.open` and `pwm.write` |
 | `HIGH`, `LOW` | `1`, `0` |
 | `OUTPUT`, `INPUT`, `INPUT_PULLUP` | modes `1`, `0` and `2` of `gpio.mode` |
-| `Serial.println(x)` | `print:` with Text, or `print-int` below for an integer |
-| `print.value:` | `print-int` below |
+| `Serial.println(x)` | `print.value: "x", x`, or `print: x` and then `print: "\n"` |
 | `i2c.scan`, `spi.*` | nothing in v0.1.22 |
 | `neopixel.show` | nothing; on ESP32 boards, the `pulse.*` words build a waveform |
 | `break`, `return`, `for`, `case` | `while`, `repeat`, `forever`, `if` |
@@ -110,34 +110,22 @@ that is not in the list does not exist there. `see name` prints the code of a
 word. `status` prints the release and the profile, `mem` prints how full each
 table is, and `events` prints the event bindings.
 
-## Print An Integer
+## Print A Number
 
-`print:` does not take an integer. This word prints one. It uses the PAD and
-makes no Text or Bytes values, so it is safe in a long loop:
+`print:` writes an integer with no line end. `print.value:` writes a label, a
+colon, an integer and a line end in one write, so an event cannot print inside
+the line. Neither word makes a Text or Bytes value, so both are safe in a long
+loop:
 
 ```frothy
-to print-int with n [
-  here v is n
-  pad.reset:
-  when v < 0 [
-    pad.emit-byte: 45
-    set v to 0 - v
-  ]
-  here div is 1
-  while v / div >= 10 [ set div to div * 10 ]
-  while div > 0 [
-    pad.emit-byte: 48 + v / div % 10
-    set div to div / 10
-  ]
-  pad.type:
-]
-
 repeat 20 [
-  print-int: (adc.read: $a0)
-  print: "\n"
+  print.value: "a0", (adc.read: $a0)
   wait: 200
 ]
 ```
+
+A label has 1 to 48 bytes: a letter or `_` first, then letters, digits, `_`,
+`.` or `-`.
 
 ## Send Code
 
@@ -161,7 +149,7 @@ repeat 20 [
 | `invalid (8)`, `unexpected token` | a syntax error | look for `!=`, a bit operator, or two forms on one line |
 | `invalid (8)`, `expected ':' before the argument to a word` | a call with no colon | write `name: arg` |
 | `invalid (8)`, `expected 3 arguments, got 1` | a call with the wrong number of arguments | give each argument; put a nested call in parentheses |
-| `wrong type (2)` | a value of the wrong kind | for example, `print:` with an integer |
+| `wrong type (2)` | a value of the wrong kind | for example, `text.concat:` with an integer |
 | `capacity exceeded (4)` | a fixed table is full; the `note:` line names it | see [Limits](/limits/) |
 | `busy (25)` | a pin or port is in use | close its handle first |
 | `prompt only (26)` | a word called `save`, `restore` or `dangerous.wipe` | run it at the prompt |
