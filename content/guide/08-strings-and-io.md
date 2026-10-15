@@ -47,6 +47,21 @@ result into persistent Text when it must outlive the current call:
 body is text.pack: (http.get: "http://example.com/")
 ```
 
+## A Value That Changes
+
+Each new Text value stays until the next `save`, `clear` or restart. A program
+that keeps the latest reply, command or status line keeps it in a buffer
+instead. A buffer has a fixed capacity, and `buffer.set` writes into the same
+storage each time:
+
+```frothy
+status is buffer: 32
+repeat 10000 as i [ buffer.set: status, i ]
+print: status
+```
+
+[Buffers](/reference/language/#buffers) gives the rules.
+
 ## Read A Console Line As Data
 
 Normally, a line entered at the prompt is Frothy source. `console.read-line:`
@@ -84,7 +99,7 @@ and `uart.available:` for arbitrary bytes or an independent serial device.
 
 ## The Shared PAD
 
-PAD is one 64-byte scratch buffer for building a short sequence one byte at a
+PAD is one 64-byte scratch area for building a short sequence one byte at a
 time without allocating a Bytes value:
 
 ```frothy
