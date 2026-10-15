@@ -43,7 +43,7 @@ The kind is acceptable, but that particular value is invalid in this domain. Arg
 <a id="code-4"></a>
 **`4 — capacity exceeded`** *(runtime)*
 
-A fixed table, buffer, image, or other bounded store is full. Release or clear entries, or reduce what is being stored. Many of these errors add a note line that names the full store and its limit, and gives a remedy when one always works, for example `note: pending code is full (limit 687 bytes) -- a save that succeeds frees it`. A line longer than the device reads answers this code with `note: the line limit is <n> bytes`. [Limits](/limits/) lists each table and its size.
+A fixed table, buffer, image, or other bounded store is full. Store less data. Many of these errors add a note line that names the full store and its limit. The note gives a remedy only when one always works. For example: `note: pending code is full (limit 4178 bytes) -- a save that succeeds frees it`. A line longer than the device reads answers this code with `note: the line limit is <n> bytes`. A value that does not fit a buffer answers it with `note: buffer is full (limit <n> bytes)`, and the buffer does not change. [Limits](/limits/) lists each table and its size.
 
 ---
 
@@ -92,7 +92,7 @@ Evaluation was deliberately interrupted and is not catchable. At the prompt this
 <a id="code-11"></a>
 **`11 — corrupt data`** *(device)*
 
-Persisted or incoming data failed validation: a bad magic number, a bad checksum, or a bad length. The data is damaged, so restore, wipe, rebuild, or reacquire it instead of using a partial result. An image that the device refuses because its format or profile hash differs is not damaged and reports `other release` instead.
+Persisted or incoming data failed validation: a bad magic number, a bad checksum, or a bad length. The data is damaged, so restore, wipe, rebuild, or reacquire it instead of using a partial result. An image with a different format or profile hash reports `other release (27)` instead. That answer does not check the rest of the image.
 
 ---
 
@@ -109,6 +109,8 @@ A peripheral or storage operation failed. Check power, wiring, media, and device
 Volatile state cannot be made durable. A rejected store is an error.
 
 At the prompt, a bare `save` or `save:` stores slots holding handle values as nil and reports [notice 100](#notice-100) instead. It still refuses with this code when the value cannot be made nil safely: a live Bluetooth connection, a slot installed in library mode, or more handle-bound slots than the device can hold at once. Rebind the named slot and retry.
+
+`set` of a local to a Bytes value also answers this code, because the next loop pass can free the value. Make the value with `here` in the loop body.
 
 Inside a program, `save:` does not reach this check at all — see [code 26](#code-26).
 
@@ -208,7 +210,7 @@ This operation replaces the running program; issue it as its own complete prompt
 <a id="code-27"></a>
 **`27 — other release`** *(persistence)*
 
-The saved image has a different image format or profile hash than this firmware. The image is not damaged and your board is healthy: the device reads an image only when both match its own (see [An Image From Another Release](/reference/device/image-and-persistence/#an-image-from-another-release)). You see this at boot, when the device finds a saved image it cannot load, and from `restore`. Save again to write an image this firmware can read.
+The saved image has a different image format or profile hash than this firmware. The device reads an image only when both match its own (see [An Image From Another Release](/reference/device/image-and-persistence/#an-image-from-another-release)). You see this at boot, when the device finds a saved image it cannot load, and from `restore`. Send your source again. Then type `save`. A `save` before you send your source writes an empty program over the old image.
 
 ---
 

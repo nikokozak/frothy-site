@@ -115,7 +115,7 @@ hold at once:
 ```text
 > save
 notice: not saved (13)
-detail: cannot save slot 'link' - bound to a live handle or buffer
+detail: cannot save slot 'link' - bound to a live handle or a Bytes value
 ok
 >
 ```

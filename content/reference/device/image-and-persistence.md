@@ -134,7 +134,7 @@ at once. Those keep the older response:
 ```text
 > save
 notice: not saved (13)
-detail: cannot save slot 'link' - bound to a live handle or buffer
+detail: cannot save slot 'link' - bound to a live handle or a Bytes value
 ok
 >
 ```
@@ -150,6 +150,23 @@ image the running program is executing from, so it belongs to the prompt; the
 same holds for `restore` and `dangerous.wipe`. The error is catchable with
 `attempt`/`rescue`. See the complete
 [error and notice contract](/errors/#code-26).
+
+### Buffers and `save`
+
+`save` keeps the contents of a [buffer](/reference/language/#buffers), and the
+board has them again after a restart. A buffer from library mode goes back to
+its contents in the library image at each `save`, `restore` and `wipe-user`. A
+buffer that both the library and your program hold does the same, as does a
+library Cells value.
+
+A buffer keeps its capacity in the Text pool also when it is empty. When no
+name holds a buffer, `save`, `clear`, `restore` or a restart frees it. A
+running program cannot make, resize or free a buffer; only a top-level
+definition makes one.
+
+Flash keeps the older saved image until a later save writes over it. So saved
+contents can stay in flash after you change them. `dangerous.wipe` removes
+them.
 
 **`restore`** *(interactive base image)*
 
@@ -250,6 +267,10 @@ Typical recovery flow:
 4. Define `boot` again and `save`, or run `dangerous.wipe`.
 ```
 
+In safe boot, the board does not load the saved program. So a `save` writes
+only the words that you define after the start. Run `restore` before `save` to
+keep the saved program.
+
 ## An Image From Another Release
 
 A saved image records the image format and the profile hash of the firmware
@@ -265,13 +286,30 @@ does not cover the code inside a native or the names of base words. A release
 that keeps the hash and the image format reads the images of the release
 before it; the changelog says when a release changes either.
 
-Nothing is damaged when the device refuses an image. The board is healthy and
-the image is intact; this firmware cannot read it. Run `save` to write an image
-this firmware can read, or `wipe-user` to clear the saved state.
+The device does not load such an image, and the image stays on the board until
+a `save` or a wipe. To go on, send your source again. Then type `save`. A
+`save` before you send your source writes an empty program over the old image.
 
-The web flasher erases the whole board, so a board you flash from the browser
-never shows this. You see it when you flash by another route and leave the old
-saved data in place.
+The web flasher erases an ESP32 board, so that board starts empty. A UF2 copy
+to an RP2040 board and `frothy flash` keep the old image.
+
+### Update From v0.1.22
+
+v0.1.23 changes the saved image and the profile hash of every board, and it
+has no migration. Do these steps in this order:
+
+1. Before you update, keep your source: the editor project or your `.fr` files.
+   `see` is not a full backup.
+2. Flash v0.1.23.
+3. Install your libraries again.
+4. Send your program again.
+5. Set again the state that your program needs, for example cell contents,
+   records, and the `wifi.save` credentials after a browser flash.
+6. Type `save`.
+
+If you updated without your source, do not type `save`. Do not use a wipe
+command. When the flash did not erase the old image, the image stays on the
+board, and v0.1.22 firmware can read it again.
 
 ## Snapshot Format Boundary
 

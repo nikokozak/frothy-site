@@ -128,17 +128,14 @@ nonzero status.
 `frothy install` ends with `install-user`, so the board is back in the user
 tier and later definitions are user words.
 
-Changing a library while a program is on the board is not safe yet. A
-library that comes again gives its words new slots, so words that the board
-compiled before answer `wrong type (2)` or run a different library word, and
-a later `save` can answer `corrupt data (11)`. Until a fix, change a library
-in this order: `wipe-user`, then `frothy install`, then send the program and
-`save`. If a library already changed under a program, do not `save`: run
-`dangerous.wipe`, then `frothy install`, then send the program.
+A library can change while a program is on the board. A library word keeps
+its slot when the library comes again, so code that the board compiled before
+still calls it. When the new library has no word with that name, a call answers
+`wrong type (2)`. The board keeps the name as reserved until no saved code
+calls it. After a library change, send your program again. Then type `save`.
 
 If you type `install-library` yourself, send `install-user` when the library
-is in: in library mode, a definition after `wipe-user` can answer
-`corrupt data (11)`, and only `dangerous.wipe` recovers.
+is in. In library mode, each definition saves at once.
 
 ## Recovery Commands
 

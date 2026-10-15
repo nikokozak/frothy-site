@@ -84,9 +84,9 @@ it means the resource exists but is currently exclusive to another owner. See
 the receive queue is empty:
 
 ```frothy
-to drain-uart handle [
+to drain-uart with handle [
   while (uart.available: handle) > 0 [
-    print: (text.from-int: uart.read-byte: handle)
+    print.value: "byte", (uart.read-byte: handle)
   ]
 ]
 ```

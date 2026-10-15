@@ -34,8 +34,8 @@ you can type datasheet values as they are.
 | Word | Result | Use |
 | --- | --- | --- |
 | [`i2c.open`](/reference/words/#i2c-open) | `Handle` | Open a port on selected SDA/SCL pins and frequency |
-| [`i2c.write`](/reference/words/#i2c-write) | `nil` | Send Text or Bytes to a 7-bit address |
-| [`i2c.read`](/reference/words/#i2c-read) | `Bytes` | Read a transient byte buffer |
+| [`i2c.write`](/reference/words/#i2c-write) | `nil` | Send Text, Bytes or a buffer to a 7-bit address |
+| [`i2c.read`](/reference/words/#i2c-read) | `Bytes` | Read bytes as a transient Bytes value |
 | [`i2c.read-reg`](/reference/words/#i2c-read-reg) | `Int` | Read one 8-bit register |
 | [`i2c.write-reg`](/reference/words/#i2c-write-reg) | `nil` | Write one 8-bit register |
 | [`i2c.read-reg16`](/reference/words/#i2c-read-reg16) | `Int` | Read one big-endian 16-bit register |
@@ -60,7 +60,7 @@ or stale handle cannot be reused.
 
 ## Raw Transfers
 
-`i2c.write` accepts Text or Bytes, so short fixed command sequences can be
+`i2c.write` accepts Text, Bytes or a buffer, so short fixed command sequences can be
 written directly:
 
 ```frothy

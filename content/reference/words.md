@@ -507,7 +507,10 @@ words
 <a id="see"></a>
 **`see`** *(inspection)* `see name`
 
-Renders the source form for a binding.
+Renders the source form for a binding. After `save` and a restart or
+`restore`, `see` shows the parameter names of a word, but not its local names,
+comments or layout. A local shows as `local0`, `local1` and so on, and `and` and
+`or` show as nested `if` forms. So keep your `.fr` source.
 
 **Example**
 
@@ -711,14 +714,33 @@ close-handles
 ---
 
 <a id="print"></a>
-**`print`** *(io)* `(Text|Bytes) -> nil`
+**`print`** *(io)* `(Int|Text|Bytes|Buffer) -> nil`
 
-Writes raw text or bytes to the console output.
+Writes an integer, Text, Bytes or a buffer to the console output. Outside an
+event body, it adds no line end. An event body writes complete lines that start
+with `! `.
 
 **Example**
 
 ```frothy
 print: "hello"
+print: 42
+```
+
+---
+
+<a id="print-value"></a>
+**`print.value`** *(io)* `(label, value) -> nil`
+
+Writes the label, a colon, the integer value and a line end in one write, so
+an event cannot print inside the line. The label is Text of 1 to 48 bytes: a
+letter or `_` first, then letters, digits, `_`, `.` or `-`. The word makes no
+Text or Bytes value, so a loop can call it for as long as it runs.
+
+**Example**
+
+```frothy
+print.value: "temp", 21
 ```
 
 ## GPIO, ADC, And LED
@@ -1448,9 +1470,9 @@ uart.write-byte: aux, 65
 Reads one byte from an auxiliary UART, or `-1` when none is ready.
 
 The read never blocks: `-1` means "nothing yet", not an error, so a
-polling loop stays live and interruptible. Received bytes queue in a
-driver buffer until read, so a periodic drain does not lose data between
-polls.
+polling loop stays live and interruptible. Received bytes wait in the
+receive queue of the driver until read, so a periodic drain does not lose data
+between polls.
 
 **Example**
 
@@ -1783,15 +1805,13 @@ text.from-int: 42
 <a id="bytes-from-text"></a>
 **`bytes.from-text`** *(bytes)* `(text) -> Bytes`
 
-Copies a text value into a transient bytes buffer.
+Copies a text value into a new Bytes value.
 
-`Bytes` values are scratch space in a small arena. The runtime frees them
-when the line or the outermost call ends, so a `Bytes` value cannot stay in a
-top-level binding. A stale value gives `not saved: bytes stale (13)` and never
-reads other data. Build, inspect, and send bytes in one evaluation. When a
-result must stay after the line, copy it with `text.pack`. After a restart, a
-board can make 1,024 Bytes values; see
-[Text, Bytes & PAD](/reference/modules/text-bytes-pad/#bytes).
+`Bytes` values use a small transient arena. A Bytes value cannot stay in a
+top-level binding. Use each value during its evaluation or loop pass. Copy a
+result with `text.pack` when it must stay. For a result that changes, use a
+buffer. [Text, Bytes & PAD](/reference/modules/text-bytes-pad/#bytes) gives the
+lifetime rules.
 
 **Example**
 
@@ -1806,7 +1826,7 @@ Deeper: [Text, bytes, and pad](/reference/modules/text-bytes-pad/).
 <a id="bytes-from-byte"></a>
 **`bytes.from-byte`** *(bytes)* `(byte) -> Bytes`
 
-Creates a one-byte buffer from a 0 to 255 integer.
+Makes a Bytes value of one byte from a 0 to 255 integer.
 
 **Example**
 
@@ -1830,27 +1850,27 @@ bytes.from-int: 42
 ---
 
 <a id="bytes-length"></a>
-**`bytes.length`** *(bytes)* `(buf) -> Int`
+**`bytes.length`** *(bytes)* `(bytes) -> Int`
 
-Returns the byte count of a bytes buffer.
+Returns the number of bytes in a Bytes value.
 
 **Example**
 
 ```frothy
-bytes.length: buf
+bytes.length: (bytes.from-text: "AT")
 ```
 
 ---
 
 <a id="bytes-at"></a>
-**`bytes.at`** *(bytes)* `(buf, index) -> Int`
+**`bytes.at`** *(bytes)* `(bytes, index) -> Int`
 
 Returns the byte at an index as a 0 to 255 integer.
 
 **Example**
 
 ```frothy
-bytes.at: buf, 0
+bytes.at: (bytes.from-text: "AT"), 0
 ```
 
 ---
@@ -1858,12 +1878,12 @@ bytes.at: buf, 0
 <a id="bytes-equals"></a>
 **`bytes.equals?`** *(bytes)* `(a, b) -> Bool`
 
-Returns true when two bytes buffers have equal contents.
+Returns true when two Bytes values hold the same bytes.
 
 **Example**
 
 ```frothy
-bytes.equals?: buf, bytes.from-text: "AT"
+bytes.equals?: (bytes.from-text: "AT"), bytes.from-text: "AT"
 ```
 
 ---
@@ -1871,20 +1891,21 @@ bytes.equals?: buf, bytes.from-text: "AT"
 <a id="bytes-concat"></a>
 **`bytes.concat`** *(bytes)* `(a, b) -> Bytes`
 
-Concatenates two bytes buffers into a new buffer.
+Joins two Bytes values into a new Bytes value.
 
 **Example**
 
 ```frothy
-bytes.concat: bytes.from-text: "A", bytes.from-text: "T"
+bytes.concat: (bytes.from-text: "A"), bytes.from-text: "T"
 ```
 
 ---
 
 <a id="text-pack"></a>
-**`text.pack`** *(text)* `(buf) -> Text`
+**`text.pack`** *(text)* `(bytes) -> Text`
 
-Copies a bytes buffer into persistent text storage.
+Copies a Bytes value into Text. Frothy reuses an equal Text value when one
+exists.
 
 The door out of bytes-transience: `Bytes` die when the line ends, but the
 `Text` this returns lives in the text pool and can sit in a binding like
@@ -1892,17 +1913,102 @@ any other value. The usual shape is receive-then-pack — read from a
 socket, UART, or I2C device into transient bytes, then pack the part
 worth keeping.
 
+Use a buffer and `buffer.set` for bytes that change many times.
+
 **Example**
 
 ```frothy
-text.pack: buf
-```
-
-```frothy
-reply is text.pack: (tcp.read: sock, 64)
+reply is text.pack: (bytes.from-text: "ready")
 ```
 
 Deeper: [Text, bytes, and pad](/reference/modules/text-bytes-pad/).
+
+---
+
+<a id="buffer-set"></a>
+**`buffer.set`** *(buffer)* `(buffer, value) -> nil`
+
+Replaces the contents of a buffer with the bytes of the value. The value is an
+integer, Text, Bytes or a buffer; an integer gives its decimal digits. A value
+that does not fit answers `capacity exceeded (4)` with the note
+`buffer is full (limit N bytes)`, and the contents do not change. Make a buffer
+at the top level with `name is buffer: N`.
+
+**Example**
+
+```frothy
+reply is buffer: 64
+buffer.set: reply, "status: ok"
+```
+
+---
+
+<a id="buffer-append"></a>
+**`buffer.append`** *(buffer)* `(buffer, value) -> nil`
+
+Adds the bytes of the value after the contents of a buffer. A value that does
+not fit changes nothing.
+
+**Example**
+
+```frothy
+buffer.append: reply, "!"
+```
+
+---
+
+<a id="buffer-length"></a>
+**`buffer.length`** *(buffer)* `(buffer) -> Int`
+
+Returns the number of bytes in a buffer.
+
+**Example**
+
+```frothy
+buffer.length: reply
+```
+
+---
+
+<a id="buffer-capacity"></a>
+**`buffer.capacity`** *(buffer)* `(buffer) -> Int`
+
+Returns the most bytes that a buffer can hold.
+
+**Example**
+
+```frothy
+buffer.capacity: reply
+```
+
+---
+
+<a id="buffer-at"></a>
+**`buffer.at`** *(buffer)* `(buffer, index) -> Int`
+
+Returns the byte at an index as a 0 to 255 integer.
+
+**Example**
+
+```frothy
+buffer.at: reply, 0
+```
+
+---
+
+<a id="buffer-equals"></a>
+**`buffer.equals?`** *(buffer)* `(buffer, value) -> Bool`
+
+Returns true when a buffer holds the bytes of the value. The value is an
+integer, Text, Bytes or a buffer.
+
+**Example**
+
+```frothy
+buffer.equals?: reply, "status: ok"
+```
+
+Deeper: [Buffers](/reference/language/#buffers).
 
 ---
 
@@ -2009,7 +2115,7 @@ Deeper: [Network module](/reference/modules/wifi/).
 <a id="http-post"></a>
 **`http.post`** *(network)* `(url, body) -> Bytes`
 
-Posts Text or Bytes to a plain HTTP URL and returns the complete response body.
+Posts Text, Bytes or a buffer to a plain HTTP URL and returns the complete response body.
 
 The request uses `Content-Type: text/plain`. Response limits, timeout, and
 errors are identical to `http.get`, including no partial result for an
@@ -2089,7 +2195,7 @@ tcp.read: sock, 64
 <a id="tcp-write"></a>
 **`tcp.write`** *(network)* `(sock, bytes) -> nil`
 
-Sends the raw bytes of a text or bytes value to a TCP socket.
+Sends the raw bytes of a Text, Bytes or buffer value to a TCP socket.
 
 **Example**
 
@@ -2233,9 +2339,9 @@ Deeper: [Power module](/reference/modules/power/).
 <a id="pad-reset"></a>
 **`pad.reset`** *(pad)* `() -> nil`
 
-Clears the transient pad buffer.
+Empties the PAD.
 
-The pad is one shared builder buffer (64 bytes on the shipped profiles)
+The PAD is one shared scratch area (64 bytes on the shipped profiles)
 for assembling small messages a byte at a time. Unlike `Bytes` values, it
 survives between lines and calls — bytes accumulate until you clear it —
 which is what makes it useful for collecting input that arrives over many
@@ -2257,7 +2363,7 @@ Deeper: [Text, bytes, and pad](/reference/modules/text-bytes-pad/).
 <a id="pad-emit-byte"></a>
 **`pad.emit-byte`** *(pad)* `(byte) -> nil`
 
-Appends one byte to the transient pad buffer.
+Adds one byte to the PAD.
 
 **Example**
 
@@ -2271,7 +2377,7 @@ pad.emit-byte: 65
 <a id="pad-length"></a>
 **`pad.length`** *(pad)* `() -> Int`
 
-Returns the transient pad buffer length.
+Returns the number of bytes in the PAD.
 
 **Example**
 
@@ -2284,7 +2390,7 @@ pad.length:
 <a id="pad-type"></a>
 **`pad.type`** *(pad)* `() -> nil`
 
-Writes the transient pad buffer to console output.
+Writes the bytes of the PAD to the console output.
 
 **Example**
 
@@ -2297,7 +2403,7 @@ pad.type:
 <a id="pad-peek-byte"></a>
 **`pad.peek-byte`** *(pad)* `(index) -> Int`
 
-Reads one byte from the transient pad buffer.
+Reads one byte from the PAD.
 
 **Example**
 
@@ -2458,7 +2564,7 @@ trace.delta-ns: capture, 1
 <a id="trace-complete"></a>
 **`trace.complete?`** *(trace)* `(capture) -> Bool`
 
-Returns true when capture stopped, filled its edge buffer, or reached its
+Returns true when capture stopped, filled its edge storage, or reached its
 maximum span.
 
 **Example**
@@ -2853,7 +2959,7 @@ ble.scan.data:
 <a id="ble-advertise-start"></a>
 **`ble.advertise.start`** *(ble advertise)* `(advertising_data, scan_response_data, interval_ms, connectable) -> nil`
 
-Starts legacy advertising with raw Text or Bytes AD payloads and a connectable
+Starts legacy advertising with raw Text, Bytes or buffer AD payloads and a connectable
 flag of 0 or 1.
 
 Advertising broadcasts a small payload every `interval_ms` for any nearby

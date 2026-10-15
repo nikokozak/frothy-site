@@ -157,6 +157,7 @@ shipped board runs exposes all of these:
 | `Text` | `"ready"` | persistable |
 | `Code` | `fn [ 1 + 2 ]` | persistable |
 | `Cells` | `cells: 4` | persistable mutable storage |
+| buffer | `buffer: 64` | persistable mutable storage |
 | record shape/value | `record Point [ x, y ]` | persistable |
 | `Bytes` | `bytes.from-text: "AT"` | transient |
 | `Handle` | `i2c.open: ...` | transient |
@@ -170,7 +171,7 @@ if 0 [ "yes" ] else [ "no" ]       -- "no"
 if nil [ "yes" ] else [ "no" ]     -- "no"
 ```
 
-`0x10` is the integer `16`; it is not a byte buffer. Create `Bytes` explicitly
+`0x10` is the integer `16`; it is not a Bytes value. Create `Bytes` explicitly
 with a `bytes.*` word or an I/O operation that returns bytes.
 
 Square brackets delimit bodies used by language forms. A standalone `[ 1 + 2
@@ -204,10 +205,11 @@ packet is "\x02\x01\x06"
 ```
 
 Text cannot contain a literal source newline. Use `\n`. One Text value holds
-at most 4,096 bytes, and all live Text together holds 4,096 bytes.
+at most 4,096 bytes. The Text values made since the last `save` and the
+capacities of all buffers share a RAM pool of 4,096 bytes.
 
 Use [Text, Bytes & PAD](/reference/modules/text-bytes-pad/) for conversion and
-transient-buffer rules.
+the lifetime of Bytes.
 
 ## Names
 
@@ -302,7 +304,7 @@ Arguments are comma-separated. Parenthesize a nested call when it makes the
 argument boundary explicit.
 
 ```frothy
-print: (text.from-int: 42)
+print: (abs: -42)
 total is add: 1, (add: 2, 3)
 ```
 
@@ -404,6 +406,8 @@ to demo [
 
 The local declared inside the `if` block stops existing at its closing `]`.
 The current profile allows 8 parameters and 16 locals in one parsed definition.
+Each loop level uses one of the 16 locals. `set` of a local refuses a Bytes
+value with `not saved (13)`. Make the value with `here` in the loop body.
 
 ## Blocks And Expression Separation
 
@@ -472,7 +476,7 @@ an error. Add `as name` for a zero-based loop index.
 repeat 3 [ print: "tick\n" ]
 
 repeat 3 as i [
-  print: (text.from-int: i)
+  print: i
   print: "\n"
 ]
 ```
@@ -513,6 +517,36 @@ elements across the live image.
 
 Cells and their persistable contents are included by `save`. Transient `Bytes`
 and `Handle` values are rejected as cell contents.
+
+## Buffers
+
+A buffer keeps bytes that change many times, such as the latest reply or
+status line. Create it at the top level with a positive literal capacity:
+
+```frothy
+reply is buffer: 64
+buffer.set: reply, "status: ok"
+buffer.append: reply, "!"
+print: reply                    -- status: ok!
+buffer.length: reply            -- 11
+```
+
+A buffer takes its capacity from the Text pool when you define it. It takes no
+new storage after that, so a loop or an event body can change it for as long as
+it runs.
+
+`buffer.set` and `buffer.append` take an integer, Text, Bytes or a buffer. A
+value that does not fit answers `capacity exceeded (4)` with the note
+`buffer is full (limit 64 bytes)`, and the contents do not change.
+`buffer.length`, `buffer.capacity`, `buffer.at` and `buffer.equals?` read a
+buffer. `print`, `i2c.write`, `tcp.write`, `http.post` and the BLE words that
+send data take a buffer where they take Text or Bytes.
+
+A definition with the same capacity keeps the buffer and empties it, so a file
+can run again. A Cells element or a record field cannot hold a buffer.
+`buffer` is a reserved word: a parameter, a local or a `repeat ... as` name
+cannot be `buffer`. `save` keeps the contents of a buffer; see
+[Buffers and `save`](/reference/device/image-and-persistence/#buffers-and-save).
 
 ## Records
 
@@ -650,8 +684,8 @@ details.
 `Bytes` and `Handle` are real Frothy values, but they represent live working
 state rather than saved project data.
 
-`Bytes` is a transient byte buffer returned by words such as `i2c.read`,
-`tcp.read`, `http.get`, and BLE reads.
+A `Bytes` value holds transient bytes. Words such as `i2c.read`, `tcp.read`,
+`http.get`, and BLE reads return one.
 
 ```frothy
 bytes.length: (http.get: "http://example.com/")
@@ -664,6 +698,10 @@ Text when the content must survive the current evaluation or loop pass:
 ```frothy
 reply-text is text.pack: (http.get: "http://example.com/")
 ```
+
+`text.pack` reuses an equal Text value. It makes a new Text value only when no
+equal Text value exists. Keep bytes that change many times in a
+[buffer](#buffers).
 
 A `Handle` refers to an open platform resource such as I2C, UART, PWM, TCP,
 trace, pulse, or BLE state.

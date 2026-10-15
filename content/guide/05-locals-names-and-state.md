@@ -86,7 +86,7 @@ set scores[1] to 25
 scores[1]
 ```
 
-Cells are good for small tables, board-sized state, and simple buffers. They
+Cells are good for small tables and board-sized state. They
 are not a general heap. In current Frothy, `cells: n` belongs in a top-level
 binding so the image can reason about ownership and persistence.
 

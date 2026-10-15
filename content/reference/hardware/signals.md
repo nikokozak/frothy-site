@@ -28,7 +28,7 @@ set capture to nil
 
 One trace capture can be open at a time. Add one to three pins while it is in
 the configuring state, then arm it. The capture completes when stopped, when
-its 256-edge buffer fills, or when its one-second maximum span is reached.
+its storage of 256 edges fills, or when its one-second maximum span is reached.
 
 ### Trace Words
 
@@ -52,9 +52,9 @@ Inspect edges programmatically only after completion:
 ```frothy
 when trace.complete?: capture [
   repeat (trace.count: capture) as i [
-    print: (text.from-int: trace.channel: capture, i)
+    print: (trace.channel: capture, i)
     print: ":"
-    print: (text.from-int: trace.delta-ns: capture, i)
+    print: (trace.delta-ns: capture, i)
     print: "\n"
   ]
 ]

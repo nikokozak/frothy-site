@@ -30,8 +30,9 @@ clusters or locale-sensitive characters.
 ## Transient Bytes
 
 I/O words such as `http.get`, `tcp.read`, `i2c.read`, and BLE reads return
-`Bytes`. Use them in the current evaluation or loop pass. After a restart, a
-board can make 1,024 Bytes values; see [Limits](/limits/#text-and-bytes-in-a-loop):
+`Bytes`. Use them in the current evaluation or loop pass. Each loop pass frees
+the Bytes values that it made, so a loop can read for as long as it runs; see
+[Limits](/limits/#text-and-bytes-in-a-loop):
 
 ```frothy
 to fetch-size with url [
@@ -46,6 +47,21 @@ result into persistent Text when it must outlive the current call:
 ```frothy
 body is text.pack: (http.get: "http://example.com/")
 ```
+
+## A Value That Changes
+
+Each new Text value stays until the next `save`, `clear` or restart. A program
+that keeps the latest reply, command or status line keeps it in a buffer
+instead. A buffer has a fixed capacity, and `buffer.set` writes into the same
+storage each time:
+
+```frothy
+status is buffer: 32
+repeat 10000 as i [ buffer.set: status, i ]
+print: status
+```
+
+[Buffers](/reference/language/#buffers) gives the rules.
 
 ## Read A Console Line As Data
 
@@ -84,7 +100,7 @@ and `uart.available:` for arbitrary bytes or an independent serial device.
 
 ## The Shared PAD
 
-PAD is one 64-byte scratch buffer for building a short sequence one byte at a
+PAD is one 64-byte scratch area for building a short sequence one byte at a
 time without allocating a Bytes value:
 
 ```frothy
